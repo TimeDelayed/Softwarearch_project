@@ -1,0 +1,73 @@
+services:
+  bank:
+    build: ./bank
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://bank-db:5432/bankdb
+      SPRING_DATASOURCE_USERNAME: bank
+      SPRING_DATASOURCE_PASSWORD: bank
+    depends_on:
+      - bank-db
+  bank-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: bankdb
+      POSTGRES_USER: bank
+      POSTGRES_PASSWORD: bank
+    ports:
+      - "5433:5432"
+    volumes:
+      - bank-db-data:/var/lib/postgresql/data
+  roulette:
+    build: ./roulette
+    ports:
+      - "8082:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://roulette-db:5432/roulettedb
+      SPRING_DATASOURCE_USERNAME: roulette
+      SPRING_DATASOURCE_PASSWORD: roulette
+      BANK_SERVICE_URL: http://bank:8080
+    depends_on:
+      - roulette-db
+      - bank
+
+  roulette-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: roulettedb
+      POSTGRES_USER: roulette
+      POSTGRES_PASSWORD: roulette
+    ports:
+      - "5434:5432"
+    volumes:
+      - roulette-db-data:/var/lib/postgresql/data
+
+  slotmachine:
+    build: ./slotmachine
+    ports:
+      - "8083:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://slot-db:5432/slotdb
+      SPRING_DATASOURCE_USERNAME: slot
+      SPRING_DATASOURCE_PASSWORD: slot
+      BANK_SERVICE_URL: http://bank:8080
+    depends_on:
+      - slot-db
+      - bank
+
+  slot-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: slotdb
+      POSTGRES_USER: slot
+      POSTGRES_PASSWORD: slot
+    ports:
+      - "5435:5432"
+    volumes:
+      - slot-db-data:/var/lib/postgresql/data
+
+volumes:
+  bank-db-data:
+  roulette-db-data:
+  slot-db-data:
