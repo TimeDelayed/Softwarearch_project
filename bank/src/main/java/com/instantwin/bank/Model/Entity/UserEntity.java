@@ -26,9 +26,65 @@ public class UserEntity {
     @Column(nullable = false)
     private BigDecimal balance = BigDecimal.ZERO;
 
+    private boolean init = false;
+
     // Empty constructor for JPA
     protected UserEntity() {
     }
-
     
+    public boolean init(String firstName, String lastName)
+    {
+        if (firstName == null || lastName == null) return false;
+
+        if (!init) {
+            init = true;
+            this.firstName = firstName;
+            this.lastName = lastName;
+            this.balance = BigDecimal.ZERO;
+            return true;
+        }
+        return false;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public boolean deposit(BigDecimal amount) {
+        if (amount == null) return false;
+
+        this.balance = this.balance.add(amount);
+        return true;
+    }
+
+    public boolean withdraw(BigDecimal amount) {
+        return deposit(amount.negate());
+    }
+
+    public boolean changeFirstName(String firstName) {
+        if (firstName == null) return false;
+
+        this.firstName = firstName;
+        return true;
+    }
+
+    public boolean changeLastName(String lastName) {
+        if (lastName == null) return false;
+
+        this.lastName = lastName;
+        return true;
+    }
+
 }
