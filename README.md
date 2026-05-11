@@ -1,7 +1,7 @@
 # Uni Softwarearch. casino project 
 ## Instant Win Enterprise
 ## Contributors: 
-    -   Mathis
+    -   Mathis Kriwoluzky
     -   Nikita Schmidt
 
 # Project Setup
