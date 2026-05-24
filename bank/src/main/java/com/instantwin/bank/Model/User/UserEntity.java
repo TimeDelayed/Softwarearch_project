@@ -1,4 +1,4 @@
-package com.instantwin.bank.Model.Entity;
+package com.instantwin.bank.Model.User;
 
 import java.math.BigDecimal;
 

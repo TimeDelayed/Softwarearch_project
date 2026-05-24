@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 
+import com.instantwin.bank.Model.User.UserEntity;
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserEntityTest {
 
@@ -176,8 +178,7 @@ public class UserEntityTest {
     @Test
     void testChangeFirstName_valid() {
 
-        String newFirstName =
-                firstNameString + random.nextInt(1_000);
+        String newFirstName = firstNameString + random.nextInt(1_000);
 
         assertTrue(u.changeFirstName(newFirstName));
     }
