@@ -40,8 +40,7 @@ public class UserEntityTest {
 
     @BeforeEach
     void userInit() {
-        u = new UserEntity();
-        u.init(firstNameString, lastNameString);
+        u = UserEntity.of(firstNameString, lastNameString);
     }    
     @BeforeEach
     void initRandom(TestInfo testInfo){
@@ -58,7 +57,7 @@ public class UserEntityTest {
 
     @Test
     void testInit_firstName_not_null() {
-        UserEntity e = new UserEntity();
+        UserEntity e = UserEntity.of(firstNameString, lastNameString);
 
         assertFalse(e.init(null, lastNameString));
     }

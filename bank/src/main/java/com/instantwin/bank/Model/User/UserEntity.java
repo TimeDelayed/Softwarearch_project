@@ -2,19 +2,24 @@ package com.instantwin.bank.Model.User;
 
 import java.math.BigDecimal;
 
+import com.instantwin.bank.Utilities.ErrorMessages;
+import com.instantwin.bank.Utilities.ModelValidityBreachException;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.Getter;
 
 @Entity
 @Table(name = "users")
+@Getter
 public class UserEntity {
-    
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @Column(name = "firstName", nullable = false)
@@ -26,65 +31,60 @@ public class UserEntity {
     @Column(nullable = false)
     private BigDecimal balance = BigDecimal.ZERO;
 
-    private boolean init = false;
-
     // Empty constructor for JPA
     protected UserEntity() {
     }
-    
-    public boolean init(String firstName, String lastName)
-    {
-        if (firstName == null || lastName == null) return false;
 
-        if (!init) {
-            init = true;
-            this.firstName = firstName;
-            this.lastName = lastName;
-            this.balance = BigDecimal.ZERO;
-            return true;
-        }
-        return false;
+    private UserEntity(String firstName, String lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.balance = BigDecimal.ZERO;
     }
 
-    public Long getId() {
-        return id;
+    private static void validateUserName(String name) throws ModelValidityBreachException {
+        if (name == null || name.isBlank())
+            throw new ModelValidityBreachException(ErrorMessages.USER_NAME_IS_INVALID);
     }
 
-    public String getFirstName() {
-        return firstName;
+    public static UserEntity of(String firstName, String lastName) throws ModelValidityBreachException {
+        validateUserName(firstName);
+        validateUserName(lastName);
+
+        return new UserEntity(firstName, lastName);
     }
 
-    public String getLastName() {
-        return lastName;
+    private void validateAmount(BigDecimal amount) throws ModelValidityBreachException {
+        if (amount == null)
+            throw new ModelValidityBreachException(ErrorMessages.CURRENCY_INPUT_INVALID);
+
+        boolean isNegative = amount.signum() == -1;
+
+        if (isNegative)
+            throw new ModelValidityBreachException(ErrorMessages.CURRENCY_INPUT_INVALID);
     }
 
-    public BigDecimal getBalance() {
-        return balance;
-    }
-
-    public boolean deposit(BigDecimal amount) {
-        if (amount == null) return false;
+    public void deposit(BigDecimal amount) throws ModelValidityBreachException {
+        validateAmount(amount);
 
         this.balance = this.balance.add(amount);
-        return true;
     }
 
-    public boolean withdraw(BigDecimal amount) {
-        return deposit(amount.negate());
+    public void withdraw(BigDecimal amount) throws ModelValidityBreachException {
+        validateAmount(amount);
+
+        this.balance = this.balance.subtract(amount);
     }
 
-    public boolean changeFirstName(String firstName) {
-        if (firstName == null) return false;
+    public void changeFirstName(String firstName) throws ModelValidityBreachException {
+        validateUserName(firstName);
 
         this.firstName = firstName;
-        return true;
     }
 
-    public boolean changeLastName(String lastName) {
-        if (lastName == null) return false;
+    public void changeLastName(String lastName) throws ModelValidityBreachException{
+        validateUserName(lastName);
 
         this.lastName = lastName;
-        return true;
     }
 
 }
