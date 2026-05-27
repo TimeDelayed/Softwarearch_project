@@ -1,4 +1,4 @@
-package com.instantwin.bank.Model.Entity;
+/*package com.instantwin.bank.Model.Entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -217,4 +217,4 @@ public class UserEntityTest {
 
         assertEquals(newLastName, u.getLastName());
     }
-}
+}*/

@@ -1,6 +1,9 @@
-# Uni Softwarearch. casino project 
+# Uni Softwarearch. casino project
+
 ## Instant Win Enterprise
-## Contributors: 
+
+## Contributors:
+
     -   Mathis Kriwoluzky
     -   Nikita Schmidt
 
@@ -26,13 +29,11 @@
 
 Services communicate internally via Docker network names:
 
-* Roulette → Bank:
+- Roulette → Bank:
+  - `http://bank:8080`
 
-  * `http://bank:8080`
-
-* Slotmachine → Bank:
-
-  * `http://bank:8080`
+- Slotmachine → Bank:
+  - `http://bank:8080`
 
 ## Start the Project
 
@@ -40,37 +41,46 @@ Services communicate internally via Docker network names:
 docker compose up --build
 ```
 
+## Stop the project
+
+```bash
+docker compose down
+```
+
+or if you want to clean volumes:
+
+```bash
+docker compose down
+```
+
 ## Persistent Storage
 
 The following Docker volumes are used:
 
-* `bank-db-data`
-* `roulette-db-data`
-* `slot-db-data`
+- `bank-db-data`
+- `roulette-db-data`
+- `slot-db-data`
 
 This ensures database data persists after container restarts.
 
 ## Dependencies
 
-* `bank` depends on `bank-db`
-* `roulette` depends on `roulette-db` and `bank`
-* `slotmachine` depends on `slot-db` and `bank`
+- `bank` depends on `bank-db`
+- `roulette` depends on `roulette-db` and `bank`
+- `slotmachine` depends on `slot-db` and `bank`
 
 ## Access
 
 ### APIs
 
-* Bank API:
+- Bank API:
+  - `http://localhost:8081`
 
-  * `http://localhost:8081`
+- Roulette API:
+  - `http://localhost:8082`
 
-* Roulette API:
-
-  * `http://localhost:8082`
-
-* Slotmachine API:
-
-  * `http://localhost:8083`
+- Slotmachine API:
+  - `http://localhost:8083`
 
 ### PostgreSQL Connections
 

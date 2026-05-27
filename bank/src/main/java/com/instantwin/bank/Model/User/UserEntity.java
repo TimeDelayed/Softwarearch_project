@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import com.instantwin.bank.Utilities.ErrorMessages;
 import com.instantwin.bank.Utilities.ModelValidityBreachException;
+import com.instantwin.bank.Utilities.TransactionNumberInvalidException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -53,23 +54,23 @@ public class UserEntity {
         return new UserEntity(firstName, lastName);
     }
 
-    private void validateAmount(BigDecimal amount) throws ModelValidityBreachException {
+    private void validateAmount(BigDecimal amount) throws TransactionNumberInvalidException {
         if (amount == null)
-            throw new ModelValidityBreachException(ErrorMessages.CURRENCY_INPUT_INVALID);
+            throw new TransactionNumberInvalidException(ErrorMessages.CURRENCY_INPUT_INVALID);
 
         boolean isNegative = amount.signum() == -1;
 
         if (isNegative)
-            throw new ModelValidityBreachException(ErrorMessages.CURRENCY_INPUT_INVALID);
+            throw new TransactionNumberInvalidException(ErrorMessages.CURRENCY_INPUT_INVALID);
     }
 
-    public void deposit(BigDecimal amount) throws ModelValidityBreachException {
+    public void deposit(BigDecimal amount) throws TransactionNumberInvalidException {
         validateAmount(amount);
 
         this.balance = this.balance.add(amount);
     }
 
-    public void withdraw(BigDecimal amount) throws ModelValidityBreachException {
+    public void withdraw(BigDecimal amount) throws TransactionNumberInvalidException {
         validateAmount(amount);
 
         this.balance = this.balance.subtract(amount);
