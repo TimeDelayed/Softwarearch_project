@@ -1,8 +1,6 @@
-/*package com.instantwin.bank.Model.Entity;
+package com.instantwin.bank.Model.Entity;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.util.Random;
@@ -15,12 +13,11 @@ import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
 
 import com.instantwin.bank.Model.User.UserEntity;
+import com.instantwin.bank.Utilities.ModelValidityBreachException;
+import com.instantwin.bank.Utilities.TransactionNumberInvalidException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserEntityTest {
-
-    private UserEntity u;
-
     private static long SUITE_SEED;
     private Random random;
 
@@ -39,10 +36,6 @@ public class UserEntityTest {
     }
 
     @BeforeEach
-    void userInit() {
-        u = UserEntity.of(firstNameString, lastNameString);
-    }    
-    @BeforeEach
     void initRandom(TestInfo testInfo){
 
         long testSeed = SUITE_SEED ^ testInfo.getDisplayName().hashCode();
@@ -56,34 +49,28 @@ public class UserEntityTest {
     }
 
     @Test
-    void testInit_firstName_not_null() {
-        UserEntity e = UserEntity.of(firstNameString, lastNameString);
-
-        assertFalse(e.init(null, lastNameString));
+    void testCreate_firstName_not_null() {
+        assertThrows(ModelValidityBreachException.class, 
+            () -> UserEntity.of(null, lastNameString));
     }
 
     @Test
-    void testInit_lastName_not_null() {
-        UserEntity e = new UserEntity();
-
-        assertFalse(e.init(firstNameString, null));
-    }
-
-    @Test 
-    void testInit_cant_be_called_twice() {
-        boolean secondInit = u.init(firstNameString, lastNameString);
-        assertFalse(secondInit);
+    void testCreate_lastName_not_null() {
+        assertThrows(ModelValidityBreachException.class, 
+            () -> UserEntity.of(firstNameString, null));
     }
 
     @Test
-    void testInit_inits_correct_names() {
+    void testCreate_makes_correct_names() {
+        UserEntity u = UserEntity.of(firstNameString, lastNameString);
         assertEquals(firstNameString, u.getFirstName());
         assertEquals(lastNameString, u.getLastName());
     }
 
     @Test
     void testDeposit_amount_not_null() {
-        assertFalse(u.deposit(null));
+        UserEntity u = UserEntity.of(firstNameString, lastNameString);
+        assertThrows(TransactionNumberInvalidException.class,() -> u.deposit(null));
     }
 
     @Test
@@ -217,4 +204,4 @@ public class UserEntityTest {
 
         assertEquals(newLastName, u.getLastName());
     }
-}*/
+}
