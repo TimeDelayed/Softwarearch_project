@@ -14,4 +14,4 @@ public class ModelConfiguration {
         return new UserFactory();
     }
 }
-// TODO: Do I need this?
+// Makes UserFactory available for dependency injection

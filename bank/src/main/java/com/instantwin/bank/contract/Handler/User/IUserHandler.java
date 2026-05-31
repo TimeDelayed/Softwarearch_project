@@ -3,7 +3,6 @@ package com.instantwin.bank.contract.Handler.User;
 import java.util.List;
 import java.util.Optional;
 
-import com.instantwin.bank.Utilities.ModelValidityBreachException;
 import com.instantwin.bank.contract.DTO.IUserDTO;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
