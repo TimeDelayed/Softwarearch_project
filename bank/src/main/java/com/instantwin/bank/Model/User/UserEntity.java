@@ -4,8 +4,9 @@ import java.math.BigDecimal;
 
 import com.instantwin.bank.Utilities.ErrorMessages;
 import com.instantwin.bank.Utilities.ModelValidityBreachException;
-import com.instantwin.bank.Utilities.NegativeBalanceException;
+import com.instantwin.bank.Utilities.InsufficientBalanceException;
 import com.instantwin.bank.Utilities.TransactionNumberInvalidException;
+import com.instantwin.bank.contract.Model.User.IUserEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,7 +19,7 @@ import lombok.Getter;
 @Entity
 @Table(name = "users")
 @Getter
-public class UserEntity {
+public class UserEntity implements IUserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -43,12 +44,12 @@ public class UserEntity {
         this.balance = BigDecimal.ZERO;
     }
 
-    private static void validateUserName(String name) throws ModelValidityBreachException {
+    private static void validateUserName(String name) {
         if (name == null || name.isBlank())
             throw new ModelValidityBreachException(ErrorMessages.USER_NAME_IS_INVALID);
     }
 
-    public static UserEntity of(String firstName, String lastName) throws ModelValidityBreachException {
+    public static UserEntity of(String firstName, String lastName) {
         validateUserName(firstName);
         validateUserName(lastName);
 
@@ -65,10 +66,10 @@ public class UserEntity {
             throw new TransactionNumberInvalidException(ErrorMessages.CURRENCY_INPUT_INVALID);
     }
 
-    private void validateNotNegativeBalance(BigDecimal amount) throws NegativeBalanceException {
+    private void validateNotNegativeBalance(BigDecimal amount) throws InsufficientBalanceException {
         boolean wouldBeNegative = this.balance.subtract(amount).signum() == -1;
         if (wouldBeNegative)
-            throw new NegativeBalanceException();
+            throw new InsufficientBalanceException(ErrorMessages.NEGATIVE_BALANCE_ERROR);
     }
 
     public void deposit(BigDecimal amount) throws TransactionNumberInvalidException {
@@ -77,20 +78,20 @@ public class UserEntity {
         this.balance = this.balance.add(amount);
     }
 
-    public void withdraw(BigDecimal amount) throws TransactionNumberInvalidException, NegativeBalanceException {
+    public void withdraw(BigDecimal amount) throws TransactionNumberInvalidException, InsufficientBalanceException {
         validateAmount(amount);
         validateNotNegativeBalance(amount);
 
         this.balance = this.balance.subtract(amount);
     }
 
-    public void changeFirstName(String firstName) throws ModelValidityBreachException {
+    public void changeFirstName(String firstName) {
         validateUserName(firstName);
 
         this.firstName = firstName;
     }
 
-    public void changeLastName(String lastName) throws ModelValidityBreachException{
+    public void changeLastName(String lastName) {
         validateUserName(lastName);
 
         this.lastName = lastName;

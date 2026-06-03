@@ -1,4 +1,4 @@
-package com.instantwin.bank.DTO;
+package com.instantwin.bank.DTO.User;
 
 import com.instantwin.bank.contract.DTO.IUserDTO;
 

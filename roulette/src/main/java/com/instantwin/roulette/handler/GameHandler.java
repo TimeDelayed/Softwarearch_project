@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.instantwin.roulette.contract.handler.IGameHandler;
 import com.instantwin.roulette.contract.view.IGameView;
-import com.instantwin.roulette.repostitory.IGameRepository;
+import com.instantwin.roulette.Repostitory.IGameRepository;
 
 @Service
 public class GameHandler implements IGameHandler {

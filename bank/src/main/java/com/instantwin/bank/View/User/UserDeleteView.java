@@ -2,7 +2,7 @@ package com.instantwin.bank.View.User;
 
 import java.math.BigDecimal;
 
-import com.instantwin.bank.Model.User.UserEntity;
+import com.instantwin.bank.contract.Model.User.IUserEntity;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 
 public record UserDeleteView(
@@ -10,7 +10,7 @@ public record UserDeleteView(
                 String lastName,
                 BigDecimal balance) implements IUserDeleteView {
 
-        public static IUserDeleteView of(UserEntity user) {
+        public static IUserDeleteView of(IUserEntity user) {
                 return new UserDeleteView(user.getFirstName(), user.getLastName(), user.getBalance());
         }
 

@@ -2,7 +2,7 @@ package com.instantwin.bank.View.User;
 
 import java.math.BigDecimal;
 
-import com.instantwin.bank.Model.User.UserEntity;
+import com.instantwin.bank.contract.Model.User.IUserEntity;
 import com.instantwin.bank.contract.View.User.IUserView;
 
 public record UserView(
@@ -11,7 +11,7 @@ public record UserView(
         long id,
         BigDecimal balance) implements IUserView {
 
-    public static IUserView of(UserEntity user) {
+    public static IUserView of(IUserEntity user) {
         return new UserView(user.getFirstName(), user.getLastName(), user.getId(), user.getBalance());
     }
 

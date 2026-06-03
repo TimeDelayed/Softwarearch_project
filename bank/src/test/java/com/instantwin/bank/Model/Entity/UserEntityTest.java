@@ -14,22 +14,21 @@ import org.junit.jupiter.api.TestInstance;
 
 import com.instantwin.bank.Model.User.UserEntity;
 import com.instantwin.bank.Utilities.ModelValidityBreachException;
-import com.instantwin.bank.Utilities.NegativeBalanceException;
+import com.instantwin.bank.Utilities.InsufficientBalanceException;
 import com.instantwin.bank.Utilities.TransactionNumberInvalidException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserEntityTest {
+
     private static long SUITE_SEED;
     private Random random;
 
-    // Testing variables
     private String firstNameString = "Max";
     private String lastNameString = "Mustermann";
     private UserEntity user;
 
     @BeforeAll
     void initSuiteSeed() {
-
         String raw = System.getProperty("test.seed");
 
         SUITE_SEED = (raw == null || raw.isBlank())
@@ -39,20 +38,17 @@ public class UserEntityTest {
 
     @BeforeEach
     void initUser() {
-
         user = UserEntity.of(firstNameString, lastNameString);
     }
 
     @BeforeEach
     void initRandom(TestInfo testInfo) {
-
         long testSeed = SUITE_SEED ^ testInfo.getDisplayName().hashCode();
         random = new Random(testSeed);
     }
 
     @AfterAll
     static void printSeed() {
-
         System.out.println("Seed used: " + SUITE_SEED);
     }
 
@@ -88,158 +84,130 @@ public class UserEntityTest {
 
     @Test
     void testDeposit_amount_not_null() {
-        assertThrows(TransactionNumberInvalidException.class, () -> user.deposit(null));
+        assertThrows(TransactionNumberInvalidException.class,
+                () -> user.deposit(null));
     }
 
     @Test
     void testDeposit_amount_not_negative() {
         Float amount = -(0.01f + random.nextFloat() * 1_000f);
-        assertThrows(TransactionNumberInvalidException.class, () -> user.deposit(new BigDecimal(amount.toString())));
+
+        assertThrows(TransactionNumberInvalidException.class,
+                () -> user.deposit(new BigDecimal(amount.toString())));
     }
 
     @Test
     void testDeposit_valid() {
         Float amount = 0.01f + random.nextFloat() * 1_000f;
+        BigDecimal value = new BigDecimal(amount.toString());
 
-        try {
-            user.deposit(new BigDecimal(amount.toString()));
-        } catch (TransactionNumberInvalidException e) {
-            e.printStackTrace();
-            fail("Deposit threw exception for valid amount");
-        }
+        user.deposit(value);
 
-        assertEquals(new BigDecimal(amount.toString()), user.getBalance());
+        assertEquals(value, user.getBalance());
     }
 
     @Test
     void testDeposit_add_is_right_amount() {
         Float amount = 0.01f + random.nextFloat() * 1_000f;
+        BigDecimal value = new BigDecimal(amount.toString());
 
-        try {
-            user.deposit(new BigDecimal(amount.toString()));
-            assertEquals(amount, user.getBalance());
+        user.deposit(value);
+        assertEquals(value, user.getBalance());
 
-            user.deposit(new BigDecimal(amount.toString()));
-            assertEquals(amount + amount, user.getBalance());
-        } catch (TransactionNumberInvalidException e) {
-            e.printStackTrace();
-            fail("Deposit threw exception for valid amount");
-        }
+        user.deposit(value);
+        assertEquals(value.add(value), user.getBalance());
     }
 
     @Test
     void testWithdraw_amount_not_null() {
-        assertThrows(TransactionNumberInvalidException.class, () -> user.withdraw(null));
+        assertThrows(TransactionNumberInvalidException.class,
+                () -> user.withdraw(null));
     }
 
     @Test
     void testWithdraw_amount_not_negative() {
         Float amount = -(0.01f + random.nextFloat() * 1_000f);
 
-        assertThrows(TransactionNumberInvalidException.class, () -> user.withdraw(new BigDecimal(amount.toString())));
+        assertThrows(TransactionNumberInvalidException.class,
+                () -> user.withdraw(new BigDecimal(amount.toString())));
     }
 
     @Test
     void testWithdraw_amount_not_bigger_than_balance() {
-
         Float deposit = 0.01f + random.nextFloat() * 1_000f;
         Float withdraw = deposit + (0.01f + random.nextFloat() * 1_000f);
 
-        try {
-            user.deposit(new BigDecimal(deposit.toString()));
-        } catch (TransactionNumberInvalidException e) {
-            e.printStackTrace();
-            fail("Deposit threw exception for valid amount");
-        }
+        user.deposit(new BigDecimal(deposit.toString()));
 
-        assertThrows(NegativeBalanceException.class, () -> user.withdraw(new BigDecimal(withdraw.toString())));
+        assertThrows(InsufficientBalanceException.class,
+                () -> user.withdraw(new BigDecimal(withdraw.toString())));
     }
 
     @Test
     void testWithdraw_valid_smaller_than_balance() {
-
         Float deposit = 0.01f + random.nextFloat() * 1_000f;
         Float withdraw = deposit * random.nextFloat();
 
-        Float newBalance = deposit - withdraw;
+        BigDecimal depositValue = new BigDecimal(deposit.toString());
+        BigDecimal withdrawValue = new BigDecimal(withdraw.toString());
+        BigDecimal expected = depositValue.subtract(withdrawValue);
 
-        try {
-            user.deposit(new BigDecimal(deposit.toString()));
-            user.withdraw(new BigDecimal(withdraw.toString()));
-        } catch (TransactionNumberInvalidException e) {
-            e.printStackTrace();
-            fail("Deposit or withdraw threw exception for valid amount");
-        } catch (NegativeBalanceException e) {
-            e.printStackTrace();
-            fail("Withdraw threw NegativeBalanceException for valid amount");
-        }
+        user.deposit(depositValue);
 
-        assertEquals(newBalance, user.getBalance());
+        assertDoesNotThrow(() -> user.withdraw(withdrawValue));
+
+        assertEquals(expected, user.getBalance());
     }
 
     @Test
     void testWithdraw_valid_same_as_balance() {
-
         Float deposit = 0.01f + random.nextFloat() * 1_000f;
-        Float withdraw = deposit;
 
-        Float newBalance = deposit - withdraw;
+        BigDecimal value = new BigDecimal(deposit.toString());
 
-        try {
-            user.deposit(new BigDecimal(deposit.toString()));
-            user.withdraw(new BigDecimal(withdraw.toString()));
-        } catch (TransactionNumberInvalidException e) {
-            e.printStackTrace();
-            fail("Deposit or withdraw threw exception for valid amount");
-        } catch (NegativeBalanceException e) {
-            e.printStackTrace();
-            fail("Withdraw threw NegativeBalanceException for valid amount");
-        }
+        user.deposit(value);
 
-        assertEquals(newBalance, user.getBalance());
+        assertDoesNotThrow(() -> user.withdraw(value));
+
+        assertTrue(user.getBalance().compareTo(BigDecimal.ZERO) == 0);
     }
 
     @Test
     void testWithdraw_subtracts_right_amount() {
-
         Float deposit = 0.01f + random.nextFloat() * 1_000f;
-        Float withdraw = deposit * random.nextFloat();
+        Float withdraw = deposit * random.nextFloat() / 2;
 
-        Float newBalance = deposit - withdraw;
+        BigDecimal depositValue = new BigDecimal(deposit.toString());
+        BigDecimal withdrawValue = new BigDecimal(withdraw.toString());
 
-        try {
-            user.deposit(new BigDecimal(deposit.toString()));
-            user.withdraw(new BigDecimal(withdraw.toString()));
+        BigDecimal firstExpected = depositValue.subtract(withdrawValue);
+        BigDecimal secondExpected = firstExpected.subtract(withdrawValue);
 
-            assertEquals(newBalance, user.getBalance());
+        user.deposit(depositValue);
 
-            user.withdraw(new BigDecimal(withdraw.toString()));
+        assertDoesNotThrow(() -> user.withdraw(withdrawValue));
+        assertEquals(firstExpected, user.getBalance());
 
-            assertEquals(newBalance - withdraw, user.getBalance());
-        } catch (TransactionNumberInvalidException e) {
-            e.printStackTrace();
-            fail("Deposit or withdraw threw exception for valid amount");
-        } catch (NegativeBalanceException e) {
-            e.printStackTrace();
-            fail("Withdraw threw NegativeBalanceException for valid amount");
-        }
-
+        assertDoesNotThrow(() -> user.withdraw(withdrawValue));
+        assertEquals(secondExpected, user.getBalance());
     }
 
     @Test
     void testChangeFirstName_first_name_not_null() {
-        assertThrows(ModelValidityBreachException.class, () -> user.changeFirstName(null));
+        assertThrows(ModelValidityBreachException.class,
+                () -> user.changeFirstName(null));
     }
 
     @Test
     void testChangeFirstName_first_name_not_empty() {
-        assertThrows(ModelValidityBreachException.class, () -> user.changeFirstName(" "));
+        assertThrows(ModelValidityBreachException.class,
+                () -> user.changeFirstName(" "));
     }
 
     @Test
     void testChangeFirstName_valid() {
-
         String newFirstName = firstNameString + random.nextInt(1_000);
+
         user.changeFirstName(newFirstName);
 
         assertEquals(newFirstName, user.getFirstName());
@@ -247,17 +215,18 @@ public class UserEntityTest {
 
     @Test
     void testChangeLastName_last_name_not_null() {
-        assertThrows(ModelValidityBreachException.class, () -> user.changeLastName(null));
+        assertThrows(ModelValidityBreachException.class,
+                () -> user.changeLastName(null));
     }
 
     @Test
     void testChangeLastName_last_name_not_empty() {
-        assertThrows(ModelValidityBreachException.class, () -> user.changeLastName(" "));
+        assertThrows(ModelValidityBreachException.class,
+                () -> user.changeLastName(" "));
     }
 
     @Test
     void testChangeLastName_valid() {
-
         String newLastName = lastNameString + random.nextInt(1_000);
 
         user.changeLastName(newLastName);
