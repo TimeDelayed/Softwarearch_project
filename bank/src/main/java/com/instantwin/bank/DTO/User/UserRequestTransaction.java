@@ -2,15 +2,18 @@ package com.instantwin.bank.DTO.User;
 
 import java.math.BigDecimal;
 
-import com.instantwin.bank.contract.DTO.IUserRequestTransaction;
+import com.instantwin.bank.Utilities.InvoicingParty;
 
 import jakarta.validation.constraints.NotNull;
 
-public record UserRequestTransaction(@NotNull BigDecimal amount) implements IUserRequestTransaction {
+public record UserRequestTransaction(@NotNull InvoicingParty invoicingParty, @NotNull BigDecimal amount){
 
-    @Override
     public BigDecimal getAmount() {
         return amount;
+    }
+
+    public InvoicingParty getInvoicingParty() {
+        return invoicingParty;
     }
     
 }
