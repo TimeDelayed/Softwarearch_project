@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.instantwin.bank.DTO.User.UserDTO;
 import com.instantwin.bank.Utilities.DecimalPlaceInvalidException;
 import com.instantwin.bank.Utilities.ErrorMessages;
-import com.instantwin.bank.Utilities.InsufficientBalanceException;
 import com.instantwin.bank.contract.Controller.IUserController;
 import com.instantwin.bank.contract.DTO.IUserDTO;
 import com.instantwin.bank.contract.Service.User.IUserService;
@@ -73,36 +72,36 @@ public class UserController implements IUserController {
         }
     }
 
-    @Override
-    public ResponseEntity<IUserView> depositToUser(long id, BigDecimal amount, int decimals) {
-
-        validateDecimalInput(decimals);
-
-        BigDecimal fullAmount = amount.add(
+    private BigDecimal convertToFullAmount(BigDecimal amount, int decimals) {
+        return amount.add(
                 BigDecimal.valueOf(decimals)
                         .movePointLeft(2));
-        var result = userHandler.depositToUser(id, fullAmount);
-        if (result.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(result.get());
     }
 
     @Override
-    public ResponseEntity<IUserView> withdrawFromUser(long id, BigDecimal amount, int decimals)
-            throws InsufficientBalanceException {
+    public ResponseEntity<String> depositToUser(long id, BigDecimal amount, int decimals) {
 
         validateDecimalInput(decimals);
 
-        BigDecimal fullAmount = amount.add(
-                BigDecimal.valueOf(decimals)
-                        .movePointLeft(2));
-
-        var result = userHandler.withdrawFromUser(id, fullAmount);
-        if (result.isEmpty()) {
+        BigDecimal fullAmount = convertToFullAmount(amount, decimals);
+        var transactionResponse = userHandler.depositToUser(id, fullAmount);
+        if (transactionResponse == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(result.get());
+        return transactionResponse;
+    }
+
+    @Override
+    public ResponseEntity<String> withdrawFromUser(long id, BigDecimal amount, int decimals){
+
+        validateDecimalInput(decimals);
+
+        BigDecimal fullAmount = convertToFullAmount(amount, decimals);
+        var transactionResponse = userHandler.withdrawFromUser(id, fullAmount);
+        if (transactionResponse == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return transactionResponse;
     }
 
 }

@@ -4,7 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import com.instantwin.bank.Utilities.InsufficientBalanceException;
+import org.springframework.http.ResponseEntity;
+
 import com.instantwin.bank.contract.DTO.IUserDTO;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
@@ -21,7 +22,7 @@ public interface IUserService {
 
     Optional<IUserDeleteView> deleteUser(long id);
 
-    Optional<IUserView> depositToUser(long id, BigDecimal amount);
+    ResponseEntity<String> depositToUser(long id, BigDecimal amount);
 
-    Optional<IUserView> withdrawFromUser(long id, BigDecimal amount) throws InsufficientBalanceException;
+    ResponseEntity<String> withdrawFromUser(long id, BigDecimal amount);
 }

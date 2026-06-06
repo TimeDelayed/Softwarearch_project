@@ -12,16 +12,6 @@ public class UserExceptionHandler {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
-    @ExceptionHandler(InsufficientBalanceException.class)
-    public ResponseEntity<String> handleNegativeBalanceException(InsufficientBalanceException ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
-    }
-
-    @ExceptionHandler(TransactionNumberInvalidException.class)
-    public ResponseEntity<String> handleTransactionNumberInvalidException(TransactionNumberInvalidException ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
-    }
-
     @ExceptionHandler(DecimalPlaceInvalidException.class)
     public ResponseEntity<String> handleDecimalPlaceInvalidException(DecimalPlaceInvalidException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());

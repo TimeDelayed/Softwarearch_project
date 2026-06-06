@@ -10,8 +10,8 @@ public record UserDeleteView(
                 String lastName,
                 BigDecimal balance) implements IUserDeleteView {
 
-        public static IUserDeleteView of(IUserEntity user) {
-                return new UserDeleteView(user.getFirstName(), user.getLastName(), user.getBalance());
+        public static IUserDeleteView of(IUserEntity user, BigDecimal balance) {
+                return new UserDeleteView(user.getFirstName(), user.getLastName(), balance);
         }
 
         @Override

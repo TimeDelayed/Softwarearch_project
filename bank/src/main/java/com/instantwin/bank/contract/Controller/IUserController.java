@@ -13,13 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.instantwin.bank.DTO.User.UserDTO;
-import com.instantwin.bank.Utilities.InsufficientBalanceException;
 import com.instantwin.bank.contract.DTO.IUserDTO;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+
 
 @RequestMapping("/instantwin/bank/api")
 public interface IUserController {
@@ -40,11 +39,11 @@ public interface IUserController {
     ResponseEntity<IUserDeleteView> deleteUser(@PathVariable long id);
 
     @PutMapping("/user/{id}/deposit/{amount}/{decimals}")
-    ResponseEntity<IUserView> depositToUser(@PathVariable long id, @PathVariable BigDecimal amount,
+    ResponseEntity<String> depositToUser(@PathVariable long id, @PathVariable BigDecimal amount,
             @PathVariable int decimals);
 
     @PutMapping("/user/{id}/withdraw/{amount}/{decimals}")
-    ResponseEntity<IUserView> withdrawFromUser(@PathVariable long id, @PathVariable BigDecimal amount,
-            @PathVariable int decimals) throws InsufficientBalanceException;
+    ResponseEntity<String> withdrawFromUser(@PathVariable long id, @PathVariable BigDecimal amount,
+            @PathVariable int decimals);
 
 }

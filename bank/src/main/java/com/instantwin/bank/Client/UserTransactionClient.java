@@ -47,32 +47,28 @@ public class UserTransactionClient implements IUserTransactionClient {
         }
     }
 
+    @Override
     public ResponseEntity<String> depositTransaction(long userId, BigDecimal amount) {
-        String json = restClient.post()
+        var responseAsString = restClient.post()
                 .uri("/transaction/user/{id}", userId)
                 .body(new UserRequestTransaction(
                         invoicingParty, amount))
                 .retrieve()
-                .body(String.class);
+                .toEntity(String.class);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        return responseAsString;
     }
 
+    @Override
     public ResponseEntity<String> withdrawTransaction(long userId, BigDecimal amount) {
-        String json = restClient.post()
+        var responseAsString = restClient.post()
                 .uri("/transaction/user/{id}", userId)
                 .body(new UserRequestTransaction(
                         invoicingParty, amount.negate()))
                 .retrieve()
-                .body(String.class);
+                .toEntity(String.class);
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(json);
+        return responseAsString;
     }
 
 }

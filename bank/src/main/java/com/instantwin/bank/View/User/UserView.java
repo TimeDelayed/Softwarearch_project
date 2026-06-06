@@ -11,8 +11,8 @@ public record UserView(
         long id,
         BigDecimal balance) implements IUserView {
 
-    public static IUserView of(IUserEntity user) {
-        return new UserView(user.getFirstName(), user.getLastName(), user.getId(), user.getBalance());
+    public static IUserView of(IUserEntity user, BigDecimal balance) {
+        return new UserView(user.getFirstName(), user.getLastName(), user.getId(), balance);
     }
 
     @Override
