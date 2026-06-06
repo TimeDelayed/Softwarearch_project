@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.instantwin.bank.DTO.User.UserRequestTransaction;
 import com.instantwin.bank.Model.User.UserEntity;
 import com.instantwin.bank.Repository.User.IUserRepository;
+import com.instantwin.bank.Utilities.UserBalanceCalculator;
 import com.instantwin.bank.View.User.UserDeleteView;
 import com.instantwin.bank.View.User.UserView;
 import com.instantwin.bank.contract.Client.IUserTransactionClient;
@@ -26,25 +27,19 @@ public class UserService implements IUserService {
     private final IUserFactory userFactory;
     private final IUserTransactionClient transactionClient;
 
-    public UserService(IUserRepository userRepository, IUserFactory userFactory, IUserTransactionClient transactionClient) {
+    public UserService(
+        IUserRepository userRepository,
+        IUserFactory userFactory,
+        IUserTransactionClient transactionClient
+        ) {
         this.userRepository = userRepository;
         this.userFactory = userFactory;
         this.transactionClient = transactionClient;
     }
 
-    private BigDecimal sumAllTransactionsForUser(long userId) {
-        var transactions = transactionClient.getAllTransactionsForUser(userId);
-        if (transactions.isEmpty()) {
-            return BigDecimal.ZERO;
-        }
-        BigDecimal balance = transactions.get().stream()
-                .map(UserRequestTransaction::amount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        return balance;
-    }
-
     private BigDecimal getUserBalance(long userId) {
-        return sumAllTransactionsForUser(userId);
+        var transactions = transactionClient.getAllTransactionsForUser(userId);
+        return UserBalanceCalculator.calculateBalanceForUser(transactions);
     }
 
     @Override
@@ -95,10 +90,12 @@ public class UserService implements IUserService {
             return Optional.empty();
         }
 
+        BigDecimal balance = getUserBalance(id);
+
         UserEntity userEntity = result.get();
         userRepository.delete(userEntity);
 
-        return Optional.of(UserDeleteView.of(userEntity, getUserBalance(id)));
+        return Optional.of(UserDeleteView.of(userEntity, balance));
     }
 
     @Override

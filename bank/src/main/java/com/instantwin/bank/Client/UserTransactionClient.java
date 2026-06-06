@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -14,7 +12,6 @@ import org.springframework.web.client.RestClient;
 
 import com.instantwin.bank.DTO.User.UserRequestTransaction;
 import com.instantwin.bank.Utilities.InvoicingParty;
-import com.instantwin.bank.View.User.UserView;
 import com.instantwin.bank.contract.Client.IUserTransactionClient;
 
 @Component
@@ -31,7 +28,7 @@ public class UserTransactionClient implements IUserTransactionClient {
                 .baseUrl(BASE_URL)
                 .build();
     }
-
+    // TODO: FRAGEN WIE SOWAS TESTEN
     @Override
     public Optional<List<UserRequestTransaction>> getAllTransactionsForUser(long userId) {
         try {
@@ -61,10 +58,12 @@ public class UserTransactionClient implements IUserTransactionClient {
 
     @Override
     public ResponseEntity<String> withdrawTransaction(long userId, BigDecimal amount) {
+        BigDecimal negativeAmount = amount.negate();
         var responseAsString = restClient.post()
                 .uri("/transaction/user/{id}", userId)
                 .body(new UserRequestTransaction(
-                        invoicingParty, amount.negate()))
+                        invoicingParty,
+                        negativeAmount))
                 .retrieve()
                 .toEntity(String.class);
 
