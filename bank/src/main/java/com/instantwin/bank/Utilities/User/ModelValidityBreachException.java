@@ -1,4 +1,4 @@
-package com.instantwin.bank.Utilities;
+package com.instantwin.bank.Utilities.User;
 
 public class ModelValidityBreachException extends RuntimeException {
 

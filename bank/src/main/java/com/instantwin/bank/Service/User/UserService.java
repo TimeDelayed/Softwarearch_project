@@ -7,10 +7,9 @@ import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.instantwin.bank.DTO.User.UserRequestTransaction;
 import com.instantwin.bank.Model.User.UserEntity;
 import com.instantwin.bank.Repository.User.IUserRepository;
-import com.instantwin.bank.Utilities.UserBalanceCalculator;
+import com.instantwin.bank.Utilities.User.UserBalanceCalculator;
 import com.instantwin.bank.View.User.UserDeleteView;
 import com.instantwin.bank.View.User.UserView;
 import com.instantwin.bank.contract.Client.IUserTransactionClient;

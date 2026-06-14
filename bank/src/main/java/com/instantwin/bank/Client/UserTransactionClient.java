@@ -11,13 +11,13 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import com.instantwin.bank.DTO.User.UserRequestTransaction;
-import com.instantwin.bank.Utilities.InvoicingParty;
+import com.instantwin.bank.Utilities.User.UserInvoicingParty;
 import com.instantwin.bank.contract.Client.IUserTransactionClient;
 
 @Component
 public class UserTransactionClient implements IUserTransactionClient {
 
-    private final InvoicingParty invoicingParty = InvoicingParty.USER_SLICE;
+    private final UserInvoicingParty invoicingParty = UserInvoicingParty.USER_SLICE;
 
     private static final String BASE_URL = "http://localhost:8081/instantwin/bank/api";
 
@@ -28,7 +28,7 @@ public class UserTransactionClient implements IUserTransactionClient {
                 .baseUrl(BASE_URL)
                 .build();
     }
-    // TODO: FRAGEN WIE SOWAS TESTEN
+    // TODO: FRAGEN WIE SOWAS TESTEN -> Integrationstests
     @Override
     public Optional<List<UserRequestTransaction>> getAllTransactionsForUser(long userId) {
         try {

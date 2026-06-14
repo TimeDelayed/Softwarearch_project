@@ -4,12 +4,14 @@ import java.math.BigDecimal;
 
 import com.instantwin.bank.contract.Model.User.IUserEntity;
 import com.instantwin.bank.contract.View.User.IUserView;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 
 public record UserView(
-        String firstName,
-        String lastName,
-        long id,
-        BigDecimal balance) implements IUserView {
+        @NotNull @NotBlank String firstName,
+        @NotNull @NotBlank String lastName,
+        @NotNull long id,
+        @NotNull @NotBlank BigDecimal balance) implements IUserView {
 
     public static IUserView of(IUserEntity user, BigDecimal balance) {
         return new UserView(user.getFirstName(), user.getLastName(), user.getId(), balance);

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
-import com.instantwin.bank.Utilities.ModelValidityBreachException;
+import com.instantwin.bank.Utilities.User.ModelValidityBreachException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserEntityTest {

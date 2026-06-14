@@ -22,7 +22,7 @@ import org.springframework.http.ResponseEntity;
 import com.instantwin.bank.DTO.User.UserRequestTransaction;
 import com.instantwin.bank.Model.User.UserEntity;
 import com.instantwin.bank.Repository.User.IUserRepository;
-import com.instantwin.bank.Utilities.InvoicingParty;
+import com.instantwin.bank.Utilities.User.UserInvoicingParty;
 import com.instantwin.bank.contract.Client.IUserTransactionClient;
 import com.instantwin.bank.contract.Model.User.IUserFactory;
 import com.instantwin.bank.DTO.User.UserDTO;
@@ -94,9 +94,9 @@ public class UserServiceTest {
 
     @Test
     void testFindAllUsers_returns_all_users() {
-        UserRequestTransaction transaction1 = new UserRequestTransaction(InvoicingParty.USER_SLICE,
+        UserRequestTransaction transaction1 = new UserRequestTransaction(UserInvoicingParty.USER_SLICE,
                 BigDecimal.valueOf(100));
-        UserRequestTransaction transaction2 = new UserRequestTransaction(InvoicingParty.USER_SLICE,
+        UserRequestTransaction transaction2 = new UserRequestTransaction(UserInvoicingParty.USER_SLICE,
                 BigDecimal.valueOf(-50));
 
         when(transactionClient.getAllTransactionsForUser(1L)).thenReturn(Optional.of(List.of(transaction1)));
@@ -124,7 +124,7 @@ public class UserServiceTest {
 
     @Test
     void testFindUserById_returns_user_when_user_exists() {
-        UserRequestTransaction transaction1 = new UserRequestTransaction(InvoicingParty.USER_SLICE,
+        UserRequestTransaction transaction1 = new UserRequestTransaction(UserInvoicingParty.USER_SLICE,
                 BigDecimal.valueOf(100));
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(userEntities.get(0)));
@@ -205,7 +205,7 @@ public class UserServiceTest {
     @Test
     void testDeleteUser_calculates_balance_before_deleting_user() {
         var transaction1 = new UserRequestTransaction(
-                InvoicingParty.USER_SLICE,
+                UserInvoicingParty.USER_SLICE,
                 BigDecimal.valueOf(100));
 
         when(userRepository.findById(1L))
@@ -228,7 +228,7 @@ public class UserServiceTest {
     @Test
     void testDeleteUser_returns_deleted_user_view() {
         var transaction1 = new UserRequestTransaction(
-                InvoicingParty.USER_SLICE,
+                UserInvoicingParty.USER_SLICE,
                 BigDecimal.valueOf(100));
 
         when(userRepository.findById(1L))

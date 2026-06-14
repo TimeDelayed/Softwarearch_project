@@ -3,7 +3,7 @@ package com.instantwin.bank.Model.User;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
-import com.instantwin.bank.Utilities.ModelValidityBreachException;
+import com.instantwin.bank.Utilities.User.ModelValidityBreachException;
 import com.instantwin.bank.contract.Model.User.IUserFactory;
 
 import static org.mockito.Mockito.mock;

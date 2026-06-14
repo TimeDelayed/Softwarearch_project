@@ -1,4 +1,4 @@
-package com.instantwin.bank.Utilities;
+package com.instantwin.bank.Utilities.User;
 
 import java.math.BigDecimal;
 import java.util.List;

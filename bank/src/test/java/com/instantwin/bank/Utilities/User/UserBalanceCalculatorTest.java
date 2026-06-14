@@ -1,4 +1,4 @@
-package com.instantwin.bank.Utilities;
+package com.instantwin.bank.Utilities.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -24,9 +24,9 @@ public class UserBalanceCalculatorTest {
     @Test
     void testCalculateBalanceForUser_sums_all_transaction_amounts() {
         List<UserRequestTransaction> transactions = List.of(
-                new UserRequestTransaction(InvoicingParty.USER_SLICE, BigDecimal.valueOf(10)),
-                new UserRequestTransaction(InvoicingParty.USER_SLICE, BigDecimal.valueOf(-3)),
-                new UserRequestTransaction(InvoicingParty.USER_SLICE, BigDecimal.valueOf(5)));
+                new UserRequestTransaction(UserInvoicingParty.USER_SLICE, BigDecimal.valueOf(10)),
+                new UserRequestTransaction(UserInvoicingParty.USER_SLICE, BigDecimal.valueOf(-3)),
+                new UserRequestTransaction(UserInvoicingParty.USER_SLICE, BigDecimal.valueOf(5)));
 
         BigDecimal result = UserBalanceCalculator.calculateBalanceForUser(Optional.of(transactions));
 

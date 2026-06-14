@@ -1,4 +1,4 @@
-package com.instantwin.bank.Utilities;
+package com.instantwin.bank.Utilities.User;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,5 +16,4 @@ public class UserExceptionHandler {
     public ResponseEntity<String> handleDecimalPlaceInvalidException(DecimalPlaceInvalidException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
-
 }

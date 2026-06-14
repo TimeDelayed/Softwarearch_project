@@ -1,10 +1,10 @@
-package com.instantwin.bank.Utilities;
+package com.instantwin.bank.Utilities.User;
 
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 
-public class ResponseMapper {
+public class UserResponseMapper {
     public static <T> ResponseEntity<T> optionalToResponseEntity(Optional<T> optional) {
         if (optional.isEmpty()) {
             return ResponseEntity.notFound().build();

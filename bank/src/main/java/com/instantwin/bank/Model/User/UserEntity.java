@@ -2,8 +2,8 @@ package com.instantwin.bank.Model.User;
 
 import java.math.BigDecimal;
 
-import com.instantwin.bank.Utilities.ErrorMessages;
-import com.instantwin.bank.Utilities.ModelValidityBreachException;
+import com.instantwin.bank.Utilities.User.ModelValidityBreachException;
+import com.instantwin.bank.Utilities.User.UserErrorMessages;
 import com.instantwin.bank.contract.Model.User.IUserEntity;
 
 import jakarta.persistence.Column;
@@ -40,7 +40,7 @@ public class UserEntity implements IUserEntity {
 
     private static void validateUserName(String name) {
         if (name == null || name.isBlank())
-            throw new ModelValidityBreachException(ErrorMessages.USER_NAME_IS_INVALID);
+            throw new ModelValidityBreachException(UserErrorMessages.USER_NAME_IS_INVALID);
     }
 
     public static UserEntity of(String firstName, String lastName) {

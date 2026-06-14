@@ -1,4 +1,4 @@
-package com.instantwin.bank.Utilities;
+package com.instantwin.bank.Utilities.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -15,7 +15,7 @@ public class ResponseMapperTest {
         Optional<String> optional = Optional.of("test");
 
         ResponseEntity<String> result =
-                ResponseMapper.optionalToResponseEntity(optional);
+                UserResponseMapper.optionalToResponseEntity(optional);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals("test", result.getBody());
@@ -26,7 +26,7 @@ public class ResponseMapperTest {
         Optional<String> optional = Optional.empty();
 
         ResponseEntity<String> result =
-                ResponseMapper.optionalToResponseEntity(optional);
+                UserResponseMapper.optionalToResponseEntity(optional);
 
         assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
         assertNull(result.getBody());

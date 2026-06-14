@@ -15,9 +15,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.instantwin.bank.DTO.User.UserDTO;
-import com.instantwin.bank.DTO.User.UserRequestTransaction;
 import com.instantwin.bank.Model.User.UserEntity;
-import com.instantwin.bank.Utilities.DecimalPlaceInvalidException;
+import com.instantwin.bank.Utilities.User.DecimalPlaceInvalidException;
 import com.instantwin.bank.View.User.UserView;
 import com.instantwin.bank.contract.Service.User.IUserService;
 import com.instantwin.bank.contract.View.User.IUserView;

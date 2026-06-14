@@ -8,9 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.instantwin.bank.DTO.User.UserDTO;
-import com.instantwin.bank.Utilities.DecimalPlaceInvalidException;
-import com.instantwin.bank.Utilities.ErrorMessages;
-import com.instantwin.bank.Utilities.ResponseMapper;
+import com.instantwin.bank.Utilities.User.DecimalPlaceInvalidException;
+import com.instantwin.bank.Utilities.User.UserResponseMapper;
+import com.instantwin.bank.Utilities.User.UserErrorMessages;
 import com.instantwin.bank.contract.Controller.IUserController;
 import com.instantwin.bank.contract.DTO.IUserDTO;
 import com.instantwin.bank.contract.Service.User.IUserService;
@@ -35,7 +35,7 @@ public class UserController implements IUserController {
     public ResponseEntity<IUserView> findUserById(long id) {
         var result = userHandler.findUserById(id);
 
-        return ResponseMapper.optionalToResponseEntity(result);
+        return UserResponseMapper.optionalToResponseEntity(result);
     }
 
     @Override
@@ -50,20 +50,20 @@ public class UserController implements IUserController {
 
         var result = userHandler.updateUserName(id, userDTO);
 
-        return ResponseMapper.optionalToResponseEntity(result);
+        return UserResponseMapper.optionalToResponseEntity(result);
     }
 
     @Override
     public ResponseEntity<IUserDeleteView> deleteUser(long id) {
         var result = userHandler.deleteUser(id);
         
-        return ResponseMapper.optionalToResponseEntity(result);
+        return UserResponseMapper.optionalToResponseEntity(result);
     }
 
     private void validateDecimalInput(int decimals) {
         boolean decimalInputInvalid = decimals < 0 || decimals > 99;
         if (decimalInputInvalid) {
-            throw new DecimalPlaceInvalidException(ErrorMessages.DECIMAL_INPUT_INVALID);
+            throw new DecimalPlaceInvalidException(UserErrorMessages.DECIMAL_INPUT_INVALID);
         }
     }
 
