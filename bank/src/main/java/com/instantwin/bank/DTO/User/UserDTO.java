@@ -1,6 +1,6 @@
 package com.instantwin.bank.DTO.User;
 
-import com.instantwin.bank.contract.DTO.IUserDTO;
+import com.instantwin.bank.contract.DTO.User.IUserDTO;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

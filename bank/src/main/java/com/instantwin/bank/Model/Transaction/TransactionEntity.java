@@ -2,7 +2,9 @@ package com.instantwin.bank.Model.Transaction;
 
 import java.math.BigDecimal;
 
+import com.instantwin.bank.Utilities.Transaction.TransactionErrorMessages;
 import com.instantwin.bank.Utilities.Transaction.TransactionInvoicingParty;
+import com.instantwin.bank.Utilities.Transaction.UserIdInputFormatInvalidException;
 import com.instantwin.bank.contract.Model.Transaction.ITransactionEntity;
 
 import jakarta.persistence.Column;
@@ -43,4 +45,38 @@ public class TransactionEntity implements ITransactionEntity{
         
         return new TransactionEntity(invoicingParty, amount);
     }
+
+    private void validateUserId(long userId) {
+        if (userId <= 0) {
+            throw new UserIdInputFormatInvalidException(TransactionErrorMessages.USER_ID_INPUT_NEGATIVE);
+        }
+    }
+
+    public void updateUserId(long userId) {
+        validateUserId(userId);
+        this.userId = userId;
+    }
+
+    private void validateAmount(BigDecimal amount) {
+        if (amount == null) {
+            throw new IllegalArgumentException(TransactionErrorMessages.AMOUNT_INPUT_NULL);
+        }
+    }
+
+    public void updateAmount(BigDecimal amount) {
+        validateAmount(amount);
+        this.amount = amount;
+    }
+
+    private void validateInvoicingParty(TransactionInvoicingParty invoicingParty) {
+        if (invoicingParty == null) {
+            throw new IllegalArgumentException(TransactionErrorMessages.INVOICING_PARTY_INPUT_NULL);
+        }
+    }
+
+    public void updateInvoicingParty(TransactionInvoicingParty invoicingParty) {
+        validateInvoicingParty(invoicingParty);
+        this.invoicingParty = invoicingParty;
+    }
+        
 }

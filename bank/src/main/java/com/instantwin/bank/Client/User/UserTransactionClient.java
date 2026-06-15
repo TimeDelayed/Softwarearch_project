@@ -1,4 +1,4 @@
-package com.instantwin.bank.Client;
+package com.instantwin.bank.Client.User;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -11,8 +11,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import com.instantwin.bank.DTO.User.UserRequestTransaction;
+import com.instantwin.bank.DTO.User.UserTransactionDTO;
 import com.instantwin.bank.Utilities.User.UserInvoicingParty;
-import com.instantwin.bank.contract.Client.IUserTransactionClient;
+import com.instantwin.bank.contract.Client.User.IUserTransactionClient;
 
 @Component
 public class UserTransactionClient implements IUserTransactionClient {
@@ -28,14 +29,15 @@ public class UserTransactionClient implements IUserTransactionClient {
                 .baseUrl(BASE_URL)
                 .build();
     }
+
     // TODO: FRAGEN WIE SOWAS TESTEN -> Integrationstests
     @Override
-    public Optional<List<UserRequestTransaction>> getAllTransactionsForUser(long userId) {
+    public Optional<List<UserTransactionDTO>> getAllTransactionsForUser(long userId) {
         try {
-            List<UserRequestTransaction> result = restClient.get()
+            List<UserTransactionDTO> result = restClient.get()
                     .uri("transactions/user/{id}", userId)
                     .retrieve()
-                    .body(new ParameterizedTypeReference<List<UserRequestTransaction>>() {
+                    .body(new ParameterizedTypeReference<List<UserTransactionDTO>>() {
                     });
 
             return Optional.of(result);

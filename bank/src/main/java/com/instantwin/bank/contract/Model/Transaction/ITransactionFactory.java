@@ -6,5 +6,5 @@ import com.instantwin.bank.Model.Transaction.TransactionEntity;
 import com.instantwin.bank.Utilities.Transaction.TransactionInvoicingParty;
 
 public interface ITransactionFactory {
-    TransactionEntity createTransaction(BigDecimal amount, TransactionInvoicingParty invoicingParty);
+    TransactionEntity createTransaction(long userId ,BigDecimal amount, TransactionInvoicingParty invoicingParty);
 }

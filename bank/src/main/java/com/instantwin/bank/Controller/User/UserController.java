@@ -1,22 +1,23 @@
-package com.instantwin.bank.Controller;
+package com.instantwin.bank.Controller.User;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.instantwin.bank.DTO.User.UserDTO;
 import com.instantwin.bank.Utilities.User.DecimalPlaceInvalidException;
 import com.instantwin.bank.Utilities.User.UserResponseMapper;
 import com.instantwin.bank.Utilities.User.UserErrorMessages;
-import com.instantwin.bank.contract.Controller.IUserController;
-import com.instantwin.bank.contract.DTO.IUserDTO;
+import com.instantwin.bank.contract.Controller.User.IUserController;
 import com.instantwin.bank.contract.Service.User.IUserService;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
 
+@Validated
 @RestController
 public class UserController implements IUserController {
 
@@ -46,7 +47,7 @@ public class UserController implements IUserController {
     }
 
     @Override
-    public ResponseEntity<IUserView> updateUserName(long id, IUserDTO userDTO) {
+    public ResponseEntity<IUserView> updateUserName(long id, UserDTO userDTO) {
 
         var result = userHandler.updateUserName(id, userDTO);
 

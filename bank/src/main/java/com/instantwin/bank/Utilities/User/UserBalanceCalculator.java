@@ -4,16 +4,16 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import com.instantwin.bank.DTO.User.UserRequestTransaction;
+import com.instantwin.bank.DTO.User.UserTransactionDTO;
 
 public class UserBalanceCalculator {
 
-    public static BigDecimal calculateBalanceForUser(Optional<List<UserRequestTransaction>> transactions) {
+    public static BigDecimal calculateBalanceForUser(Optional<List<UserTransactionDTO>> transactions) {
         if (transactions.isEmpty()) {
             return BigDecimal.ZERO;
         }
         BigDecimal balance = transactions.get().stream()
-                .map(UserRequestTransaction::amount)
+                .map(UserTransactionDTO::amount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return balance;
     }

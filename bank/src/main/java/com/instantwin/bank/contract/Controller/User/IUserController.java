@@ -1,4 +1,4 @@
-package com.instantwin.bank.contract.Controller;
+package com.instantwin.bank.contract.Controller.User;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.instantwin.bank.DTO.User.UserDTO;
-import com.instantwin.bank.contract.DTO.IUserDTO;
+import com.instantwin.bank.contract.DTO.User.IUserDTO;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
 
@@ -33,7 +33,7 @@ public interface IUserController {
     ResponseEntity<IUserView> createUser(@RequestBody @Valid UserDTO userDTO);
 
     @PutMapping("/user/{id}")
-    ResponseEntity<IUserView> updateUserName(@PathVariable long id, @RequestBody @Valid IUserDTO userDTO);
+    ResponseEntity<IUserView> updateUserName(@PathVariable long id, @RequestBody @Valid UserDTO userDTO);
 
     @DeleteMapping("/user/{id}")
     ResponseEntity<IUserDeleteView> deleteUser(@PathVariable long id);

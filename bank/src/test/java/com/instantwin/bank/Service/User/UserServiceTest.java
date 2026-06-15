@@ -1,33 +1,59 @@
 package com.instantwin.bank.Service.User;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InOrder;
 import org.springframework.http.ResponseEntity;
 
-import com.instantwin.bank.DTO.User.UserRequestTransaction;
+import com.instantwin.bank.DTO.User.UserDTO;
+import com.instantwin.bank.DTO.User.UserTransactionDTO;
 import com.instantwin.bank.Model.User.UserEntity;
 import com.instantwin.bank.Repository.User.IUserRepository;
-import com.instantwin.bank.Utilities.User.UserInvoicingParty;
-import com.instantwin.bank.contract.Client.IUserTransactionClient;
+import com.instantwin.bank.contract.Client.User.IUserTransactionClient;
 import com.instantwin.bank.contract.Model.User.IUserFactory;
-import com.instantwin.bank.DTO.User.UserDTO;
 
 public class UserServiceTest {
+
+    private static final long USER_1_ID = 1L;
+    private static final long USER_2_ID = 2L;
+
+    private static final int FIRST_USER_INDEX = 0;
+    private static final int SECOND_USER_INDEX = 1;
+    private static final int USER_COUNT = 2;
+
+    private static final String USER_1_FIRST_NAME = "Max";
+    private static final String USER_1_LAST_NAME = "Mustermann";
+    private static final String USER_2_FIRST_NAME = "Erika";
+    private static final String USER_2_LAST_NAME = "Mustermann";
+
+    private static final String NEW_USER_FIRST_NAME = "John";
+    private static final String NEW_USER_LAST_NAME = "Doe";
+
+    private static final BigDecimal TRANSACTION_AMOUNT_100 = BigDecimal.valueOf(100);
+    private static final BigDecimal TRANSACTION_AMOUNT_MINUS_50 = BigDecimal.valueOf(-50);
+    private static final BigDecimal DEPOSIT_AMOUNT_50 = BigDecimal.valueOf(50);
+    private static final BigDecimal DEPOSIT_AMOUNT_50_75 = BigDecimal.valueOf(50.75);
+    private static final BigDecimal WITHDRAW_AMOUNT_50 = BigDecimal.valueOf(50);
+    private static final BigDecimal WITHDRAW_AMOUNT_30_25 = BigDecimal.valueOf(30.25);
+
+    private static final String DEPOSIT_SUCCESSFUL_RESPONSE = "Deposit successful";
+    private static final String WITHDRAW_SUCCESSFUL_RESPONSE = "Withdraw successful";
+
     private IUserRepository userRepository;
     private IUserFactory userFactory;
     private IUserTransactionClient transactionClient;
@@ -44,14 +70,14 @@ public class UserServiceTest {
         var user1 = mock(UserEntity.class);
         var user2 = mock(UserEntity.class);
 
-        when(user1.getId()).thenReturn(1L);
-        when(user2.getId()).thenReturn(2L);
+        when(user1.getId()).thenReturn(USER_1_ID);
+        when(user2.getId()).thenReturn(USER_2_ID);
 
-        when(user1.getFirstName()).thenReturn("Max");
-        when(user1.getLastName()).thenReturn("Mustermann");
+        when(user1.getFirstName()).thenReturn(USER_1_FIRST_NAME);
+        when(user1.getLastName()).thenReturn(USER_1_LAST_NAME);
 
-        when(user2.getFirstName()).thenReturn("Erika");
-        when(user2.getLastName()).thenReturn("Mustermann");
+        when(user2.getFirstName()).thenReturn(USER_2_FIRST_NAME);
+        when(user2.getLastName()).thenReturn(USER_2_LAST_NAME);
 
         doAnswer(invocation -> {
             String newFirstName = invocation.getArgument(0);
@@ -85,32 +111,34 @@ public class UserServiceTest {
             String firstName = invocation.getArgument(0);
             String lastName = invocation.getArgument(1);
             var user = mock(UserEntity.class);
+
             when(user.getFirstName()).thenReturn(firstName);
             when(user.getLastName()).thenReturn(lastName);
+
             return user;
         });
-
     }
 
     @Test
     void testFindAllUsers_returns_all_users() {
-        UserRequestTransaction transaction1 = new UserRequestTransaction(UserInvoicingParty.USER_SLICE,
-                BigDecimal.valueOf(100));
-        UserRequestTransaction transaction2 = new UserRequestTransaction(UserInvoicingParty.USER_SLICE,
-                BigDecimal.valueOf(-50));
+        UserTransactionDTO transaction1 = new UserTransactionDTO(TRANSACTION_AMOUNT_100);
+        UserTransactionDTO transaction2 = new UserTransactionDTO(TRANSACTION_AMOUNT_MINUS_50);
 
-        when(transactionClient.getAllTransactionsForUser(1L)).thenReturn(Optional.of(List.of(transaction1)));
-        when(transactionClient.getAllTransactionsForUser(2L)).thenReturn(Optional.of(List.of(transaction2)));
+        when(transactionClient.getAllTransactionsForUser(USER_1_ID))
+                .thenReturn(Optional.of(List.of(transaction1)));
+
+        when(transactionClient.getAllTransactionsForUser(USER_2_ID))
+                .thenReturn(Optional.of(List.of(transaction2)));
 
         var result = userHandler.findAllUsers();
 
-        assertEquals(2, result.size());
-        assertEquals("Max", result.get(0).getFirstName());
-        assertEquals("Mustermann", result.get(0).getLastName());
-        assertEquals("Erika", result.get(1).getFirstName());
-        assertEquals("Mustermann", result.get(1).getLastName());
-        assertEquals(BigDecimal.valueOf(100), result.get(0).getBalance());
-        assertEquals(BigDecimal.valueOf(-50), result.get(1).getBalance());
+        assertEquals(USER_COUNT, result.size());
+        assertEquals(USER_1_FIRST_NAME, result.get(FIRST_USER_INDEX).getFirstName());
+        assertEquals(USER_1_LAST_NAME, result.get(FIRST_USER_INDEX).getLastName());
+        assertEquals(USER_2_FIRST_NAME, result.get(SECOND_USER_INDEX).getFirstName());
+        assertEquals(USER_2_LAST_NAME, result.get(SECOND_USER_INDEX).getLastName());
+        assertEquals(TRANSACTION_AMOUNT_100, result.get(FIRST_USER_INDEX).getBalance());
+        assertEquals(TRANSACTION_AMOUNT_MINUS_50, result.get(SECOND_USER_INDEX).getBalance());
     }
 
     @Test
@@ -124,79 +152,83 @@ public class UserServiceTest {
 
     @Test
     void testFindUserById_returns_user_when_user_exists() {
-        UserRequestTransaction transaction1 = new UserRequestTransaction(UserInvoicingParty.USER_SLICE,
-                BigDecimal.valueOf(100));
+        UserTransactionDTO transaction1 = new UserTransactionDTO(TRANSACTION_AMOUNT_100);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(userEntities.get(0)));
-        when(transactionClient.getAllTransactionsForUser(1L)).thenReturn(Optional.of(List.of(transaction1)));
+        when(userRepository.findById(USER_1_ID))
+                .thenReturn(Optional.of(userEntities.get(FIRST_USER_INDEX)));
 
-        var result = userHandler.findUserById(1L);
+        when(transactionClient.getAllTransactionsForUser(USER_1_ID))
+                .thenReturn(Optional.of(List.of(transaction1)));
+
+        var result = userHandler.findUserById(USER_1_ID);
 
         assertTrue(result.isPresent());
-        assertEquals("Max", result.get().getFirstName());
-        assertEquals("Mustermann", result.get().getLastName());
-        assertEquals(BigDecimal.valueOf(100), result.get().getBalance());
+        assertEquals(USER_1_FIRST_NAME, result.get().getFirstName());
+        assertEquals(USER_1_LAST_NAME, result.get().getLastName());
+        assertEquals(TRANSACTION_AMOUNT_100, result.get().getBalance());
     }
 
     @Test
     void testFindUserById_returns_optional_empty_when_user_does_not_exist() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(USER_1_ID)).thenReturn(Optional.empty());
 
-        var result = userHandler.findUserById(1L);
+        var result = userHandler.findUserById(USER_1_ID);
 
         assertTrue(result.isEmpty());
     }
 
     @Test
     void testCreateUser_creates_user_with_given_names() {
-        var userDTO = new UserDTO("John", "Doe");
+        var userDTO = new UserDTO(NEW_USER_FIRST_NAME, NEW_USER_LAST_NAME);
+
         var result = userHandler.createUser(userDTO);
 
-        assertEquals("John", result.getFirstName());
-        assertEquals("Doe", result.getLastName());
+        assertEquals(NEW_USER_FIRST_NAME, result.getFirstName());
+        assertEquals(NEW_USER_LAST_NAME, result.getLastName());
     }
 
     @Test
     void testCreateUser_creates_user_repository_save_is_called() {
-        var userDTO = new UserDTO("John", "Doe");
+        var userDTO = new UserDTO(NEW_USER_FIRST_NAME, NEW_USER_LAST_NAME);
 
         var result = userHandler.createUser(userDTO);
 
         verify(userRepository).save(any(UserEntity.class));
-        assertEquals("John", result.getFirstName());
-        assertEquals("Doe", result.getLastName());
+        assertEquals(NEW_USER_FIRST_NAME, result.getFirstName());
+        assertEquals(NEW_USER_LAST_NAME, result.getLastName());
     }
 
     @Test
     void testUpdateUserName_returns_optional_empty_when_user_does_not_exist() {
-        var userDTO = new UserDTO("John", "Doe");
+        var userDTO = new UserDTO(NEW_USER_FIRST_NAME, NEW_USER_LAST_NAME);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(USER_1_ID)).thenReturn(Optional.empty());
 
-        var result = userHandler.updateUserName(1L, userDTO);
+        var result = userHandler.updateUserName(USER_1_ID, userDTO);
 
         assertTrue(result.isEmpty());
     }
 
     @Test
     void testUpdateUserName_updates_user_names_when_user_exists() {
-        var userDTO = new UserDTO("John", "Doe");
+        var userDTO = new UserDTO(NEW_USER_FIRST_NAME, NEW_USER_LAST_NAME);
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(userEntities.get(0)));
+        when(userRepository.findById(USER_1_ID))
+                .thenReturn(Optional.of(userEntities.get(FIRST_USER_INDEX)));
 
-        var result = userHandler.updateUserName(1L, userDTO);
+        var result = userHandler.updateUserName(USER_1_ID, userDTO);
 
         verify(userRepository).save(any(UserEntity.class));
         assertTrue(result.isPresent());
-        assertEquals("John", result.get().getFirstName());
-        assertEquals("Doe", result.get().getLastName());
+        assertEquals(NEW_USER_FIRST_NAME, result.get().getFirstName());
+        assertEquals(NEW_USER_LAST_NAME, result.get().getLastName());
     }
 
     @Test
     void testDeleteUser_returns_optional_empty_when_user_does_not_exist() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(USER_1_ID)).thenReturn(Optional.empty());
 
-        var result = userHandler.deleteUser(1L);
+        var result = userHandler.deleteUser(USER_1_ID);
 
         assertTrue(result.isEmpty());
         verify(userRepository, never()).delete(any(UserEntity.class));
@@ -204,22 +236,20 @@ public class UserServiceTest {
 
     @Test
     void testDeleteUser_calculates_balance_before_deleting_user() {
-        var transaction1 = new UserRequestTransaction(
-                UserInvoicingParty.USER_SLICE,
-                BigDecimal.valueOf(100));
+        UserTransactionDTO transaction1 = new UserTransactionDTO(TRANSACTION_AMOUNT_100);
 
-        when(userRepository.findById(1L))
-                .thenReturn(Optional.of(userEntities.get(0)));
+        when(userRepository.findById(USER_1_ID))
+                .thenReturn(Optional.of(userEntities.get(FIRST_USER_INDEX)));
 
-        when(transactionClient.getAllTransactionsForUser(1L))
+        when(transactionClient.getAllTransactionsForUser(USER_1_ID))
                 .thenReturn(Optional.of(List.of(transaction1)));
 
-        userHandler.deleteUser(1L);
+        userHandler.deleteUser(USER_1_ID);
 
         InOrder inOrder = inOrder(transactionClient, userRepository);
 
         inOrder.verify(transactionClient)
-                .getAllTransactionsForUser(1L);
+                .getAllTransactionsForUser(USER_1_ID);
 
         inOrder.verify(userRepository)
                 .delete(any(UserEntity.class));
@@ -227,69 +257,67 @@ public class UserServiceTest {
 
     @Test
     void testDeleteUser_returns_deleted_user_view() {
-        var transaction1 = new UserRequestTransaction(
-                UserInvoicingParty.USER_SLICE,
-                BigDecimal.valueOf(100));
+        UserTransactionDTO transaction1 = new UserTransactionDTO(TRANSACTION_AMOUNT_100);
 
-        when(userRepository.findById(1L))
-                .thenReturn(Optional.of(userEntities.get(0)));
+        when(userRepository.findById(USER_1_ID))
+                .thenReturn(Optional.of(userEntities.get(FIRST_USER_INDEX)));
 
-        when(transactionClient.getAllTransactionsForUser(1L))
+        when(transactionClient.getAllTransactionsForUser(USER_1_ID))
                 .thenReturn(Optional.of(List.of(transaction1)));
 
-        var result = userHandler.deleteUser(1L);
+        var result = userHandler.deleteUser(USER_1_ID);
 
         assertTrue(result.isPresent());
-        assertEquals("Max", result.get().getFirstName());
-        assertEquals("Mustermann", result.get().getLastName());
-        assertEquals(BigDecimal.valueOf(100), result.get().getBalance());
+        assertEquals(USER_1_FIRST_NAME, result.get().getFirstName());
+        assertEquals(USER_1_LAST_NAME, result.get().getLastName());
+        assertEquals(TRANSACTION_AMOUNT_100, result.get().getBalance());
     }
 
     @Test
     void testDepositToUser_deposit_transaction_response_is_returned() {
-        when(transactionClient.depositTransaction(1L, BigDecimal.valueOf(50)))
-                .thenReturn(ResponseEntity.ok("Deposit successful"));
+        when(transactionClient.depositTransaction(USER_1_ID, DEPOSIT_AMOUNT_50))
+                .thenReturn(ResponseEntity.ok(DEPOSIT_SUCCESSFUL_RESPONSE));
 
-        var result = userHandler.depositToUser(1L, BigDecimal.valueOf(50));
+        var result = userHandler.depositToUser(USER_1_ID, DEPOSIT_AMOUNT_50);
 
-        assertEquals(ResponseEntity.ok("Deposit successful"), result);
+        assertEquals(ResponseEntity.ok(DEPOSIT_SUCCESSFUL_RESPONSE), result);
     }
 
     @Test
     void testDepositToUser_deposit_transaction_is_delegated() {
-        userHandler.depositToUser(1L, BigDecimal.valueOf(50.75));
+        userHandler.depositToUser(USER_1_ID, DEPOSIT_AMOUNT_50_75);
 
-        verify(transactionClient).depositTransaction(1L, BigDecimal.valueOf(50.75));
+        verify(transactionClient).depositTransaction(USER_1_ID, DEPOSIT_AMOUNT_50_75);
     }
 
     @Test
     void testDepositToUser_deposit_transaction_is_called_with_zero_amount() {
-        userHandler.depositToUser(1L, BigDecimal.ZERO);
+        userHandler.depositToUser(USER_1_ID, BigDecimal.ZERO);
 
-        verify(transactionClient).depositTransaction(1L, BigDecimal.ZERO);
+        verify(transactionClient).depositTransaction(USER_1_ID, BigDecimal.ZERO);
     }
 
     @Test
     void testWithdrawFromUser_withdraw_transaction_response_is_returned() {
-        when(transactionClient.withdrawTransaction(1L, BigDecimal.valueOf(50)))
-                .thenReturn(ResponseEntity.ok("Withdraw successful"));
+        when(transactionClient.withdrawTransaction(USER_1_ID, WITHDRAW_AMOUNT_50))
+                .thenReturn(ResponseEntity.ok(WITHDRAW_SUCCESSFUL_RESPONSE));
 
-        var result = userHandler.withdrawFromUser(1L, BigDecimal.valueOf(50));
+        var result = userHandler.withdrawFromUser(USER_1_ID, WITHDRAW_AMOUNT_50);
 
-        assertEquals(ResponseEntity.ok("Withdraw successful"), result);
+        assertEquals(ResponseEntity.ok(WITHDRAW_SUCCESSFUL_RESPONSE), result);
     }
 
     @Test
     void testWithdrawFromUser_withdraw_transaction_is_delegated() {
-        userHandler.withdrawFromUser(1L, BigDecimal.valueOf(30.25));
+        userHandler.withdrawFromUser(USER_1_ID, WITHDRAW_AMOUNT_30_25);
 
-        verify(transactionClient).withdrawTransaction(1L, BigDecimal.valueOf(30.25));
+        verify(transactionClient).withdrawTransaction(USER_1_ID, WITHDRAW_AMOUNT_30_25);
     }
 
     @Test
     void testWithdrawFromUser_withdraw_transaction_is_called_with_zero_amount() {
-        userHandler.withdrawFromUser(1L, BigDecimal.ZERO);
+        userHandler.withdrawFromUser(USER_1_ID, BigDecimal.ZERO);
 
-        verify(transactionClient).withdrawTransaction(1L, BigDecimal.ZERO);
+        verify(transactionClient).withdrawTransaction(USER_1_ID, BigDecimal.ZERO);
     }
 }

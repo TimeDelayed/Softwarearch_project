@@ -8,13 +8,14 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import com.instantwin.bank.DTO.User.UserRequestTransaction;
+
+import com.instantwin.bank.DTO.User.UserTransactionDTO;
 
 public class UserBalanceCalculatorTest {
 
     @Test
     void testCalculateBalanceForUser_returns_zero_when_no_transactions_exist() {
-        Optional<List<UserRequestTransaction>> transactions = Optional.empty();
+        Optional<List<UserTransactionDTO>> transactions = Optional.empty();
 
         BigDecimal result = UserBalanceCalculator.calculateBalanceForUser(transactions);
 
@@ -23,10 +24,10 @@ public class UserBalanceCalculatorTest {
 
     @Test
     void testCalculateBalanceForUser_sums_all_transaction_amounts() {
-        List<UserRequestTransaction> transactions = List.of(
-                new UserRequestTransaction(UserInvoicingParty.USER_SLICE, BigDecimal.valueOf(10)),
-                new UserRequestTransaction(UserInvoicingParty.USER_SLICE, BigDecimal.valueOf(-3)),
-                new UserRequestTransaction(UserInvoicingParty.USER_SLICE, BigDecimal.valueOf(5)));
+        List<UserTransactionDTO> transactions = List.of(
+                new UserTransactionDTO(BigDecimal.valueOf(10)),
+                new UserTransactionDTO(BigDecimal.valueOf(-3)),
+                new UserTransactionDTO(BigDecimal.valueOf(5)));
 
         BigDecimal result = UserBalanceCalculator.calculateBalanceForUser(Optional.of(transactions));
 

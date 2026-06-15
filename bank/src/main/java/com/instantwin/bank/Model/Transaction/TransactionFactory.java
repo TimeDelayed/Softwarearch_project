@@ -8,8 +8,9 @@ import com.instantwin.bank.contract.Model.Transaction.ITransactionFactory;
 public class TransactionFactory implements ITransactionFactory {
 
     @Override
-    public TransactionEntity createTransaction(BigDecimal amount, TransactionInvoicingParty invoicingParty) {
+    public TransactionEntity createTransaction(long userId, BigDecimal amount,
+            TransactionInvoicingParty invoicingParty) {
         return TransactionEntity.of(invoicingParty, amount);
     }
-    
+
 }

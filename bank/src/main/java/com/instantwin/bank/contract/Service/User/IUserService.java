@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 
-import com.instantwin.bank.contract.DTO.IUserDTO;
+import com.instantwin.bank.contract.DTO.User.IUserDTO;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
 

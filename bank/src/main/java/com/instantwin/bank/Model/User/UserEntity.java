@@ -1,7 +1,5 @@
 package com.instantwin.bank.Model.User;
 
-import java.math.BigDecimal;
-
 import com.instantwin.bank.Utilities.User.ModelValidityBreachException;
 import com.instantwin.bank.Utilities.User.UserErrorMessages;
 import com.instantwin.bank.contract.Model.User.IUserEntity;
