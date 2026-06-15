@@ -20,7 +20,7 @@ public class UserTransactionClient implements IUserTransactionClient {
 
     private final UserInvoicingParty invoicingParty = UserInvoicingParty.USER_SLICE;
 
-    private static final String BASE_URL = "http://localhost:8081/instantwin/bank/api";
+    private static final String BASE_URL = "http://bank:8080/instantwin/bank/api";
 
     private final RestClient restClient;
 
@@ -35,7 +35,7 @@ public class UserTransactionClient implements IUserTransactionClient {
     public Optional<List<UserTransactionDTO>> getAllTransactionsForUser(long userId) {
         try {
             List<UserTransactionDTO> result = restClient.get()
-                    .uri("transactions/user/{id}", userId)
+                    .uri("/transactions/user/{id}", userId)
                     .retrieve()
                     .body(new ParameterizedTypeReference<List<UserTransactionDTO>>() {
                     });

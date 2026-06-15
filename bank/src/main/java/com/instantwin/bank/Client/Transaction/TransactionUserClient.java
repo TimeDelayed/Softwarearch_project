@@ -11,7 +11,7 @@ import com.instantwin.bank.contract.Client.Transaction.ITransactionUserClient;
 @Component
 public class TransactionUserClient implements ITransactionUserClient {
 
-    private static final String BASE_URL = "http://localhost:8081/instantwin/bank/api";
+    private static final String BASE_URL = "http://bank:8080/instantwin/bank/api";
     private final RestClient restClient;
 
     public TransactionUserClient(RestClient.Builder builder) {

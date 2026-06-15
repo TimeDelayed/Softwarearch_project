@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 
-import com.instantwin.bank.contract.DTO.User.IUserDTO;
+import com.instantwin.bank.DTO.User.UserDTO;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
 
@@ -16,9 +16,9 @@ public interface IUserService {
 
     Optional<IUserView> findUserById(long id);
 
-    IUserView createUser(IUserDTO userDTO);
+    IUserView createUser(UserDTO userDTO);
 
-    Optional<IUserView> updateUserName(long id, IUserDTO userDTO);
+    Optional<IUserView> updateUserName(long id, UserDTO userDTO);
 
     Optional<IUserDeleteView> deleteUser(long id);
 

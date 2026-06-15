@@ -8,13 +8,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import com.instantwin.bank.DTO.User.UserDTO;
 import com.instantwin.bank.Model.User.UserEntity;
 import com.instantwin.bank.Repository.User.IUserRepository;
 import com.instantwin.bank.Utilities.User.UserBalanceCalculator;
 import com.instantwin.bank.View.User.UserDeleteView;
 import com.instantwin.bank.View.User.UserView;
 import com.instantwin.bank.contract.Client.User.IUserTransactionClient;
-import com.instantwin.bank.contract.DTO.User.IUserDTO;
 import com.instantwin.bank.contract.Model.User.IUserFactory;
 import com.instantwin.bank.contract.Service.User.IUserService;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
@@ -59,7 +59,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public IUserView createUser(IUserDTO userDTO) {
+    public IUserView createUser(UserDTO userDTO) {
 
         UserEntity userEntity = userFactory.createUser(userDTO.getFirstName(), userDTO.getLastName());
         userRepository.save(userEntity);
@@ -68,7 +68,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Optional<IUserView> updateUserName(long id, IUserDTO userDTO) {
+    public Optional<IUserView> updateUserName(long id, UserDTO userDTO) {
         var result = userRepository.findById(id);
         if (result.isEmpty()) {
             return Optional.empty();

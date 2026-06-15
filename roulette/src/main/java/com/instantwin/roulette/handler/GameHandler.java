@@ -9,7 +9,7 @@ import com.instantwin.roulette.contract.view.IGameView;
 import com.instantwin.roulette.Repostitory.IGameRepository;
 
 @Service
-public class GameHandler implements IGameHandler {
+public class GameHandler /*implements IGameHandler*/ {
     
     private final IGameRepository gameRepository;
     
@@ -17,10 +17,10 @@ public class GameHandler implements IGameHandler {
         this.gameRepository = gameRepository;
     }
 
-    @Override
+    /*@Override
     public List<IGameView> findAllGames() {
         return gameRepository.findAll().stream()
-                .map(IGameView::of)
+                .map(GameView::of)
                 .toList();
-    }
+    }*/
 }

@@ -8,6 +8,7 @@ services:
       SPRING_DATASOURCE_USERNAME: bank
       SPRING_DATASOURCE_PASSWORD: bank
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      BANK_SERVICE_URL: http://bank:8080
     depends_on:
       - bank-db
   bank-db:
