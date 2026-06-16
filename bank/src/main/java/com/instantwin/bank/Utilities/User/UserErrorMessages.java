@@ -10,4 +10,6 @@ public abstract class UserErrorMessages {
     public static final String INIT_WITH_NULL_ERROR = "Can't initiate this class with null parameter!";
 
     public static final String DECIMAL_INPUT_INVALID = "Invalid decimal input! Must be between 0 and 99!";
+
+    public static final String AMOUNT_INPUT_INVALID = "Invalid amount input! Must be positive!";
 }

@@ -10,7 +10,7 @@ public class TransactionFactory implements ITransactionFactory {
     @Override
     public TransactionEntity createTransaction(long userId, BigDecimal amount,
             TransactionInvoicingParty invoicingParty) {
-        return TransactionEntity.of(invoicingParty, amount);
+        return TransactionEntity.of(userId, invoicingParty, amount);
     }
 
 }

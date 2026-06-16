@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.instantwin.bank.DTO.User.UserDTO;
 import com.instantwin.bank.Utilities.User.DecimalPlaceInvalidException;
 import com.instantwin.bank.Utilities.User.UserResponseMapper;
+import com.instantwin.bank.View.User.UserExistsView;
 import com.instantwin.bank.Utilities.User.UserErrorMessages;
 import com.instantwin.bank.contract.Controller.User.IUserController;
 import com.instantwin.bank.contract.Service.User.IUserService;
@@ -25,6 +26,11 @@ public class UserController implements IUserController {
 
     public UserController(IUserService userHandler) {
         this.userHandler = userHandler;
+    }
+
+    @Override
+    public ResponseEntity<UserExistsView> checkIfUserExists(long id) {
+        return UserResponseMapper.optionalToResponseEntity(userHandler.checkIfUserExists(id));
     }
 
     @Override
@@ -68,6 +74,12 @@ public class UserController implements IUserController {
         }
     }
 
+    private void validateAmountInput(BigDecimal amount) {
+        if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new DecimalPlaceInvalidException(UserErrorMessages.AMOUNT_INPUT_INVALID);
+        }
+    }
+
     private BigDecimal convertToFullAmount(BigDecimal amount, int decimals) {
         return amount.add(
                 BigDecimal.valueOf(decimals)
@@ -76,7 +88,7 @@ public class UserController implements IUserController {
 
     @Override
     public ResponseEntity<String> depositToUser(long id, BigDecimal amount, int decimals) {
-
+        validateAmountInput(amount);
         validateDecimalInput(decimals);
 
         BigDecimal fullAmount = convertToFullAmount(amount, decimals);
@@ -86,7 +98,7 @@ public class UserController implements IUserController {
 
     @Override
     public ResponseEntity<String> withdrawFromUser(long id, BigDecimal amount, int decimals) {
-
+        validateAmountInput(amount);
         validateDecimalInput(decimals);
 
         BigDecimal fullAmount = convertToFullAmount(amount, decimals);

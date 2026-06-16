@@ -13,6 +13,7 @@ import com.instantwin.bank.Model.User.UserEntity;
 import com.instantwin.bank.Repository.User.IUserRepository;
 import com.instantwin.bank.Utilities.User.UserBalanceCalculator;
 import com.instantwin.bank.View.User.UserDeleteView;
+import com.instantwin.bank.View.User.UserExistsView;
 import com.instantwin.bank.View.User.UserView;
 import com.instantwin.bank.contract.Client.User.IUserTransactionClient;
 import com.instantwin.bank.contract.Model.User.IUserFactory;
@@ -43,6 +44,15 @@ public class UserService implements IUserService {
     }
 
     @Override
+    public Optional<UserExistsView> checkIfUserExists(long id) {
+        var result = userRepository.findById(id);
+        if (result.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(UserExistsView.of(result.get()));
+    }
+
+    @Override
     public List<IUserView> findAllUsers() {
         return userRepository.findAll().stream()
                 .map((userEntity) -> UserView.of(userEntity, getUserBalance(userEntity.getId())))
@@ -64,7 +74,7 @@ public class UserService implements IUserService {
         UserEntity userEntity = userFactory.createUser(userDTO.getFirstName(), userDTO.getLastName());
         userRepository.save(userEntity);
 
-        return UserView.of(userEntity, getUserBalance(userEntity.getId()));
+        return UserView.of(userEntity, BigDecimal.ZERO);
     }
 
     @Override

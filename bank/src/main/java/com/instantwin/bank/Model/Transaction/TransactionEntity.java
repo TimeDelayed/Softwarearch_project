@@ -36,17 +36,18 @@ public class TransactionEntity implements ITransactionEntity{
     protected TransactionEntity() {
     }
 
-    private TransactionEntity(TransactionInvoicingParty invoicingParty ,BigDecimal amount) {
+    private TransactionEntity(long userId, TransactionInvoicingParty invoicingParty ,BigDecimal amount) {
+        this.userId = userId;
         this.invoicingParty = invoicingParty;
         this.amount = amount;
     }
 
-    public static TransactionEntity of(TransactionInvoicingParty invoicingParty, BigDecimal amount) {
-        
-        return new TransactionEntity(invoicingParty, amount);
+    public static TransactionEntity of(long userId, TransactionInvoicingParty invoicingParty, BigDecimal amount) {
+        validateUserId(userId);
+        return new TransactionEntity(userId, invoicingParty, amount);
     }
 
-    private void validateUserId(long userId) {
+    private static void validateUserId(long userId) {
         if (userId <= 0) {
             throw new UserIdInputFormatInvalidException(TransactionErrorMessages.USER_ID_INPUT_NEGATIVE);
         }

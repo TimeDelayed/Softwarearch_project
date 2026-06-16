@@ -320,4 +320,26 @@ public class UserServiceTest {
 
         verify(transactionClient).withdrawTransaction(USER_1_ID, BigDecimal.ZERO);
     }
+
+    @Test
+    void testCheckIfUserExists_returns_optional_empty_when_user_does_not_exist() {
+        when(userRepository.findById(USER_1_ID)).thenReturn(Optional.empty());
+
+        var result = userHandler.checkIfUserExists(USER_1_ID);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testCheckIfUserExists_returns_user_exists_view_when_user_exists() {
+        when(userRepository.findById(USER_1_ID))
+                .thenReturn(Optional.of(userEntities.get(FIRST_USER_INDEX)));
+
+        var result = userHandler.checkIfUserExists(USER_1_ID);
+
+        assertTrue(result.isPresent());
+        assertEquals(USER_1_FIRST_NAME, result.get().getFirstName());
+        assertEquals(USER_1_LAST_NAME, result.get().getLastName());
+    }
+
 }

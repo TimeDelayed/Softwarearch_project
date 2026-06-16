@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 
 import com.instantwin.bank.DTO.User.UserDTO;
+import com.instantwin.bank.View.User.UserExistsView;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
 
@@ -17,6 +18,8 @@ public interface IUserService {
     Optional<IUserView> findUserById(long id);
 
     IUserView createUser(UserDTO userDTO);
+
+    Optional<UserExistsView> checkIfUserExists(long id);
 
     Optional<IUserView> updateUserName(long id, UserDTO userDTO);
 

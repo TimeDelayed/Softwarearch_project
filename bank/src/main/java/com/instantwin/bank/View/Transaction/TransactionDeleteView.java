@@ -8,7 +8,7 @@ import com.instantwin.bank.Utilities.Transaction.TransactionInvoicingParty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-public record TransactionDeleteView(@NotNull @Positive long userId, @NotNull BigDecimal amount, @NotNull TransactionInvoicingParty invoicingParty) {
+public record TransactionDeleteView(@Positive long userId, @NotNull BigDecimal amount, @NotNull TransactionInvoicingParty invoicingParty) {
 
     public static TransactionDeleteView of(TransactionEntity transactionEntity) {
         return new TransactionDeleteView(transactionEntity.getUserId(),

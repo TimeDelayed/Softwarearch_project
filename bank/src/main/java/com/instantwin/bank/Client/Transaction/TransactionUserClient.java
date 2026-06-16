@@ -24,7 +24,7 @@ public class TransactionUserClient implements ITransactionUserClient {
     public Optional<TransactionRequestUser> checkIfUserExists(long userId) {
         try {
             var user = restClient.get()
-                    .uri("/users/{id}", userId)
+                    .uri("/user/{id}/exists", userId)
                     .retrieve()
                     .toEntity(TransactionRequestUser.class);
 

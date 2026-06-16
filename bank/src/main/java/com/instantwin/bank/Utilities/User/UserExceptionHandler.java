@@ -16,4 +16,9 @@ public class UserExceptionHandler {
     public ResponseEntity<String> handleDecimalPlaceInvalidException(DecimalPlaceInvalidException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
+    @ExceptionHandler(AmountNegativeException.class)
+    public ResponseEntity<String> handleAmountNegativeException(AmountNegativeException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
+    }
 }

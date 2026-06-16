@@ -49,7 +49,7 @@ public class UserTransactionClient implements IUserTransactionClient {
     @Override
     public ResponseEntity<String> depositTransaction(long userId, BigDecimal amount) {
         var responseAsString = restClient.post()
-                .uri("/transaction/user/{id}", userId)
+                .uri("/transaction/user/{userId}", userId)
                 .body(new UserRequestTransaction(
                         invoicingParty, amount))
                 .retrieve()

@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -76,11 +77,25 @@ public class UserControllerTest {
     }
 
     @Test
+    void testDepositToUser_invalid_amount() {
+        BigDecimal invalidAmount = new BigDecimal("-100.00");
+        int validDecimals = 20;
+        long userId = 1L;
+
+        verify(userHandler, never()).depositToUser(anyLong(), any());
+        assertThrows(DecimalPlaceInvalidException.class,
+                () -> userController.depositToUser(userId, invalidAmount, validDecimals));
+
+    }
+
+    @Test
     void testDepositToUser_invalid_decimals() {
         BigDecimal amount = new BigDecimal("100.00");
         int invalidDecimals = 20000;
         long userId = 1L;
 
+
+        verify(userHandler, never()).depositToUser(anyLong(), any());
         assertThrows(DecimalPlaceInvalidException.class,
                 () -> userController.depositToUser(userId, amount, invalidDecimals));
     }
@@ -104,8 +119,22 @@ public class UserControllerTest {
         BigDecimal amount = new BigDecimal("100.00");
         int invalidDecimals = 20000;
         long userId = 1L;
+
+        verify(userHandler, never()).withdrawFromUser(anyLong(), any());
         assertThrows(DecimalPlaceInvalidException.class,
                 () -> userController.withdrawFromUser(userId, amount, invalidDecimals));
+    }
+
+    @Test
+    void testWithdrawToUser_invalid_amount() {
+        BigDecimal invalidAmount = new BigDecimal("-100.00");
+        int validDecimals = 20;
+        long userId = 1L;
+
+        verify(userHandler, never()).withdrawFromUser(anyLong(), any());
+        assertThrows(DecimalPlaceInvalidException.class,
+                () -> userController.withdrawFromUser(userId, invalidAmount, validDecimals));
+
     }
 
 }
