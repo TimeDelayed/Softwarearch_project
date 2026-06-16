@@ -7,6 +7,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://bank-db:5432/bankdb
       SPRING_DATASOURCE_USERNAME: bank
       SPRING_DATASOURCE_PASSWORD: bank
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      BANK_SERVICE_URL: http://bank:8080
     depends_on:
       - bank-db
   bank-db:
@@ -27,6 +29,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://roulette-db:5432/roulettedb
       SPRING_DATASOURCE_USERNAME: roulette
       SPRING_DATASOURCE_PASSWORD: roulette
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
       BANK_SERVICE_URL: http://bank:8080
     depends_on:
       - roulette-db
@@ -51,6 +54,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://slot-db:5432/slotdb
       SPRING_DATASOURCE_USERNAME: slot
       SPRING_DATASOURCE_PASSWORD: slot
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
       BANK_SERVICE_URL: http://bank:8080
     depends_on:
       - slot-db
