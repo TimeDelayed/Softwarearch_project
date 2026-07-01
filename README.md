@@ -208,15 +208,7 @@ Swagger can be used to:
 
 # PostgreSQL Connections
 
-Example connection for the Bank database:
-
-```text
-Host: localhost
-Port: 5433
-Database: bankdb
-Username: bank
-Password: bank
-```
+Exam`
 
 ---
 
@@ -241,3 +233,12 @@ Currently under development.
 ### Slot Machine Service
 
 Currently under development.
+ple connection for the Bank database:
+
+```text
+Host: localhost
+Port: 5433
+Database: bankdb
+Username: bank
+Password: bank
+``
