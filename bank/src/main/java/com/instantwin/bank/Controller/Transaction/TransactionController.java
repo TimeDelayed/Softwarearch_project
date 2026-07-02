@@ -42,7 +42,7 @@ public class TransactionController implements ITransactionController {
     }
 
     @Override
-    public ResponseEntity<TransactionView> createTransaction(long userId, @Valid TransactionDTO transactionRequest) {
+    public ResponseEntity<TransactionView> createTransaction(long userId, TransactionDTO transactionRequest) {
         var result = transactionHandler.createTransaction(userId, transactionRequest);
         if (result.isEmpty()) {
             return ResponseEntity.notFound().build();
