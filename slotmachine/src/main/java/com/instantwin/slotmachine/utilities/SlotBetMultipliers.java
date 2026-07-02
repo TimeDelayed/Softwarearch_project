@@ -9,5 +9,6 @@ public enum SlotBetMultipliers {
     TRIPLE_BELL,
     SINGLE_DIAMOND,
     DOUBLE_DIAMOND,
-    TRIPLE_DIAMOND
+    TRIPLE_DIAMOND,
+    NO_MULTIPLIER
 }

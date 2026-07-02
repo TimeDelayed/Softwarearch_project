@@ -4,4 +4,5 @@ import com.instantwin.slotmachine.utilities.SlotSymbols;
 
 public interface ISlotSpin {
     SlotSymbols[] spin();
+    Float getBetMultiplier();
 }
