@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
-
-import com.instantwin.bank.DTO.User.UserRequestTransaction;
 import com.instantwin.bank.DTO.User.UserTransactionDTO;
 
 public interface IUserTransactionClient {
