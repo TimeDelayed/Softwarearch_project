@@ -1,4 +1,4 @@
-package com.instantwin.roulette.Repostitory;
+package com.instantwin.roulette.repostitory;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
