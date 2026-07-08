@@ -12,10 +12,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class RouletteGame {
 
-    private static final SecureRandom RANDOM = new SecureRandom();
+    private final SecureRandom random;
+
+    public RouletteGame() {
+        this.random = new SecureRandom();
+    }
+
+    // Package-private Konstruktor für Unit-Tests mit kontrollierbarem Random
+    RouletteGame(SecureRandom random) {
+        this.random = random;
+    }
 
     public GameResult play(BigDecimal betAmount, int betNumber, BetType betType) {
-        int winningNumber = RANDOM.nextInt(37);
+        int winningNumber = random.nextInt(37);
         BigDecimal payout = betType.isWinner(winningNumber, betNumber)
                 ? betType.calculatePayout(betAmount)
                 : BigDecimal.ZERO;
