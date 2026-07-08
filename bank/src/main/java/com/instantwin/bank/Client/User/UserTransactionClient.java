@@ -30,7 +30,6 @@ public class UserTransactionClient implements IUserTransactionClient {
                 .build();
     }
 
-    // TODO: FRAGEN WIE SOWAS TESTEN -> Integrationstests
     @Override
     public Optional<List<UserTransactionDTO>> getAllTransactionsForUser(long userId) {
         try {

@@ -13,4 +13,7 @@ public class SlotErrorMessages {
     public static final String INVALID_AMOUNT_NULL = "Invalid amount, cant be null!";
     public static final String INVALID_AMOUNT_NEGATIVE = "Invalid amount, cant be < 0!";
     public static final String INVALID_SLOT_STATES_NULL = "Invalid slot states, cant be null!";
+
+    public static final String GAME_RULES_FILE_ERROR = "Game rules file could not be loaded";
+    public static final String GAME_INFO_FILE_ERROR = "Game info file could not be loaded";
 }

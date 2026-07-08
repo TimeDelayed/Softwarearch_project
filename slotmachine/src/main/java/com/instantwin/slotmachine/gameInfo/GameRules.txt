@@ -1,0 +1,43 @@
+========================================
+GAME RULES
+========================================
+
+- The slot machine consists of 3 reels (3x1 layout).
+- Each spin displays one symbol per reel.
+- The bet amount must be greater than 0.
+- A winning combination awards the corresponding payout multiplier.
+- If multiple winning conditions are fulfilled in the same spin, only the highest multiplier is paid.
+
+Paytable:
+
+Cherry x2   -> x0.80
+Cherry x3   -> x0.99
+
+Lemon x2    -> x1.15
+Lemon x3    -> x2.50
+
+Bell x2     -> x1.70
+Bell x3     -> x5.57
+
+Diamond x1  -> x1.50
+Diamond x2  -> x15.80
+Diamond x3  -> x498.00
+
+Payout Priority (highest first):
+
+1. Diamond x3
+2. Diamond x2
+3. Bell x3
+4. Lemon x3
+5. Bell x2
+6. Diamond x1
+7. Lemon x2
+8. Cherry x3
+9. Cherry x2
+
+Examples:
+
+Cherry Cherry Diamond -> Diamond x1
+Lemon Lemon Diamond -> Diamond x1
+Bell Bell Lemon -> Bell x2
+Diamond Diamond Bell -> Diamond x2
