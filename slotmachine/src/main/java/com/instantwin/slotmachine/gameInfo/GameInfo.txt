@@ -1,0 +1,34 @@
+========================================
+GAME INFORMATION
+========================================
+
+Reel Distribution (identical on all reels)
+
+Cherry   : 48%
+Lemon    : 29%
+Bell     : 21%
+Diamond  : 2%
+
+----------------------------------------
+Approximate Win Probabilities
+----------------------------------------
+
+Cherry x2    : 35.94%
+Cherry x3    : 11.06%
+
+Lemon x2     : 17.91%
+Lemon x3     : 2.44%
+
+Bell x2      : 10.45%
+Bell x3      : 0.93%
+
+Diamond x1   : 3.61%
+Diamond x2   : 0.12%
+Diamond x3   : 0.0008%
+
+----------------------------------------
+Expected Return
+----------------------------------------
+
+Approximate RTP        : 97.00%
+Approximate House Edge : 3.00%
