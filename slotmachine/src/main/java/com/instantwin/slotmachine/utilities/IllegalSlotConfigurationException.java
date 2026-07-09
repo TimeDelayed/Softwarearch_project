@@ -5,3 +5,4 @@ public class IllegalSlotConfigurationException extends RuntimeException {
         super(message);
     }
 }
+// TODO: Why do you even exist? What was my Idea here?

@@ -9,22 +9,22 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.instantwin.slotmachine.contract.client.ISlotRequestTransactionClient;
 import com.instantwin.slotmachine.contract.model.ISlotGameFactory;
 import com.instantwin.slotmachine.contract.model.ISlotGameLogic;
 import com.instantwin.slotmachine.contract.service.ISlotGameService;
-import com.instantwin.slotmachine.dto.SlotGameResultDTO;
 import com.instantwin.slotmachine.model.SlotGameEntity;
 import com.instantwin.slotmachine.repository.ISlotRepository;
 import com.instantwin.slotmachine.utilities.GameRulesUnavailableException;
 import com.instantwin.slotmachine.utilities.SlotErrorMessages;
 import com.instantwin.slotmachine.view.SlotClientStatsView;
+import com.instantwin.slotmachine.view.SlotGameResultView;
 import com.instantwin.slotmachine.view.SlotGameView;
 import com.instantwin.slotmachine.view.SlotHouseStatsView;
 
-@Component
+@Service
 public class SlotGameService implements ISlotGameService {
 
     private final ISlotGameLogic slotGameLogic;
@@ -59,7 +59,7 @@ public class SlotGameService implements ISlotGameService {
 
     @Override
     public Optional<SlotGameView> playSlotGame(long userId, BigDecimal amount) {
-        SlotGameResultDTO gameResult = slotGameLogic.placeBet(amount);
+        SlotGameResultView gameResult = slotGameLogic.placeBet(amount);
         BigDecimal transactionAmount = gameResult.winnings().subtract(amount);
         ResponseEntity<String> transactionResponse = slotRequestTransactionClient.requestTransaction(userId,
                 transactionAmount);

@@ -2,8 +2,8 @@ package com.instantwin.slotmachine.contract.model;
 
 import java.math.BigDecimal;
 
-import com.instantwin.slotmachine.dto.SlotGameResultDTO;
+import com.instantwin.slotmachine.view.SlotGameResultView;
 
 public interface ISlotGameLogic {
-    SlotGameResultDTO placeBet(BigDecimal betAmount);
+    SlotGameResultView placeBet(BigDecimal betAmount);
 }

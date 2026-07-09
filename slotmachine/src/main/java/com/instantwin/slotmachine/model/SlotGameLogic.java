@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component;
 import com.instantwin.slotmachine.contract.model.ISlotGameLogic;
 import com.instantwin.slotmachine.contract.model.IThreeReelPayoutCalculator;
 import com.instantwin.slotmachine.contract.model.ISlotSpinner;
-import com.instantwin.slotmachine.dto.SlotGameResultDTO;
 import com.instantwin.slotmachine.dto.ThreeReelSpinDTO;
 import com.instantwin.slotmachine.utilities.BetAmountInvalidException;
 import com.instantwin.slotmachine.utilities.SlotErrorMessages;
+import com.instantwin.slotmachine.view.SlotGameResultView;
 
 @Component
 public class SlotGameLogic implements ISlotGameLogic {
@@ -24,7 +24,7 @@ public class SlotGameLogic implements ISlotGameLogic {
     }
 
     @Override
-    public SlotGameResultDTO placeBet(BigDecimal betAmount) {
+    public SlotGameResultView placeBet(BigDecimal betAmount) {
         validateBetAmount(betAmount);
 
         ThreeReelSpinDTO spinResult = slotSpinner.spin();
@@ -33,7 +33,7 @@ public class SlotGameLogic implements ISlotGameLogic {
         boolean won = betMultiplier.compareTo(BigDecimal.ZERO) > 0;
         BigDecimal winnings = betAmount.multiply(betMultiplier);
 
-        return new SlotGameResultDTO(betAmount, spinResult, won, winnings);
+        return new SlotGameResultView(betAmount, spinResult, won, winnings);
     }
 
     private void validateBetAmount(BigDecimal betAmount) {
