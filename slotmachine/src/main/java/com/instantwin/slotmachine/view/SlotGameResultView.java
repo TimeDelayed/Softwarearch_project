@@ -1,8 +1,10 @@
-package com.instantwin.slotmachine.dto;
+package com.instantwin.slotmachine.view;
 
 import java.math.BigDecimal;
 
-public record SlotGameResultDTO(BigDecimal betAmount,
+import com.instantwin.slotmachine.dto.ThreeReelSpinDTO;
+
+public record SlotGameResultView(BigDecimal betAmount,
         ThreeReelSpinDTO spinResultSymbols, boolean won, BigDecimal winnings) {
 
     BigDecimal getBetAmount() {

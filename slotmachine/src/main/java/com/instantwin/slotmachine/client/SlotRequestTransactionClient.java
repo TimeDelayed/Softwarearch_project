@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClient;
 
 import com.instantwin.slotmachine.contract.client.ISlotRequestTransactionClient;
-import com.instantwin.slotmachine.dto.SlotRequestTransaction;
+import com.instantwin.slotmachine.dto.SlotRequestTransactionDTO;
 
 public class SlotRequestTransactionClient implements ISlotRequestTransactionClient {
 
@@ -26,7 +26,7 @@ public class SlotRequestTransactionClient implements ISlotRequestTransactionClie
     public ResponseEntity<String> requestTransaction(long userId, BigDecimal amount) {
         var responseAsString = restClient.post()
                 .uri("/transaction/user/{userId}", userId)
-                .body(new SlotRequestTransaction(
+                .body(new SlotRequestTransactionDTO(
                         invoicingParty, amount))
                 .retrieve()
                 .toEntity(String.class);
