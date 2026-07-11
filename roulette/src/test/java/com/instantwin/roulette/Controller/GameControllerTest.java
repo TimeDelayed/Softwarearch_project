@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
@@ -47,7 +48,7 @@ class GameControllerTest {
     @Test
     void findAllGames_returns200_withAllGamesInBody() {
         IGameView view = GameView.of(
-                new GameEntity(new BigDecimal("10.00"), 5, BetType.RED, 3, new BigDecimal("20.00"))
+                new GameEntity(1L, new BigDecimal("10.00"), 5, BetType.RED, 3, new BigDecimal("20.00"))
         );
         when(gameHandler.findAllGames()).thenReturn(List.of(view));
 
@@ -73,12 +74,12 @@ class GameControllerTest {
 
     @Test
     void play_returns200_withResultInBody() {
-        PlayRequest request = new PlayRequest(new BigDecimal("10.00"), 5, BetType.STRAIGHT_UP);
+        PlayRequest request = new PlayRequest(1L, new BigDecimal("10.00"), 5, BetType.STRAIGHT_UP);
         IGameView view = GameView.of(
-                new GameEntity(new BigDecimal("10.00"), 5, BetType.STRAIGHT_UP, 5, new BigDecimal("350.00"))
+                new GameEntity(1L, new BigDecimal("10.00"), 5, BetType.STRAIGHT_UP, 5, new BigDecimal("350.00"))
         );
-        when(gameHandler.play(request.betAmount(), request.betNumber(), request.betType()))
-                .thenReturn(view);
+        when(gameHandler.play(request.userId(), request.betAmount(), request.betNumber(), request.betType()))
+                .thenReturn(Optional.of(view));
 
         ResponseEntity<IGameView> response = gameController.play(request);
 
@@ -88,16 +89,27 @@ class GameControllerTest {
     }
 
     @Test
+    void play_returns404_whenUserNotFoundInBank() {
+        PlayRequest request = new PlayRequest(99L, new BigDecimal("10.00"), 5, BetType.STRAIGHT_UP);
+        when(gameHandler.play(request.userId(), request.betAmount(), request.betNumber(), request.betType()))
+                .thenReturn(Optional.empty());
+
+        ResponseEntity<IGameView> response = gameController.play(request);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
     void play_delegatesToHandlerWithCorrectArguments() {
-        PlayRequest request = new PlayRequest(new BigDecimal("20.00"), 3, BetType.EVEN);
+        PlayRequest request = new PlayRequest(2L, new BigDecimal("20.00"), 3, BetType.EVEN);
         IGameView view = GameView.of(
-                new GameEntity(new BigDecimal("20.00"), 3, BetType.EVEN, 6, new BigDecimal("40.00"))
+                new GameEntity(2L, new BigDecimal("20.00"), 3, BetType.EVEN, 6, new BigDecimal("40.00"))
         );
-        when(gameHandler.play(request.betAmount(), request.betNumber(), request.betType()))
-                .thenReturn(view);
+        when(gameHandler.play(request.userId(), request.betAmount(), request.betNumber(), request.betType()))
+                .thenReturn(Optional.of(view));
 
         gameController.play(request);
 
-        verify(gameHandler).play(new BigDecimal("20.00"), 3, BetType.EVEN);
+        verify(gameHandler).play(2L, new BigDecimal("20.00"), 3, BetType.EVEN);
     }
 }
