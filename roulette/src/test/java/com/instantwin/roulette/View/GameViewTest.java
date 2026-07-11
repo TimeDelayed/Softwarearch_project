@@ -15,6 +15,7 @@ class GameViewTest {
     @Test
     void of_mapsAllEntityFieldsToView() {
         GameEntity entity = new GameEntity(
+                1L,
                 new BigDecimal("10.00"),
                 7,
                 BetType.STRAIGHT_UP,
@@ -24,6 +25,7 @@ class GameViewTest {
 
         IGameView view = GameView.of(entity);
 
+        assertThat(view.getUserId()).isEqualTo(1L);
         assertThat(view.getBetAmount()).isEqualByComparingTo(new BigDecimal("10.00"));
         assertThat(view.getBetType()).isEqualTo(BetType.STRAIGHT_UP);
         assertThat(view.getWinningNumber()).isEqualTo(7);
@@ -33,7 +35,7 @@ class GameViewTest {
     @Test
     void of_withZeroPayout_setsPayoutToZero() {
         GameEntity entity = new GameEntity(
-                new BigDecimal("10.00"), 3, BetType.RED, 5, BigDecimal.ZERO
+                2L, new BigDecimal("10.00"), 3, BetType.RED, 5, BigDecimal.ZERO
         );
 
         IGameView view = GameView.of(entity);
@@ -45,7 +47,7 @@ class GameViewTest {
     @Test
     void of_idIsNull_whenEntityIsNotPersisted() {
         GameEntity entity = new GameEntity(
-                BigDecimal.TEN, 0, BetType.EVEN, 4, new BigDecimal("20.00")
+                3L, BigDecimal.TEN, 0, BetType.EVEN, 4, new BigDecimal("20.00")
         );
 
         IGameView view = GameView.of(entity);

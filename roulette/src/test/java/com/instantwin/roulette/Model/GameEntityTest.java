@@ -19,8 +19,9 @@ class GameEntityTest {
         int winningNumber = 7;
         BigDecimal payout = new BigDecimal("875.00");
 
-        GameEntity entity = new GameEntity(betAmount, betNumber, betType, winningNumber, payout);
+        GameEntity entity = new GameEntity(42L, betAmount, betNumber, betType, winningNumber, payout);
 
+        assertThat(entity.getUserId()).isEqualTo(42L);
         assertThat(entity.getBetAmount()).isEqualByComparingTo(betAmount);
         assertThat(entity.getBetNumber()).isEqualTo(betNumber);
         assertThat(entity.getBetType()).isEqualTo(betType);
@@ -31,7 +32,7 @@ class GameEntityTest {
     @Test
     void constructor_setsPlayedAtAutomatically() {
         LocalDateTime before = LocalDateTime.now().minusSeconds(1);
-        GameEntity entity = new GameEntity(BigDecimal.TEN, 0, BetType.RED, 3, BigDecimal.ZERO);
+        GameEntity entity = new GameEntity(1L, BigDecimal.TEN, 0, BetType.RED, 3, BigDecimal.ZERO);
         LocalDateTime after = LocalDateTime.now().plusSeconds(1);
 
         assertThat(entity.getPlayedAt())
@@ -41,16 +42,16 @@ class GameEntityTest {
 
     @Test
     void id_isNullBeforePersistence() {
-        GameEntity entity = new GameEntity(BigDecimal.TEN, 0, BetType.RED, 3, BigDecimal.ZERO);
+        GameEntity entity = new GameEntity(1L, BigDecimal.TEN, 0, BetType.RED, 3, BigDecimal.ZERO);
 
         assertThat(entity.getId()).isNull();
     }
 
     @Test
     void twoEntities_haveIndependentPlayedAtTimestamps() throws InterruptedException {
-        GameEntity first = new GameEntity(BigDecimal.TEN, 0, BetType.RED, 3, BigDecimal.ZERO);
+        GameEntity first = new GameEntity(1L, BigDecimal.TEN, 0, BetType.RED, 3, BigDecimal.ZERO);
         Thread.sleep(5);
-        GameEntity second = new GameEntity(BigDecimal.TEN, 0, BetType.BLACK, 4, BigDecimal.ZERO);
+        GameEntity second = new GameEntity(2L, BigDecimal.TEN, 0, BetType.BLACK, 4, BigDecimal.ZERO);
 
         assertThat(first.getPlayedAt()).isBefore(second.getPlayedAt());
     }

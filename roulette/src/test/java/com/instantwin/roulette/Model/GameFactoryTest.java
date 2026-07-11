@@ -18,8 +18,9 @@ class GameFactoryTest {
         BetType betType = BetType.STRAIGHT_UP;
         GameResult result = new GameResult(5, new BigDecimal("350.00"));
 
-        GameEntity entity = GameFactory.create(betAmount, betNumber, betType, result);
+        GameEntity entity = GameFactory.create(7L, betAmount, betNumber, betType, result);
 
+        assertThat(entity.getUserId()).isEqualTo(7L);
         assertThat(entity.getBetAmount()).isEqualByComparingTo(betAmount);
         assertThat(entity.getBetNumber()).isEqualTo(betNumber);
         assertThat(entity.getBetType()).isEqualTo(betType);
@@ -31,7 +32,7 @@ class GameFactoryTest {
     void create_withZeroPayout_setsPayoutToZero() {
         GameResult lostResult = new GameResult(10, BigDecimal.ZERO);
 
-        GameEntity entity = GameFactory.create(new BigDecimal("10"), 7, BetType.RED, lostResult);
+        GameEntity entity = GameFactory.create(3L, new BigDecimal("10"), 7, BetType.RED, lostResult);
 
         assertThat(entity.getPayout()).isEqualByComparingTo(BigDecimal.ZERO);
         assertThat(entity.getWinningNumber()).isEqualTo(10);

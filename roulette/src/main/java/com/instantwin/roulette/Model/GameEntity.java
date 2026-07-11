@@ -28,6 +28,9 @@ public class GameEntity {
     private Long id;
 
     @Column(nullable = false)
+    private long userId;
+
+    @Column(nullable = false)
     private BigDecimal betAmount;
 
     @Column(nullable = false)
@@ -46,7 +49,9 @@ public class GameEntity {
     @Column(nullable = false)
     private LocalDateTime playedAt;
 
-    public GameEntity(BigDecimal betAmount, int betNumber, BetType betType, int winningNumber, BigDecimal payout) {
+    public GameEntity(long userId, BigDecimal betAmount, int betNumber, BetType betType,
+                      int winningNumber, BigDecimal payout) {
+        this.userId = userId;
         this.betAmount = betAmount;
         this.betNumber = betNumber;
         this.betType = betType;
