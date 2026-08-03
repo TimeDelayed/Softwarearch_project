@@ -58,17 +58,28 @@ public class SlotGameService implements ISlotGameService {
     }
 
     @Override
-    public Optional<SlotGameView> playSlotGame(long userId, BigDecimal amount) {
-        SlotGameResultView gameResult = slotGameLogic.placeBet(amount);
-        BigDecimal transactionAmount = gameResult.winnings().subtract(amount);
-        ResponseEntity<String> transactionResponse = slotRequestTransactionClient.requestTransaction(userId,
-                transactionAmount);
+    public Optional<SlotGameView> playSlotGame(long userId, BigDecimal betAmount) {
+        SlotGameResultView gameResult = slotGameLogic.placeBet(betAmount);
+
+        BigDecimal playerNetResult = gameResult.winnings().subtract(betAmount);
+
+        ResponseEntity<String> transactionResponse = slotRequestTransactionClient.requestTransaction(
+                userId,
+                playerNetResult);
+
         if (!transactionResponse.getStatusCode().is2xxSuccessful()) {
             return Optional.empty();
         }
-        SlotGameEntity slotGameEntity = slotGameFactory.createSlotGame(userId, gameResult.won(), transactionAmount,
+
+        SlotGameEntity slotGameEntity = slotGameFactory.createSlotGame(
+                userId,
+                betAmount,
+                gameResult.won(),
+                playerNetResult,
                 gameResult.spinResultSymbols());
+
         slotGameRepository.save(slotGameEntity);
+
         return Optional.of(SlotGameView.of(slotGameEntity));
     }
 
@@ -110,42 +121,84 @@ public class SlotGameService implements ISlotGameService {
     @Override
     public SlotHouseStatsView getHouseStats() {
         List<SlotGameEntity> allGames = slotGameRepository.findAll();
+
         if (allGames.isEmpty()) {
-            return new SlotHouseStatsView(0, 0, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+            return new SlotHouseStatsView(
+                    0,
+                    0,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO);
         }
-        long totalClients = allGames.stream().map(SlotGameEntity::getUserId).distinct().count();
+
+        long totalClients = allGames.stream()
+                .map(SlotGameEntity::getUserId)
+                .distinct()
+                .count();
+
         long totalGamesPlayed = allGames.size();
+
+        BigDecimal totalTurnover = allGames.stream()
+                .map(SlotGameEntity::getBetAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         BigDecimal totalCashout = allGames.stream()
-                .filter(SlotGameEntity::isWon)
-                .map(SlotGameEntity::getAmount)
+                .map(game -> game.getBetAmount().add(game.getAmount()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+
         BigDecimal totalProfit = allGames.stream()
-                .filter(game -> !game.isWon())
                 .map(SlotGameEntity::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal totalTurnover = totalCashout.add(totalProfit);
-        return new SlotHouseStatsView(totalClients, totalGamesPlayed, totalProfit, totalCashout, totalTurnover);
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .negate();
+
+        return new SlotHouseStatsView(
+                totalClients,
+                totalGamesPlayed,
+                totalProfit,
+                totalCashout,
+                totalTurnover);
     }
 
     @Override
     public SlotClientStatsView getUserStats(long userId) {
         List<SlotGameEntity> userGames = slotGameRepository.findAllByUserId(userId);
+
         if (userGames.isEmpty()) {
-            return new SlotClientStatsView(userId, 0, 0, 0, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+            return new SlotClientStatsView(
+                    userId,
+                    0,
+                    0,
+                    0,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO,
+                    BigDecimal.ZERO);
         }
+
         long totalGamesPlayed = userGames.size();
-        long totalWins = userGames.stream().filter(SlotGameEntity::isWon).count();
-        long totalLosses = totalGamesPlayed - totalWins;
-        BigDecimal totalClientProfit = userGames.stream()
+
+        long totalWins = userGames.stream()
                 .filter(SlotGameEntity::isWon)
+                .count();
+
+        long totalLosses = totalGamesPlayed - totalWins;
+
+        BigDecimal totalClientProfit = userGames.stream()
                 .map(SlotGameEntity::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal totalHouseProfitFromClient = userGames.stream()
-                .filter(game -> !game.isWon())
-                .map(SlotGameEntity::getAmount)
+
+        BigDecimal totalHouseTurnoverFromClient = userGames.stream()
+                .map(SlotGameEntity::getBetAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        BigDecimal totalHouseTurnoverFromClient = totalClientProfit.add(totalHouseProfitFromClient);
-        return new SlotClientStatsView(userId, totalGamesPlayed, totalLosses, totalWins, totalClientProfit,
-                totalHouseTurnoverFromClient, totalHouseProfitFromClient);
+
+        BigDecimal totalHouseProfitFromClient = totalClientProfit.negate();
+
+        return new SlotClientStatsView(
+                userId,
+                totalGamesPlayed,
+                totalLosses,
+                totalWins,
+                totalClientProfit,
+                totalHouseTurnoverFromClient,
+                totalHouseProfitFromClient);
     }
 }
