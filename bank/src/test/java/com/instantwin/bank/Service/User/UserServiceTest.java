@@ -3,7 +3,6 @@ package com.instantwin.bank.Service.User;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -14,10 +13,10 @@ import static org.mockito.Mockito.when;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InOrder;
 import org.springframework.http.ResponseEntity;
 
 import com.instantwin.bank.DTO.User.UserDTO;
@@ -29,317 +28,270 @@ import com.instantwin.bank.contract.Model.User.IUserFactory;
 
 public class UserServiceTest {
 
-    private static final long USER_1_ID = 1L;
-    private static final long USER_2_ID = 2L;
+    private static final long USER_ID = 1L;
+    private static final long OTHER_USER_ID = 2L;
 
-    private static final int FIRST_USER_INDEX = 0;
-    private static final int SECOND_USER_INDEX = 1;
-    private static final int USER_COUNT = 2;
+    private static final String FIRST_NAME = "Max";
+    private static final String LAST_NAME = "Mustermann";
+    private static final String OTHER_FIRST_NAME = "Erika";
+    private static final String NEW_FIRST_NAME = "John";
+    private static final String NEW_LAST_NAME = "Doe";
 
-    private static final String USER_1_FIRST_NAME = "Max";
-    private static final String USER_1_LAST_NAME = "Mustermann";
-    private static final String USER_2_FIRST_NAME = "Erika";
-    private static final String USER_2_LAST_NAME = "Mustermann";
-
-    private static final String NEW_USER_FIRST_NAME = "John";
-    private static final String NEW_USER_LAST_NAME = "Doe";
-
-    private static final BigDecimal TRANSACTION_AMOUNT_100 = BigDecimal.valueOf(100);
-    private static final BigDecimal TRANSACTION_AMOUNT_MINUS_50 = BigDecimal.valueOf(-50);
-    private static final BigDecimal DEPOSIT_AMOUNT_50 = BigDecimal.valueOf(50);
-    private static final BigDecimal DEPOSIT_AMOUNT_50_75 = BigDecimal.valueOf(50.75);
-    private static final BigDecimal WITHDRAW_AMOUNT_50 = BigDecimal.valueOf(50);
-    private static final BigDecimal WITHDRAW_AMOUNT_30_25 = BigDecimal.valueOf(30.25);
-
-    private static final String DEPOSIT_SUCCESSFUL_RESPONSE = "Deposit successful";
-    private static final String WITHDRAW_SUCCESSFUL_RESPONSE = "Withdraw successful";
+    private static final BigDecimal BALANCE = BigDecimal.valueOf(100);
+    private static final BigDecimal OTHER_BALANCE = BigDecimal.valueOf(-50);
+    private static final BigDecimal DEPOSIT_AMOUNT = BigDecimal.valueOf(50.75);
+    private static final BigDecimal WITHDRAW_AMOUNT = BigDecimal.valueOf(30.25);
 
     private IUserRepository userRepository;
     private IUserFactory userFactory;
     private IUserTransactionClient transactionClient;
-    private UserService userHandler;
-    private List<UserEntity> userEntities;
+    private UserService userService;
 
     @BeforeEach
-    void setup() {
-        this.userRepository = mock(IUserRepository.class);
-        this.userFactory = mock(IUserFactory.class);
-        this.transactionClient = mock(IUserTransactionClient.class);
-        this.userHandler = new UserService(userRepository, userFactory, transactionClient);
-
-        var user1 = mock(UserEntity.class);
-        var user2 = mock(UserEntity.class);
-
-        when(user1.getId()).thenReturn(USER_1_ID);
-        when(user2.getId()).thenReturn(USER_2_ID);
-
-        when(user1.getFirstName()).thenReturn(USER_1_FIRST_NAME);
-        when(user1.getLastName()).thenReturn(USER_1_LAST_NAME);
-
-        when(user2.getFirstName()).thenReturn(USER_2_FIRST_NAME);
-        when(user2.getLastName()).thenReturn(USER_2_LAST_NAME);
-
-        doAnswer(invocation -> {
-            String newFirstName = invocation.getArgument(0);
-            when(user1.getFirstName()).thenReturn(newFirstName);
-            return null;
-        }).when(user1).changeFirstName(anyString());
-
-        doAnswer(invocation -> {
-            String newLastName = invocation.getArgument(0);
-            when(user1.getLastName()).thenReturn(newLastName);
-            return null;
-        }).when(user1).changeLastName(anyString());
-
-        doAnswer(invocation -> {
-            String newFirstName = invocation.getArgument(0);
-            when(user2.getFirstName()).thenReturn(newFirstName);
-            return null;
-        }).when(user2).changeFirstName(anyString());
-
-        doAnswer(invocation -> {
-            String newLastName = invocation.getArgument(0);
-            when(user2.getLastName()).thenReturn(newLastName);
-            return null;
-        }).when(user2).changeLastName(anyString());
-
-        this.userEntities = List.of(user1, user2);
-
-        when(userRepository.findAll()).thenReturn(this.userEntities);
-
-        when(userFactory.createUser(anyString(), anyString())).thenAnswer(invocation -> {
-            String firstName = invocation.getArgument(0);
-            String lastName = invocation.getArgument(1);
-            var user = mock(UserEntity.class);
-
-            when(user.getFirstName()).thenReturn(firstName);
-            when(user.getLastName()).thenReturn(lastName);
-
-            return user;
-        });
+    void setUpService() {
+        userRepository = mock(IUserRepository.class);
+        userFactory = mock(IUserFactory.class);
+        transactionClient = mock(IUserTransactionClient.class);
+        userService = new UserService(userRepository, userFactory, transactionClient);
     }
 
     @Test
     void testFindAllUsers_returns_all_users() {
-        UserTransactionDTO transaction1 = new UserTransactionDTO(TRANSACTION_AMOUNT_100);
-        UserTransactionDTO transaction2 = new UserTransactionDTO(TRANSACTION_AMOUNT_MINUS_50);
+        var firstUser = user(USER_ID, FIRST_NAME, LAST_NAME);
+        var secondUser = user(OTHER_USER_ID, OTHER_FIRST_NAME, LAST_NAME);
+        when(userRepository.findAll()).thenReturn(List.of(firstUser, secondUser));
+        balanceFor(USER_ID, BALANCE);
+        balanceFor(OTHER_USER_ID, OTHER_BALANCE);
 
-        when(transactionClient.getAllTransactionsForUser(USER_1_ID))
-                .thenReturn(Optional.of(List.of(transaction1)));
+        var result = userService.findAllUsers();
 
-        when(transactionClient.getAllTransactionsForUser(USER_2_ID))
-                .thenReturn(Optional.of(List.of(transaction2)));
-
-        var result = userHandler.findAllUsers();
-
-        assertEquals(USER_COUNT, result.size());
-        assertEquals(USER_1_FIRST_NAME, result.get(FIRST_USER_INDEX).getFirstName());
-        assertEquals(USER_1_LAST_NAME, result.get(FIRST_USER_INDEX).getLastName());
-        assertEquals(USER_2_FIRST_NAME, result.get(SECOND_USER_INDEX).getFirstName());
-        assertEquals(USER_2_LAST_NAME, result.get(SECOND_USER_INDEX).getLastName());
-        assertEquals(TRANSACTION_AMOUNT_100, result.get(FIRST_USER_INDEX).getBalance());
-        assertEquals(TRANSACTION_AMOUNT_MINUS_50, result.get(SECOND_USER_INDEX).getBalance());
+        assertEquals(2, result.size());
+        assertUser(result.get(0), USER_ID, FIRST_NAME, LAST_NAME, BALANCE);
+        assertUser(result.get(1), OTHER_USER_ID, OTHER_FIRST_NAME, LAST_NAME, OTHER_BALANCE);
     }
 
     @Test
     void testFindAllUsers_returns_empty_list_when_no_users() {
         when(userRepository.findAll()).thenReturn(List.of());
 
-        var result = userHandler.findAllUsers();
+        var result = userService.findAllUsers();
 
         assertTrue(result.isEmpty());
     }
 
     @Test
     void testFindUserById_returns_user_when_user_exists() {
-        UserTransactionDTO transaction1 = new UserTransactionDTO(TRANSACTION_AMOUNT_100);
+        var entity = user(USER_ID, FIRST_NAME, LAST_NAME);
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(entity));
+        balanceFor(USER_ID, BALANCE);
 
-        when(userRepository.findById(USER_1_ID))
-                .thenReturn(Optional.of(userEntities.get(FIRST_USER_INDEX)));
-
-        when(transactionClient.getAllTransactionsForUser(USER_1_ID))
-                .thenReturn(Optional.of(List.of(transaction1)));
-
-        var result = userHandler.findUserById(USER_1_ID);
+        var result = userService.findUserById(USER_ID);
 
         assertTrue(result.isPresent());
-        assertEquals(USER_1_FIRST_NAME, result.get().getFirstName());
-        assertEquals(USER_1_LAST_NAME, result.get().getLastName());
-        assertEquals(TRANSACTION_AMOUNT_100, result.get().getBalance());
+        assertUser(result.get(), USER_ID, FIRST_NAME, LAST_NAME, BALANCE);
     }
 
     @Test
     void testFindUserById_returns_optional_empty_when_user_does_not_exist() {
-        when(userRepository.findById(USER_1_ID)).thenReturn(Optional.empty());
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
-        var result = userHandler.findUserById(USER_1_ID);
+        var result = userService.findUserById(USER_ID);
 
         assertTrue(result.isEmpty());
+        verify(transactionClient, never()).getAllTransactionsForUser(USER_ID);
     }
 
     @Test
     void testCreateUser_creates_user_with_given_names() {
-        var userDTO = new UserDTO(NEW_USER_FIRST_NAME, NEW_USER_LAST_NAME);
+        var createdUser = user(USER_ID, NEW_FIRST_NAME, NEW_LAST_NAME);
+        var request = new UserDTO(NEW_FIRST_NAME, NEW_LAST_NAME);
+        when(userFactory.createUser(NEW_FIRST_NAME, NEW_LAST_NAME)).thenReturn(createdUser);
 
-        var result = userHandler.createUser(userDTO);
+        var result = userService.createUser(request);
 
-        assertEquals(NEW_USER_FIRST_NAME, result.getFirstName());
-        assertEquals(NEW_USER_LAST_NAME, result.getLastName());
+        assertUser(result, USER_ID, NEW_FIRST_NAME, NEW_LAST_NAME, BigDecimal.ZERO);
+        verify(userFactory).createUser(NEW_FIRST_NAME, NEW_LAST_NAME);
     }
 
     @Test
     void testCreateUser_creates_user_repository_save_is_called() {
-        var userDTO = new UserDTO(NEW_USER_FIRST_NAME, NEW_USER_LAST_NAME);
+        var createdUser = user(USER_ID, NEW_FIRST_NAME, NEW_LAST_NAME);
+        var request = new UserDTO(NEW_FIRST_NAME, NEW_LAST_NAME);
+        when(userFactory.createUser(NEW_FIRST_NAME, NEW_LAST_NAME)).thenReturn(createdUser);
 
-        var result = userHandler.createUser(userDTO);
+        userService.createUser(request);
 
-        verify(userRepository).save(any(UserEntity.class));
-        assertEquals(NEW_USER_FIRST_NAME, result.getFirstName());
-        assertEquals(NEW_USER_LAST_NAME, result.getLastName());
+        verify(userRepository).save(createdUser);
     }
 
     @Test
     void testUpdateUserName_returns_optional_empty_when_user_does_not_exist() {
-        var userDTO = new UserDTO(NEW_USER_FIRST_NAME, NEW_USER_LAST_NAME);
+        var request = new UserDTO(NEW_FIRST_NAME, NEW_LAST_NAME);
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
-        when(userRepository.findById(USER_1_ID)).thenReturn(Optional.empty());
-
-        var result = userHandler.updateUserName(USER_1_ID, userDTO);
+        var result = userService.updateUserName(USER_ID, request);
 
         assertTrue(result.isEmpty());
+        verify(userRepository, never()).save(any());
     }
 
     @Test
     void testUpdateUserName_updates_user_names_when_user_exists() {
-        var userDTO = new UserDTO(NEW_USER_FIRST_NAME, NEW_USER_LAST_NAME);
+        var entity = user(USER_ID, FIRST_NAME, LAST_NAME);
+        var request = new UserDTO(NEW_FIRST_NAME, NEW_LAST_NAME);
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(entity));
+        balanceFor(USER_ID, BALANCE);
 
-        when(userRepository.findById(USER_1_ID))
-                .thenReturn(Optional.of(userEntities.get(FIRST_USER_INDEX)));
+        var result = userService.updateUserName(USER_ID, request);
 
-        var result = userHandler.updateUserName(USER_1_ID, userDTO);
-
-        verify(userRepository).save(any(UserEntity.class));
         assertTrue(result.isPresent());
-        assertEquals(NEW_USER_FIRST_NAME, result.get().getFirstName());
-        assertEquals(NEW_USER_LAST_NAME, result.get().getLastName());
+        assertUser(result.get(), USER_ID, NEW_FIRST_NAME, NEW_LAST_NAME, BALANCE);
+        verify(entity).changeFirstName(NEW_FIRST_NAME);
+        verify(entity).changeLastName(NEW_LAST_NAME);
+        verify(userRepository).save(entity);
     }
 
     @Test
     void testDeleteUser_returns_optional_empty_when_user_does_not_exist() {
-        when(userRepository.findById(USER_1_ID)).thenReturn(Optional.empty());
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
-        var result = userHandler.deleteUser(USER_1_ID);
+        var result = userService.deleteUser(USER_ID);
 
         assertTrue(result.isEmpty());
-        verify(userRepository, never()).delete(any(UserEntity.class));
+        verify(userRepository, never()).delete(any());
     }
 
     @Test
     void testDeleteUser_calculates_balance_before_deleting_user() {
-        UserTransactionDTO transaction1 = new UserTransactionDTO(TRANSACTION_AMOUNT_100);
+        var entity = user(USER_ID, FIRST_NAME, LAST_NAME);
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(entity));
+        balanceFor(USER_ID, BALANCE);
 
-        when(userRepository.findById(USER_1_ID))
-                .thenReturn(Optional.of(userEntities.get(FIRST_USER_INDEX)));
+        userService.deleteUser(USER_ID);
 
-        when(transactionClient.getAllTransactionsForUser(USER_1_ID))
-                .thenReturn(Optional.of(List.of(transaction1)));
-
-        userHandler.deleteUser(USER_1_ID);
-
-        InOrder inOrder = inOrder(transactionClient, userRepository);
-
-        inOrder.verify(transactionClient)
-                .getAllTransactionsForUser(USER_1_ID);
-
-        inOrder.verify(userRepository)
-                .delete(any(UserEntity.class));
+        var inOrder = inOrder(transactionClient, userRepository);
+        inOrder.verify(transactionClient).getAllTransactionsForUser(USER_ID);
+        inOrder.verify(userRepository).delete(entity);
     }
 
     @Test
     void testDeleteUser_returns_deleted_user_view() {
-        UserTransactionDTO transaction1 = new UserTransactionDTO(TRANSACTION_AMOUNT_100);
+        var entity = user(USER_ID, FIRST_NAME, LAST_NAME);
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(entity));
+        balanceFor(USER_ID, BALANCE);
 
-        when(userRepository.findById(USER_1_ID))
-                .thenReturn(Optional.of(userEntities.get(FIRST_USER_INDEX)));
-
-        when(transactionClient.getAllTransactionsForUser(USER_1_ID))
-                .thenReturn(Optional.of(List.of(transaction1)));
-
-        var result = userHandler.deleteUser(USER_1_ID);
+        var result = userService.deleteUser(USER_ID);
 
         assertTrue(result.isPresent());
-        assertEquals(USER_1_FIRST_NAME, result.get().getFirstName());
-        assertEquals(USER_1_LAST_NAME, result.get().getLastName());
-        assertEquals(TRANSACTION_AMOUNT_100, result.get().getBalance());
+        assertEquals(FIRST_NAME, result.get().getFirstName());
+        assertEquals(LAST_NAME, result.get().getLastName());
+        assertEquals(BALANCE, result.get().getBalance());
     }
 
     @Test
     void testDepositToUser_deposit_transaction_response_is_returned() {
-        when(transactionClient.depositTransaction(USER_1_ID, DEPOSIT_AMOUNT_50))
-                .thenReturn(ResponseEntity.ok(DEPOSIT_SUCCESSFUL_RESPONSE));
+        var response = ResponseEntity.ok("Deposit successful");
+        when(transactionClient.depositTransaction(USER_ID, DEPOSIT_AMOUNT)).thenReturn(response);
 
-        var result = userHandler.depositToUser(USER_1_ID, DEPOSIT_AMOUNT_50);
+        var result = userService.depositToUser(USER_ID, DEPOSIT_AMOUNT);
 
-        assertEquals(ResponseEntity.ok(DEPOSIT_SUCCESSFUL_RESPONSE), result);
+        assertEquals(response, result);
     }
 
     @Test
     void testDepositToUser_deposit_transaction_is_delegated() {
-        userHandler.depositToUser(USER_1_ID, DEPOSIT_AMOUNT_50_75);
+        userService.depositToUser(USER_ID, DEPOSIT_AMOUNT);
 
-        verify(transactionClient).depositTransaction(USER_1_ID, DEPOSIT_AMOUNT_50_75);
+        verify(transactionClient).depositTransaction(USER_ID, DEPOSIT_AMOUNT);
     }
 
     @Test
     void testDepositToUser_deposit_transaction_is_called_with_zero_amount() {
-        userHandler.depositToUser(USER_1_ID, BigDecimal.ZERO);
+        userService.depositToUser(USER_ID, BigDecimal.ZERO);
 
-        verify(transactionClient).depositTransaction(USER_1_ID, BigDecimal.ZERO);
+        verify(transactionClient).depositTransaction(USER_ID, BigDecimal.ZERO);
     }
 
     @Test
     void testWithdrawFromUser_withdraw_transaction_response_is_returned() {
-        when(transactionClient.withdrawTransaction(USER_1_ID, WITHDRAW_AMOUNT_50))
-                .thenReturn(ResponseEntity.ok(WITHDRAW_SUCCESSFUL_RESPONSE));
+        var response = ResponseEntity.ok("Withdraw successful");
+        when(transactionClient.withdrawTransaction(USER_ID, WITHDRAW_AMOUNT)).thenReturn(response);
 
-        var result = userHandler.withdrawFromUser(USER_1_ID, WITHDRAW_AMOUNT_50);
+        var result = userService.withdrawFromUser(USER_ID, WITHDRAW_AMOUNT);
 
-        assertEquals(ResponseEntity.ok(WITHDRAW_SUCCESSFUL_RESPONSE), result);
+        assertEquals(response, result);
     }
 
     @Test
     void testWithdrawFromUser_withdraw_transaction_is_delegated() {
-        userHandler.withdrawFromUser(USER_1_ID, WITHDRAW_AMOUNT_30_25);
+        userService.withdrawFromUser(USER_ID, WITHDRAW_AMOUNT);
 
-        verify(transactionClient).withdrawTransaction(USER_1_ID, WITHDRAW_AMOUNT_30_25);
+        verify(transactionClient).withdrawTransaction(USER_ID, WITHDRAW_AMOUNT);
     }
 
     @Test
     void testWithdrawFromUser_withdraw_transaction_is_called_with_zero_amount() {
-        userHandler.withdrawFromUser(USER_1_ID, BigDecimal.ZERO);
+        userService.withdrawFromUser(USER_ID, BigDecimal.ZERO);
 
-        verify(transactionClient).withdrawTransaction(USER_1_ID, BigDecimal.ZERO);
+        verify(transactionClient).withdrawTransaction(USER_ID, BigDecimal.ZERO);
     }
 
     @Test
     void testCheckIfUserExists_returns_optional_empty_when_user_does_not_exist() {
-        when(userRepository.findById(USER_1_ID)).thenReturn(Optional.empty());
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
-        var result = userHandler.checkIfUserExists(USER_1_ID);
+        var result = userService.checkIfUserExists(USER_ID);
 
         assertTrue(result.isEmpty());
     }
 
     @Test
     void testCheckIfUserExists_returns_user_exists_view_when_user_exists() {
-        when(userRepository.findById(USER_1_ID))
-                .thenReturn(Optional.of(userEntities.get(FIRST_USER_INDEX)));
+        var entity = user(USER_ID, FIRST_NAME, LAST_NAME);
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(entity));
 
-        var result = userHandler.checkIfUserExists(USER_1_ID);
+        var result = userService.checkIfUserExists(USER_ID);
 
         assertTrue(result.isPresent());
-        assertEquals(USER_1_FIRST_NAME, result.get().getFirstName());
-        assertEquals(USER_1_LAST_NAME, result.get().getLastName());
+        assertEquals(FIRST_NAME, result.get().getFirstName());
+        assertEquals(LAST_NAME, result.get().getLastName());
     }
 
+    private void balanceFor(long userId, BigDecimal balance) {
+        when(transactionClient.getAllTransactionsForUser(userId))
+                .thenReturn(Optional.of(List.of(new UserTransactionDTO(balance))));
+    }
+
+    private UserEntity user(long id, String firstName, String lastName) {
+        var entity = mock(UserEntity.class);
+        var currentFirstName = new AtomicReference<>(firstName);
+        var currentLastName = new AtomicReference<>(lastName);
+
+        when(entity.getId()).thenReturn(id);
+        when(entity.getFirstName()).thenAnswer(ignored -> currentFirstName.get());
+        when(entity.getLastName()).thenAnswer(ignored -> currentLastName.get());
+
+        doAnswer(invocation -> {
+            currentFirstName.set(invocation.getArgument(0));
+            return null;
+        }).when(entity).changeFirstName(any(String.class));
+        doAnswer(invocation -> {
+            currentLastName.set(invocation.getArgument(0));
+            return null;
+        }).when(entity).changeLastName(any(String.class));
+
+        return entity;
+    }
+
+    private void assertUser(
+            com.instantwin.bank.contract.View.User.IUserView actual,
+            long expectedId,
+            String expectedFirstName,
+            String expectedLastName,
+            BigDecimal expectedBalance) {
+        assertEquals(expectedId, actual.getId());
+        assertEquals(expectedFirstName, actual.getFirstName());
+        assertEquals(expectedLastName, actual.getLastName());
+        assertEquals(expectedBalance, actual.getBalance());
+    }
 }
