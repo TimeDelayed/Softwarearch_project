@@ -9,10 +9,11 @@ import com.instantwin.slotmachine.dto.ThreeReelSpinDTO;
 
 @Component
 public class SlotGameFactory implements ISlotGameFactory {
-    
+
     @Override
-    public SlotGameEntity createSlotGame(Long userId, boolean won, BigDecimal amount, ThreeReelSpinDTO spinResult) {
-        return SlotGameEntity.of(userId, won, amount, spinResult);
+    public SlotGameEntity createSlotGame(Long userId, BigDecimal betAmount, boolean won, BigDecimal amount,
+            ThreeReelSpinDTO spinResult) {
+        return SlotGameEntity.of(userId, betAmount, won, amount, spinResult);
     }
 
 }

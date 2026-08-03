@@ -2,6 +2,7 @@ package com.instantwin.slotmachine.model;
 
 import java.util.SplittableRandom;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.instantwin.slotmachine.contract.model.ISlotConfiguration;
@@ -17,11 +18,13 @@ public class SlotSpinner implements ISlotSpinner {
     private final ISlotConfiguration slotConfiguration;
     private final SplittableRandom rng;
 
+    // TODO VERBESSERN FÜR README
+    @Autowired
     public SlotSpinner(ISlotConfiguration slotConfiguration) {
         this(slotConfiguration, new SplittableRandom());
     }
 
-    SlotSpinner(ISlotConfiguration slotConfiguration, SplittableRandom rng) {
+    public SlotSpinner(ISlotConfiguration slotConfiguration, SplittableRandom rng) {
         this.slotConfiguration = slotConfiguration;
         this.rng = rng;
     }

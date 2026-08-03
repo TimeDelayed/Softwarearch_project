@@ -23,9 +23,9 @@ public class SlotConfiguration implements ISlotConfiguration {
 
     public SlotConfiguration() {
         probabilities.put(SlotSymbols.CHERRY, 0.48f);
-        probabilities.put(SlotSymbols.LEMON, 0.21f);
-        probabilities.put(SlotSymbols.DIAMOND, 0.29f);
-        probabilities.put(SlotSymbols.BELL, 0.02f);
+        probabilities.put(SlotSymbols.LEMON, 0.29f);
+        probabilities.put(SlotSymbols.DIAMOND, 0.02f);
+        probabilities.put(SlotSymbols.BELL, 0.21f);
 
         doubleHitReferenceMap.put(SlotSymbols.CHERRY, SlotBetMultipliers.DOUBLE_CHERRY);
         doubleHitReferenceMap.put(SlotSymbols.LEMON, SlotBetMultipliers.DOUBLE_LEMON);

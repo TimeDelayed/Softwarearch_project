@@ -19,13 +19,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
-import lombok.val;
 
 @Entity
 @Table(name = "slot_game")
 @Getter
 public class SlotGameEntity {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -35,6 +34,9 @@ public class SlotGameEntity {
 
     @Column(name = "won", nullable = false)
     private boolean won;
+
+    @Column(name = "betAmount", nullable = false)
+    private BigDecimal betAmount;
 
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
@@ -47,24 +49,27 @@ public class SlotGameEntity {
     protected SlotGameEntity() {
     }
 
-    private SlotGameEntity(Long userId, boolean won, BigDecimal amount, List<SlotSymbols> slotStates) {
+    private SlotGameEntity(Long userId, BigDecimal betAmount, boolean won, BigDecimal amount,
+            List<SlotSymbols> slotStates) {
         this.userId = userId;
         this.won = won;
         this.amount = amount;
         this.slotStates = slotStates;
+        this.betAmount = betAmount;
     }
 
-    private static void validateSlotGameEntity(Long userId, boolean won, BigDecimal amount, ThreeReelSpinDTO spinResult) {
+    private static void validateSlotGameEntity(Long userId, BigDecimal betAmount, boolean won, BigDecimal netAmount,
+            ThreeReelSpinDTO spinResult) {
         if (userId == null) {
             throw new ModelValidityBreachException(SlotErrorMessages.USER_ID_NULL);
         }
         if (userId < 0) {
             throw new ModelValidityBreachException(SlotErrorMessages.USER_ID_NEGATIVE);
         }
-        if (amount == null) {
+        if (netAmount == null || betAmount == null) {
             throw new ModelValidityBreachException(SlotErrorMessages.INVALID_AMOUNT_NULL);
         }
-        if (amount.signum() < 0) {
+        if (betAmount.signum() < 0) {
             throw new ModelValidityBreachException(SlotErrorMessages.INVALID_AMOUNT_NEGATIVE);
         }
 
@@ -88,10 +93,11 @@ public class SlotGameEntity {
         return slotStates;
     }
 
-    public static SlotGameEntity of(Long userId, boolean won, BigDecimal amount, ThreeReelSpinDTO spinResult) {
-        validateSlotGameEntity(userId, won, amount, spinResult);
+    public static SlotGameEntity of(Long userId, BigDecimal betAmount, boolean won, BigDecimal netAmount,
+            ThreeReelSpinDTO spinResult) {
+        validateSlotGameEntity(userId, betAmount, won, netAmount, spinResult);
         List<SlotSymbols> slotStates = convertSpinResultToSlotStates(spinResult);
-        return new SlotGameEntity(userId, won, amount, slotStates);
+        return new SlotGameEntity(userId, betAmount, won, netAmount, slotStates);
     }
 
 }

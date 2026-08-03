@@ -3,11 +3,13 @@ package com.instantwin.slotmachine.client;
 import java.math.BigDecimal;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 import com.instantwin.slotmachine.contract.client.ISlotRequestTransactionClient;
 import com.instantwin.slotmachine.dto.SlotRequestTransactionDTO;
 
+@Component
 public class SlotRequestTransactionClient implements ISlotRequestTransactionClient {
 
     private final String invoicingParty = "SLOTS";

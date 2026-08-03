@@ -37,7 +37,7 @@ public interface ISlotController {
     ResponseEntity<SlotGameView> getGameStats(@PathVariable long id);
 
     @PostMapping("/play")
-    ResponseEntity<SlotGameResultView> playSlotGame(@RequestBody SlotGameRequestBodyDTO slotGameRequestBodyDTO);
+    ResponseEntity<SlotGameView> playSlotGame(@RequestBody SlotGameRequestBodyDTO slotGameRequestBodyDTO);
     
     @DeleteMapping("/stat/{gameId}")
     ResponseEntity<SlotGameView> deleteGameStats(@PathVariable long id);

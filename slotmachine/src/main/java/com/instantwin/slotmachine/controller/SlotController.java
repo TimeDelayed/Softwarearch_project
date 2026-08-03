@@ -16,8 +16,8 @@ import com.instantwin.slotmachine.view.SlotHouseStatsView;
 
 import jakarta.validation.Valid;
 
-@RestController
 @Validated
+@RestController
 public class SlotController implements ISlotController {
 
     private final ISlotGameService slotGameService;
@@ -62,10 +62,9 @@ public class SlotController implements ISlotController {
     }
 
     @Override
-    public ResponseEntity<SlotGameResultView> playSlotGame(SlotGameRequestBodyDTO slotGameRequestBodyDTO) {
+    public ResponseEntity<SlotGameView> playSlotGame(SlotGameRequestBodyDTO slotGameRequestBodyDTO) {
         var result = slotGameService.playSlotGame(slotGameRequestBodyDTO.getUserId(), slotGameRequestBodyDTO.getBetAmount());
-
-        return ResponseEntity.ok(SlotResponseMapper.optionalToResponseEntity(result));
+        return SlotResponseMapper.optionalToResponseEntity(result);
     }
 
     @Override
