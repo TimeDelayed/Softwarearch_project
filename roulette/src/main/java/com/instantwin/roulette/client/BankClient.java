@@ -11,10 +11,6 @@ import com.instantwin.roulette.client.dto.BankTransactionRequest;
 import com.instantwin.roulette.client.dto.BankTransactionResponse;
 import com.instantwin.roulette.contract.client.IBankClient;
 
-/**
- * DIP: Implementiert IBankClient – GameHandler hängt nur vom Interface ab.
- * SRP: Verantwortlich ausschließlich für die HTTP-Kommunikation mit dem Bank-Service.
- */
 @Component
 public class BankClient implements IBankClient {
 
@@ -28,10 +24,6 @@ public class BankClient implements IBankClient {
                 .build();
     }
 
-    /**
-     * Prüft ob ein User im Bank-Service existiert.
-     * Gibt false zurück wenn der User nicht gefunden wird oder ein Netzwerkfehler auftritt.
-     */
     @Override
     public boolean userExists(long userId) {
         try {
@@ -45,10 +37,6 @@ public class BankClient implements IBankClient {
         }
     }
 
-    /**
-     * Überweist den Gewinnbetrag auf das Konto des Users via Bank-API.
-     * invoicingParty "ROULETTE" wird vom Bank-Service als TransactionInvoicingParty.ROULETTE deserialisiert.
-     */
     @Override
     public Optional<BankTransactionResponse> createTransaction(long userId, BigDecimal amount) {
         try {

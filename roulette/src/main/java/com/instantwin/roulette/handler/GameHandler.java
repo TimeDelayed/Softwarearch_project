@@ -13,19 +13,15 @@ import com.instantwin.roulette.View.GameView;
 import com.instantwin.roulette.View.StatsView;
 import com.instantwin.roulette.View.UserStatsView;
 import com.instantwin.roulette.contract.client.IBankClient;
+import com.instantwin.roulette.contract.game.IRouletteGame;
 import com.instantwin.roulette.contract.handler.IGameHandler;
 import com.instantwin.roulette.contract.view.IGameView;
 import com.instantwin.roulette.contract.view.IStatsView;
 import com.instantwin.roulette.contract.view.IUserStatsView;
 import com.instantwin.roulette.game.BetType;
 import com.instantwin.roulette.game.GameResult;
-import com.instantwin.roulette.game.RouletteGame;
 import com.instantwin.roulette.repostitory.IGameRepository;
 
-/**
- * DIP: Hängt von Interfaces ab (IGameRepository, IBankClient) und Spring-Component (RouletteGame).
- * SRP: Orchestriert Spiellogik, Bank-Integration und Persistenz – delegiert beides an Spezialisten.
- */
 @Service
 public class GameHandler implements IGameHandler {
 
@@ -68,10 +64,10 @@ public class GameHandler implements IGameHandler {
             "      Positive amount = profit; negative amount = loss.";
 
     private final IGameRepository gameRepository;
-    private final RouletteGame rouletteGame;
+    private final IRouletteGame rouletteGame;
     private final IBankClient bankClient;
 
-    public GameHandler(IGameRepository gameRepository, RouletteGame rouletteGame, IBankClient bankClient) {
+    public GameHandler(IGameRepository gameRepository, IRouletteGame rouletteGame, IBankClient bankClient) {
         this.gameRepository = gameRepository;
         this.rouletteGame = rouletteGame;
         this.bankClient = bankClient;
@@ -98,13 +94,6 @@ public class GameHandler implements IGameHandler {
         });
     }
 
-    /**
-     * Spielablauf:
-     * 1. User-Existenz via Bank-API prüfen → 404 wenn nicht gefunden
-     * 2. Roulette-Runde spielen
-     * 3. Bei Gewinn: Betrag per Transaktion (ROULETTE) auf Konto überweisen
-     * 4. Spielergebnis in der Datenbank persistieren
-     */
     @Override
     @Transactional
     public Optional<IGameView> play(long userId, BigDecimal betAmount, int betNumber, BetType betType) {
