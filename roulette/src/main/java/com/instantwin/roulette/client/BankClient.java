@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.client.RestClientResponseException;
 
 import com.instantwin.roulette.client.dto.BankTransactionRequest;
 import com.instantwin.roulette.contract.client.IBankClient;
@@ -19,7 +18,7 @@ public class BankClient implements IBankClient {
     private final RestClient restClient;
 
     public BankClient(RestClient.Builder builder,
-                      @Value("${bank.service.url}") String bankServiceUrl) {
+                      @Value("${BANK_SERVICE_URL:http://localhost:8081}") String bankServiceUrl) {
         this.restClient = builder
                 .baseUrl(bankServiceUrl + API_PATH)
                 .build();
