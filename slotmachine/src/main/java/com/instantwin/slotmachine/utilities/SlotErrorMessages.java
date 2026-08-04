@@ -9,9 +9,11 @@ public class SlotErrorMessages {
     public static final String INVALID_THREE_REEL_CONFIGURATION = "Invalid slot configuration, must have exactly 3 reels!";
 
     public static final String USER_ID_NULL = "Invalid user ID, cant be null!";
-    public static final String USER_ID_NEGATIVE = "Invalid user ID, cant be negative!";
+    public static final String USER_ID_NEGATIVE = "Invalid user ID, must be greater than zero!";
     public static final String INVALID_AMOUNT_NULL = "Invalid amount, cant be null!";
-    public static final String INVALID_AMOUNT_NEGATIVE = "Invalid amount, cant be < 0!";
+    public static final String INVALID_AMOUNT_NEGATIVE = "Invalid bet amount, must be greater than zero!";
+    public static final String INVALID_NET_AMOUNT = "Invalid net amount, player cannot lose more than the bet amount!";
+    public static final String INVALID_WIN_STATE = "Win state does not match the resulting cash-out!";
     public static final String INVALID_SLOT_STATES_NULL = "Invalid slot states, cant be null!";
 
     public static final String GAME_RULES_FILE_ERROR = "Game rules file could not be loaded";

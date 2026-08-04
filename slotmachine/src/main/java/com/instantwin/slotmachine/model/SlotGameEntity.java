@@ -54,7 +54,7 @@ public class SlotGameEntity {
         this.userId = userId;
         this.won = won;
         this.amount = amount;
-        this.slotStates = slotStates;
+        this.slotStates = new ArrayList<>(slotStates);
         this.betAmount = betAmount;
     }
 
@@ -63,17 +63,30 @@ public class SlotGameEntity {
         if (userId == null) {
             throw new ModelValidityBreachException(SlotErrorMessages.USER_ID_NULL);
         }
-        if (userId < 0) {
+        if (userId <= 0) {
             throw new ModelValidityBreachException(SlotErrorMessages.USER_ID_NEGATIVE);
         }
         if (netAmount == null || betAmount == null) {
             throw new ModelValidityBreachException(SlotErrorMessages.INVALID_AMOUNT_NULL);
         }
-        if (betAmount.signum() < 0) {
+        if (betAmount.signum() <= 0) {
             throw new ModelValidityBreachException(SlotErrorMessages.INVALID_AMOUNT_NEGATIVE);
         }
 
         validateThreeReelSpinDTO(spinResult);
+        validateGameResult(betAmount, won, netAmount);
+    }
+
+    private static void validateGameResult(BigDecimal betAmount, boolean won, BigDecimal netAmount) {
+        BigDecimal cashOut = betAmount.add(netAmount);
+        if (cashOut.signum() < 0) {
+            throw new ModelValidityBreachException(SlotErrorMessages.INVALID_NET_AMOUNT);
+        }
+
+        boolean expectedWinState = cashOut.signum() > 0;
+        if (won != expectedWinState) {
+            throw new ModelValidityBreachException(SlotErrorMessages.INVALID_WIN_STATE);
+        }
     }
 
     private static void validateThreeReelSpinDTO(ThreeReelSpinDTO spinResult) {
@@ -98,6 +111,10 @@ public class SlotGameEntity {
         validateSlotGameEntity(userId, betAmount, won, netAmount, spinResult);
         List<SlotSymbols> slotStates = convertSpinResultToSlotStates(spinResult);
         return new SlotGameEntity(userId, betAmount, won, netAmount, slotStates);
+    }
+
+    public List<SlotSymbols> getSlotStates() {
+        return List.copyOf(slotStates);
     }
 
 }

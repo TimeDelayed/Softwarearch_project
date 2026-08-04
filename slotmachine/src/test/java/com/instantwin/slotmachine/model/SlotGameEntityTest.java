@@ -70,6 +70,15 @@ public class SlotGameEntityTest {
     }
 
     @Test
+    void testOf_throws_exception_when_user_id_is_zero() {
+        var exception = assertThrows(
+                ModelValidityBreachException.class,
+                () -> SlotGameEntity.of(0L, BET_AMOUNT, true, NET_AMOUNT, SPIN_RESULT));
+
+        assertEquals(SlotErrorMessages.USER_ID_NEGATIVE, exception.getMessage());
+    }
+
+    @Test
     void testOf_throws_exception_when_bet_amount_is_null() {
         var exception = assertThrows(
                 ModelValidityBreachException.class,
@@ -97,6 +106,33 @@ public class SlotGameEntityTest {
     }
 
     @Test
+    void testOf_throws_exception_when_bet_amount_is_zero() {
+        var exception = assertThrows(
+                ModelValidityBreachException.class,
+                () -> SlotGameEntity.of(USER_ID, BigDecimal.ZERO, false, BigDecimal.ZERO, SPIN_RESULT));
+
+        assertEquals(SlotErrorMessages.INVALID_AMOUNT_NEGATIVE, exception.getMessage());
+    }
+
+    @Test
+    void testOf_throws_exception_when_player_loses_more_than_bet_amount() {
+        var exception = assertThrows(
+                ModelValidityBreachException.class,
+                () -> SlotGameEntity.of(USER_ID, BET_AMOUNT, false, BigDecimal.valueOf(-11), SPIN_RESULT));
+
+        assertEquals(SlotErrorMessages.INVALID_NET_AMOUNT, exception.getMessage());
+    }
+
+    @Test
+    void testOf_throws_exception_when_win_state_does_not_match_cash_out() {
+        var exception = assertThrows(
+                ModelValidityBreachException.class,
+                () -> SlotGameEntity.of(USER_ID, BET_AMOUNT, true, BET_AMOUNT.negate(), SPIN_RESULT));
+
+        assertEquals(SlotErrorMessages.INVALID_WIN_STATE, exception.getMessage());
+    }
+
+    @Test
     void testOf_throws_exception_when_spin_result_is_null() {
         var exception = assertThrows(
                 ModelValidityBreachException.class,
@@ -117,5 +153,13 @@ public class SlotGameEntityTest {
                 () -> SlotGameEntity.of(USER_ID, BET_AMOUNT, true, NET_AMOUNT, invalidSpinResult));
 
         assertEquals(SlotErrorMessages.INVALID_SLOT_STATES_NULL, exception.getMessage());
+    }
+
+    @Test
+    void testGetSlotStates_returns_unmodifiable_list() {
+        var slotStates = slotGame.getSlotStates();
+
+        assertThrows(UnsupportedOperationException.class,
+                () -> slotStates.set(0, SlotSymbols.BELL));
     }
 }
