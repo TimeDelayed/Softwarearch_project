@@ -5,12 +5,10 @@ import java.security.SecureRandom;
 
 import org.springframework.stereotype.Component;
 
-/**
- * SRP: Nur verantwortlich für die Spiellogik – kein State, kein Persistence.
- * DIP: Als Spring-Component über Interface injizierbar.
- */
+import com.instantwin.roulette.contract.game.IRouletteGame;
+
 @Component
-public class RouletteGame {
+public class RouletteGame implements IRouletteGame {
 
     private final SecureRandom random;
 
@@ -18,7 +16,6 @@ public class RouletteGame {
         this.random = new SecureRandom();
     }
 
-    // Package-private Konstruktor für Unit-Tests mit kontrollierbarem Random
     RouletteGame(SecureRandom random) {
         this.random = random;
     }

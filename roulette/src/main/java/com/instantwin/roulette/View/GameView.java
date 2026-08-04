@@ -8,10 +8,6 @@ import com.instantwin.roulette.Model.GameEntity;
 import com.instantwin.roulette.contract.view.IGameView;
 import com.instantwin.roulette.game.BetType;
 
-/**
- * ISP: Implementiert IGameView vollständig – kein aufgeblähtes Interface.
- * SRP: Nur verantwortlich für die Darstellung einer Spielrunde.
- */
 public class GameView implements IGameView {
 
     private final Long id;

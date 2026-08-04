@@ -12,9 +12,6 @@ import com.instantwin.roulette.contract.view.IGameView;
 import com.instantwin.roulette.contract.view.IStatsView;
 import com.instantwin.roulette.contract.view.IUserStatsView;
 
-/**
- * DIP: Hängt von IGameHandler (Interface) ab – nicht von der konkreten Implementierung.
- */
 @RestController
 public class GameController implements IGameController {
 

@@ -3,10 +3,6 @@ package com.instantwin.roulette.game;
 import java.math.BigDecimal;
 import java.util.Set;
 
-/**
- * OCP: Jede Wettart trägt ihre eigene Gewinnlogik und Auszahlungsregel.
- * Eine neue Wettart = neues Enum-Constant, keine Änderung bestehender Klassen.
- */
 public enum BetType implements BetStrategy {
 
     STRAIGHT_UP {
@@ -59,7 +55,6 @@ public enum BetType implements BetStrategy {
             return betAmount.multiply(BigDecimal.valueOf(2));
         }
     },
-    // betNumber > 0: vertikaler Split (n, n+3); betNumber < 0: horizontaler Split (|n|, |n|+1)
     SPLIT {
         @Override
         public boolean isWinner(int winningNumber, int betNumber) {
@@ -81,7 +76,6 @@ public enum BetType implements BetStrategy {
             return betAmount.multiply(BigDecimal.valueOf(17));
         }
     },
-    // betNumber = Reihenindex 1..12
     STREET {
         @Override
         public boolean isWinner(int winningNumber, int betNumber) {
@@ -94,7 +88,6 @@ public enum BetType implements BetStrategy {
             return betAmount.multiply(BigDecimal.valueOf(11));
         }
     },
-    // betNumber = oben-links-Zahl des 2x2-Blocks
     CORNER {
         @Override
         public boolean isWinner(int winningNumber, int betNumber) {
@@ -109,7 +102,6 @@ public enum BetType implements BetStrategy {
             return betAmount.multiply(BigDecimal.valueOf(8));
         }
     },
-    // betNumber = erster Reihenindex 1..11
     LINE {
         @Override
         public boolean isWinner(int winningNumber, int betNumber) {
@@ -122,7 +114,6 @@ public enum BetType implements BetStrategy {
             return betAmount.multiply(BigDecimal.valueOf(5));
         }
     },
-    // betNumber: 1->1-12, 2->13-24, 3->25-36
     DOZEN {
         @Override
         public boolean isWinner(int winningNumber, int betNumber) {
@@ -135,7 +126,6 @@ public enum BetType implements BetStrategy {
             return betAmount.multiply(BigDecimal.valueOf(3));
         }
     },
-    // betNumber: 1..3 für Roulette-Spalten
     COLUMN {
         @Override
         public boolean isWinner(int winningNumber, int betNumber) {
@@ -148,8 +138,6 @@ public enum BetType implements BetStrategy {
         }
     };
 
-    // Statische Felder werden nach den Enum-Konstanten initialisiert,
-    // aber erst beim ersten Methodenaufruf referenziert → keine NPE.
     private static final Set<Integer> RED_NUMBERS =
         Set.of(1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36);
     private static final Set<Integer> BLACK_NUMBERS =
