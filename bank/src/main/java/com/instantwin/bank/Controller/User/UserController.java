@@ -93,7 +93,7 @@ public class UserController implements IUserController {
 
         BigDecimal fullAmount = convertToFullAmount(amount, decimals);
         var transactionResponse = userHandler.depositToUser(id, fullAmount);
-        return transactionResponse;
+        return UserResponseMapper.optionalToResponseEntity(transactionResponse);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class UserController implements IUserController {
 
         BigDecimal fullAmount = convertToFullAmount(amount, decimals);
         var transactionResponse = userHandler.withdrawFromUser(id, fullAmount);
-        return transactionResponse;
+        return UserResponseMapper.optionalToResponseEntity(transactionResponse);
     }
 
 }

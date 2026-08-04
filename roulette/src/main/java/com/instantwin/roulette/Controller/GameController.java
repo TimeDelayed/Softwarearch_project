@@ -23,7 +23,9 @@ public class GameController implements IGameController {
 
     @Override
     public ResponseEntity<IGameView> play(PlayRequest request) {
-        return gameHandler.play(request.userId(), request.betAmount(), request.betNumber(), request.betType());
+        return gameHandler.play(request.userId(), request.betAmount(), request.betNumber(), request.betType())
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @Override

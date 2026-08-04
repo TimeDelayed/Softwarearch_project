@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,6 +26,7 @@ import com.instantwin.roulette.contract.view.IUserStatsView;
 
 import com.instantwin.roulette.game.BetType;
 import com.instantwin.roulette.model.GameEntity;
+import com.instantwin.roulette.utilities.BankTransactionFailedException;
 
 @ExtendWith(MockitoExtension.class)
 class GameControllerTest {
@@ -81,7 +83,7 @@ class GameControllerTest {
         IGameView view = GameView.of(
                 new GameEntity(1L, new BigDecimal("10.00"), 5, BetType.STRAIGHT_UP, 5, new BigDecimal("360.00")));
         when(gameHandler.play(request.userId(), request.betAmount(), request.betNumber(), request.betType()))
-                .thenReturn(ResponseEntity.ok(view));
+                .thenReturn(Optional.of(view));
 
         ResponseEntity<IGameView> response = gameController.play(request);
 
@@ -94,7 +96,7 @@ class GameControllerTest {
     void play_returns404_whenBankReturnsNotFound() {
         PlayRequest request = new PlayRequest(99L, new BigDecimal("10.00"), 5, BetType.STRAIGHT_UP);
         when(gameHandler.play(request.userId(), request.betAmount(), request.betNumber(), request.betType()))
-                .thenReturn(ResponseEntity.notFound().build());
+                .thenReturn(Optional.empty());
 
         ResponseEntity<IGameView> response = gameController.play(request);
 
@@ -102,14 +104,13 @@ class GameControllerTest {
     }
 
     @Test
-    void play_returns500_whenBankHasInternalError() {
+    void play_propagates_exception_whenBankHasInternalError() {
         PlayRequest request = new PlayRequest(1L, new BigDecimal("10.00"), 5, BetType.STRAIGHT_UP);
         when(gameHandler.play(request.userId(), request.betAmount(), request.betNumber(), request.betType()))
-                .thenReturn(ResponseEntity.internalServerError().build());
+                .thenThrow(new BankTransactionFailedException("Bank transaction failed!"));
 
-        ResponseEntity<IGameView> response = gameController.play(request);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThatThrownBy(() -> gameController.play(request))
+                .isInstanceOf(BankTransactionFailedException.class);
     }
 
     @Test
@@ -118,7 +119,7 @@ class GameControllerTest {
         IGameView view = GameView.of(
                 new GameEntity(2L, new BigDecimal("20.00"), 3, BetType.EVEN, 6, new BigDecimal("40.00")));
         when(gameHandler.play(request.userId(), request.betAmount(), request.betNumber(), request.betType()))
-                .thenReturn(ResponseEntity.ok(view));
+                .thenReturn(Optional.of(view));
 
         gameController.play(request);
 

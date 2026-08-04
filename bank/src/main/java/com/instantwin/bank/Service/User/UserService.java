@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import com.instantwin.bank.DTO.User.UserDTO;
 import com.instantwin.bank.contract.Client.User.IUserTransactionClient;
@@ -17,6 +15,8 @@ import com.instantwin.bank.contract.View.User.IUserView;
 import com.instantwin.bank.model.User.UserEntity;
 import com.instantwin.bank.repository.User.IUserRepository;
 import com.instantwin.bank.utilities.User.UserBalanceCalculator;
+import com.instantwin.bank.utilities.User.TransactionRequestFailedException;
+import com.instantwin.bank.utilities.User.UserErrorMessages;
 import com.instantwin.bank.view.User.UserDeleteView;
 import com.instantwin.bank.view.User.UserExistsView;
 import com.instantwin.bank.view.User.UserView;
@@ -84,13 +84,14 @@ public class UserService implements IUserService {
             return Optional.empty();
         }
 
+        BigDecimal balance = getUserBalance(id);
         UserEntity userEntity = result.get();
         userEntity.changeFirstName(userDTO.getFirstName());
         userEntity.changeLastName(userDTO.getLastName());
 
         userRepository.save(userEntity);
 
-        return Optional.of(UserView.of(userEntity, getUserBalance(id)));
+        return Optional.of(UserView.of(userEntity, balance));
     }
 
     @Override
@@ -109,16 +110,29 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ResponseEntity<String> depositToUser(long id, BigDecimal amount) {
-        var transactionServiceResponse = transactionClient.depositTransaction(id, amount);
-        return transactionServiceResponse;
+    public Optional<String> depositToUser(long id, BigDecimal amount) {
+        return mapTransactionResponse(transactionClient.depositTransaction(id, amount));
     }
 
     @Override
-    public ResponseEntity<String> withdrawFromUser(long id, BigDecimal amount) {
-        var transactionServiceResponse = transactionClient.withdrawTransaction(id, amount);
-        return transactionServiceResponse;
+    public Optional<String> withdrawFromUser(long id, BigDecimal amount) {
+        return mapTransactionResponse(transactionClient.withdrawTransaction(id, amount));
     }
 
+    private Optional<String> mapTransactionResponse(org.springframework.http.ResponseEntity<String> response) {
+        if (response == null) {
+            throw new TransactionRequestFailedException(UserErrorMessages.TRANSACTION_REQUEST_FAILED);
+        }
+
+        if (response.getStatusCode().value() == 404) {
+            return Optional.empty();
+        }
+
+        if (!response.getStatusCode().is2xxSuccessful() || response.getBody() == null) {
+            throw new TransactionRequestFailedException(UserErrorMessages.TRANSACTION_REQUEST_FAILED);
+        }
+
+        return Optional.of(response.getBody());
+    }
 
 }

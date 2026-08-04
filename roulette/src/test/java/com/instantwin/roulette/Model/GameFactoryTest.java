@@ -13,6 +13,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class GameFactoryTest {
 
+    private final GameFactory gameFactory = new GameFactory();
+
     @Test
     void create_returnsEntityWithAllFieldsMappedFromResult() {
         BigDecimal betAmount = new BigDecimal("10.00");
@@ -20,7 +22,7 @@ class GameFactoryTest {
         BetType betType = BetType.STRAIGHT_UP;
         GameResult result = new GameResult(5, new BigDecimal("350.00"));
 
-        GameEntity entity = GameFactory.create(7L, betAmount, betNumber, betType, result);
+        GameEntity entity = gameFactory.create(7L, betAmount, betNumber, betType, result);
 
         assertThat(entity.getUserId()).isEqualTo(7L);
         assertThat(entity.getBetAmount()).isEqualByComparingTo(betAmount);
@@ -34,7 +36,7 @@ class GameFactoryTest {
     void create_withZeroPayout_setsPayoutToZero() {
         GameResult lostResult = new GameResult(10, BigDecimal.ZERO);
 
-        GameEntity entity = GameFactory.create(3L, new BigDecimal("10"), 7, BetType.RED, lostResult);
+        GameEntity entity = gameFactory.create(3L, new BigDecimal("10"), 7, BetType.RED, lostResult);
 
         assertThat(entity.getPayout()).isEqualByComparingTo(BigDecimal.ZERO);
         assertThat(entity.getWinningNumber()).isEqualTo(10);

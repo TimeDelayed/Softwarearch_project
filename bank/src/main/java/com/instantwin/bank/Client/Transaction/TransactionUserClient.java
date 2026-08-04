@@ -31,7 +31,7 @@ public class TransactionUserClient implements ITransactionUserClient {
                     .retrieve()
                     .toEntity(TransactionRequestUser.class);
 
-            return Optional.of(user.getBody());
+            return Optional.ofNullable(user.getBody());
         } catch (HttpClientErrorException.NotFound e) {
             return Optional.empty();
         }

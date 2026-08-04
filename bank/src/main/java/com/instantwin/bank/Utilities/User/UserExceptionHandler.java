@@ -21,4 +21,9 @@ public class UserExceptionHandler {
     public ResponseEntity<String> handleAmountNegativeException(AmountNegativeException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
+    @ExceptionHandler(TransactionRequestFailedException.class)
+    public ResponseEntity<String> handleTransactionRequestFailedException(TransactionRequestFailedException ex) {
+        return ResponseEntity.internalServerError().body(ex.getMessage());
+    }
 }

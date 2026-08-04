@@ -4,8 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
-
 import com.instantwin.bank.DTO.User.UserDTO;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
@@ -25,7 +23,7 @@ public interface IUserService {
 
     Optional<IUserDeleteView> deleteUser(long id);
 
-    ResponseEntity<String> depositToUser(long id, BigDecimal amount);
+    Optional<String> depositToUser(long id, BigDecimal amount);
 
-    ResponseEntity<String> withdrawFromUser(long id, BigDecimal amount);
+    Optional<String> withdrawFromUser(long id, BigDecimal amount);
 }

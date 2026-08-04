@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,15 +20,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.instantwin.roulette.contract.client.IBankClient;
 import com.instantwin.roulette.contract.game.IRouletteGame;
+import com.instantwin.roulette.contract.model.IGameFactory;
 import com.instantwin.roulette.contract.view.IGameView;
 import com.instantwin.roulette.contract.view.IStatsView;
 import com.instantwin.roulette.contract.view.IUserStatsView;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.instantwin.roulette.game.BetType;
 import com.instantwin.roulette.game.GameResult;
 import com.instantwin.roulette.model.GameEntity;
 import com.instantwin.roulette.repostitory.IGameRepository;
+import com.instantwin.roulette.utilities.BankTransactionFailedException;
 
 @ExtendWith(MockitoExtension.class)
 class GameHandlerTest {
@@ -40,6 +42,9 @@ class GameHandlerTest {
 
     @Mock
     private IBankClient bankClient;
+
+    @Mock
+    private IGameFactory gameFactory;
 
     @InjectMocks
     private GameHandler gameHandler;
@@ -87,7 +92,7 @@ class GameHandlerTest {
     // -------------------------------------------------------------------------
 
     @Test
-    void play_returnsOk_andSavesEntity_whenTransactionSucceeds() {
+    void play_returnsGame_andSavesEntity_whenTransactionSucceeds() {
         BigDecimal betAmount = new BigDecimal("10.00");
         BigDecimal payout = new BigDecimal("360.00");
         BigDecimal netAmount = new BigDecimal("350.00");
@@ -96,15 +101,16 @@ class GameHandlerTest {
 
         when(rouletteGame.play(betAmount, 7, BetType.STRAIGHT_UP)).thenReturn(gameResult);
         when(bankClient.requestTransaction(1L, netAmount)).thenReturn(ResponseEntity.ok("ok"));
-        when(gameRepository.save(any(GameEntity.class))).thenReturn(savedEntity);
+        when(gameFactory.create(1L, betAmount, 7, BetType.STRAIGHT_UP, gameResult)).thenReturn(savedEntity);
+        when(gameRepository.save(savedEntity)).thenReturn(savedEntity);
 
-        ResponseEntity<IGameView> response = gameHandler.play(1L, betAmount, 7, BetType.STRAIGHT_UP);
+        Optional<IGameView> response = gameHandler.play(1L, betAmount, 7, BetType.STRAIGHT_UP);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getPayout()).isEqualByComparingTo(payout);
+        assertThat(response).isPresent();
+        assertThat(response.get().getPayout()).isEqualByComparingTo(payout);
         verify(rouletteGame).play(betAmount, 7, BetType.STRAIGHT_UP);
-        verify(gameRepository).save(any(GameEntity.class));
+        verify(gameFactory).create(1L, betAmount, 7, BetType.STRAIGHT_UP, gameResult);
+        verify(gameRepository).save(savedEntity);
     }
 
     @Test
@@ -116,40 +122,43 @@ class GameHandlerTest {
 
         when(rouletteGame.play(betAmount, 17, BetType.STRAIGHT_UP)).thenReturn(lostResult);
         when(bankClient.requestTransaction(1L, negativeNet)).thenReturn(ResponseEntity.ok("ok"));
-        when(gameRepository.save(any(GameEntity.class))).thenReturn(savedEntity);
+        when(gameFactory.create(1L, betAmount, 17, BetType.STRAIGHT_UP, lostResult)).thenReturn(savedEntity);
+        when(gameRepository.save(savedEntity)).thenReturn(savedEntity);
 
-        ResponseEntity<IGameView> response = gameHandler.play(1L, betAmount, 17, BetType.STRAIGHT_UP);
+        Optional<IGameView> response = gameHandler.play(1L, betAmount, 17, BetType.STRAIGHT_UP);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response).isPresent();
         verify(bankClient).requestTransaction(1L, negativeNet);
-        verify(gameRepository).save(any(GameEntity.class));
+        verify(gameFactory).create(1L, betAmount, 17, BetType.STRAIGHT_UP, lostResult);
+        verify(gameRepository).save(savedEntity);
     }
 
     @Test
-    void play_returnsTransactionStatus_andDoesNotSave_whenTransactionFails() {
+    void play_returnsEmpty_andDoesNotSave_whenUserDoesNotExist() {
         BigDecimal betAmount = new BigDecimal("10.00");
         GameResult gameResult = new GameResult(7, new BigDecimal("360.00"));
 
         when(rouletteGame.play(betAmount, 7, BetType.STRAIGHT_UP)).thenReturn(gameResult);
         when(bankClient.requestTransaction(anyLong(), any())).thenReturn(ResponseEntity.notFound().build());
 
-        ResponseEntity<IGameView> response = gameHandler.play(99L, betAmount, 7, BetType.STRAIGHT_UP);
+        Optional<IGameView> response = gameHandler.play(99L, betAmount, 7, BetType.STRAIGHT_UP);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response).isEmpty();
+        verify(gameFactory, never()).create(anyLong(), any(), anyInt(), any(), any());
         verify(gameRepository, never()).save(any());
     }
 
     @Test
-    void play_propagates500Status_andDoesNotSave_whenBankHasInternalError() {
+    void play_throws_andDoesNotSave_whenBankHasInternalError() {
         BigDecimal betAmount = new BigDecimal("10.00");
         GameResult gameResult = new GameResult(7, new BigDecimal("360.00"));
 
         when(rouletteGame.play(betAmount, 7, BetType.STRAIGHT_UP)).thenReturn(gameResult);
         when(bankClient.requestTransaction(anyLong(), any())).thenReturn(ResponseEntity.internalServerError().build());
 
-        ResponseEntity<IGameView> response = gameHandler.play(1L, betAmount, 7, BetType.STRAIGHT_UP);
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+        assertThatThrownBy(() -> gameHandler.play(1L, betAmount, 7, BetType.STRAIGHT_UP))
+                .isInstanceOf(BankTransactionFailedException.class);
+        verify(gameFactory, never()).create(anyLong(), any(), anyInt(), any(), any());
         verify(gameRepository, never()).save(any());
     }
 

@@ -12,4 +12,6 @@ public abstract class UserErrorMessages {
     public static final String DECIMAL_INPUT_INVALID = "Invalid decimal input! Must be between 0 and 99!";
 
     public static final String AMOUNT_INPUT_INVALID = "Invalid amount input! Must be positive!";
+
+    public static final String TRANSACTION_REQUEST_FAILED = "Transaction could not be created!";
 }

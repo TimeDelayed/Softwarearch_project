@@ -11,4 +11,9 @@ public class RouletteErrorHandler {
     public ResponseEntity<String> handleInvalidBetException(InvalidBetException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+
+    @ExceptionHandler(BankTransactionFailedException.class)
+    public ResponseEntity<String> handleBankTransactionFailedException(BankTransactionFailedException ex) {
+        return ResponseEntity.internalServerError().body(ex.getMessage());
+    }
 }

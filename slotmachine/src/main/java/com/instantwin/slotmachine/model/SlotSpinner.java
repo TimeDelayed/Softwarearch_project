@@ -5,7 +5,7 @@ import java.util.SplittableRandom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.instantwin.slotmachine.contract.model.ISlotConfiguration;
+import com.instantwin.slotmachine.contract.model.ISlotProbabilityConfiguration;
 import com.instantwin.slotmachine.contract.model.ISlotSpinner;
 import com.instantwin.slotmachine.dto.ThreeReelSpinDTO;
 import com.instantwin.slotmachine.utilities.InvalidSlotProbabilities;
@@ -18,16 +18,16 @@ public class SlotSpinner implements ISlotSpinner {
     private static final float TOTAL_PROBABILITY = 1.0f;
     private static final float PROBABILITY_TOLERANCE = 0.0001f;
 
-    private final ISlotConfiguration slotConfiguration;
+    private final ISlotProbabilityConfiguration slotConfiguration;
     private final SplittableRandom rng;
     private final double configuredTotalProbability;
     
     @Autowired
-    public SlotSpinner(ISlotConfiguration slotConfiguration) {
+    public SlotSpinner(ISlotProbabilityConfiguration slotConfiguration) {
         this(slotConfiguration, new SplittableRandom());
     }
 
-    public SlotSpinner(ISlotConfiguration slotConfiguration, SplittableRandom rng) {
+    public SlotSpinner(ISlotProbabilityConfiguration slotConfiguration, SplittableRandom rng) {
         this.slotConfiguration = slotConfiguration;
         this.rng = rng;
         this.configuredTotalProbability = validateProbabilities();

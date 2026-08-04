@@ -1,8 +1,10 @@
 package com.instantwin.bank.service.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -26,6 +28,7 @@ import com.instantwin.bank.contract.Model.User.IUserFactory;
 import com.instantwin.bank.model.User.UserEntity;
 import com.instantwin.bank.repository.User.IUserRepository;
 import com.instantwin.bank.service.User.UserService;
+import com.instantwin.bank.utilities.User.TransactionRequestFailedException;
 
 public class UserServiceTest {
 
@@ -54,6 +57,11 @@ public class UserServiceTest {
         userFactory = mock(IUserFactory.class);
         transactionClient = mock(IUserTransactionClient.class);
         userService = new UserService(userRepository, userFactory, transactionClient);
+
+        when(transactionClient.depositTransaction(anyLong(), any(BigDecimal.class)))
+                .thenReturn(ResponseEntity.ok("Deposit successful"));
+        when(transactionClient.withdrawTransaction(anyLong(), any(BigDecimal.class)))
+                .thenReturn(ResponseEntity.ok("Withdraw successful"));
     }
 
     @Test
@@ -153,6 +161,22 @@ public class UserServiceTest {
     }
 
     @Test
+    void testUpdateUserName_calculates_balance_before_saving_user() {
+        var entity = user(USER_ID, FIRST_NAME, LAST_NAME);
+        var request = new UserDTO(NEW_FIRST_NAME, NEW_LAST_NAME);
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.of(entity));
+        balanceFor(USER_ID, BALANCE);
+
+        userService.updateUserName(USER_ID, request);
+
+        var inOrder = inOrder(transactionClient, entity, userRepository);
+        inOrder.verify(transactionClient).getAllTransactionsForUser(USER_ID);
+        inOrder.verify(entity).changeFirstName(NEW_FIRST_NAME);
+        inOrder.verify(entity).changeLastName(NEW_LAST_NAME);
+        inOrder.verify(userRepository).save(entity);
+    }
+
+    @Test
     void testDeleteUser_returns_optional_empty_when_user_does_not_exist() {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
@@ -190,13 +214,33 @@ public class UserServiceTest {
     }
 
     @Test
-    void testDepositToUser_deposit_transaction_response_is_returned() {
+    void testDepositToUser_deposit_transaction_response_body_is_returned() {
         var response = ResponseEntity.ok("Deposit successful");
         when(transactionClient.depositTransaction(USER_ID, DEPOSIT_AMOUNT)).thenReturn(response);
 
         var result = userService.depositToUser(USER_ID, DEPOSIT_AMOUNT);
 
-        assertEquals(response, result);
+        assertTrue(result.isPresent());
+        assertEquals("Deposit successful", result.get());
+    }
+
+    @Test
+    void testDepositToUser_returns_optional_empty_when_user_does_not_exist() {
+        when(transactionClient.depositTransaction(USER_ID, DEPOSIT_AMOUNT))
+                .thenReturn(ResponseEntity.notFound().build());
+
+        var result = userService.depositToUser(USER_ID, DEPOSIT_AMOUNT);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testDepositToUser_throws_when_transaction_fails() {
+        when(transactionClient.depositTransaction(USER_ID, DEPOSIT_AMOUNT))
+                .thenReturn(ResponseEntity.internalServerError().build());
+
+        assertThrows(TransactionRequestFailedException.class,
+                () -> userService.depositToUser(USER_ID, DEPOSIT_AMOUNT));
     }
 
     @Test
@@ -214,13 +258,33 @@ public class UserServiceTest {
     }
 
     @Test
-    void testWithdrawFromUser_withdraw_transaction_response_is_returned() {
+    void testWithdrawFromUser_withdraw_transaction_response_body_is_returned() {
         var response = ResponseEntity.ok("Withdraw successful");
         when(transactionClient.withdrawTransaction(USER_ID, WITHDRAW_AMOUNT)).thenReturn(response);
 
         var result = userService.withdrawFromUser(USER_ID, WITHDRAW_AMOUNT);
 
-        assertEquals(response, result);
+        assertTrue(result.isPresent());
+        assertEquals("Withdraw successful", result.get());
+    }
+
+    @Test
+    void testWithdrawFromUser_returns_optional_empty_when_user_does_not_exist() {
+        when(transactionClient.withdrawTransaction(USER_ID, WITHDRAW_AMOUNT))
+                .thenReturn(ResponseEntity.notFound().build());
+
+        var result = userService.withdrawFromUser(USER_ID, WITHDRAW_AMOUNT);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    void testWithdrawFromUser_throws_when_transaction_fails() {
+        when(transactionClient.withdrawTransaction(USER_ID, WITHDRAW_AMOUNT))
+                .thenReturn(ResponseEntity.internalServerError().build());
+
+        assertThrows(TransactionRequestFailedException.class,
+                () -> userService.withdrawFromUser(USER_ID, WITHDRAW_AMOUNT));
     }
 
     @Test

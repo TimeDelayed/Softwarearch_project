@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,8 @@ public class UserControllerTest {
         this.userDTO = new UserDTO("Max", "Mustermann");
 
         when(userHandler.createUser(userDTO)).thenReturn(userView);
+        when(userHandler.depositToUser(anyLong(), any())).thenReturn(Optional.of("Deposit successful"));
+        when(userHandler.withdrawFromUser(anyLong(), any())).thenReturn(Optional.of("Withdraw successful"));
     }
 
     @Test
@@ -70,10 +73,21 @@ public class UserControllerTest {
 
         BigDecimal expectedAmount = amount.add(BigDecimal.valueOf(validDecimals).movePointLeft(2));
 
-        userController.depositToUser(userId, amount, validDecimals);
+        var response = userController.depositToUser(userId, amount, validDecimals);
 
         verify(userHandler).depositToUser(userId, expectedAmount);
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals("Deposit successful", response.getBody());
 
+    }
+
+    @Test
+    void testDepositToUser_returns_404_when_user_does_not_exist() {
+        when(userHandler.depositToUser(anyLong(), any())).thenReturn(Optional.empty());
+
+        var response = userController.depositToUser(1L, new BigDecimal("100.00"), 20);
+
+        assertEquals(404, response.getStatusCode().value());
     }
 
     @Test
@@ -108,10 +122,21 @@ public class UserControllerTest {
 
         BigDecimal expectedAmount = amount.add(BigDecimal.valueOf(validDecimals).movePointLeft(2));
 
-        userController.withdrawFromUser(userId, amount, validDecimals);
+        var response = userController.withdrawFromUser(userId, amount, validDecimals);
 
         verify(userHandler).withdrawFromUser(userId, expectedAmount);
+        assertEquals(200, response.getStatusCode().value());
+        assertEquals("Withdraw successful", response.getBody());
 
+    }
+
+    @Test
+    void testWithdrawToUser_returns_404_when_user_does_not_exist() {
+        when(userHandler.withdrawFromUser(anyLong(), any())).thenReturn(Optional.empty());
+
+        var response = userController.withdrawFromUser(1L, new BigDecimal("100.00"), 20);
+
+        assertEquals(404, response.getStatusCode().value());
     }
 
     @Test

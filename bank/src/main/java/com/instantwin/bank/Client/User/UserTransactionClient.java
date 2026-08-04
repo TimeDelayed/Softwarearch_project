@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 import com.instantwin.bank.DTO.User.UserRequestTransaction;
 import com.instantwin.bank.DTO.User.UserTransactionDTO;
@@ -41,7 +42,7 @@ public class UserTransactionClient implements IUserTransactionClient {
                     .body(new ParameterizedTypeReference<List<UserTransactionDTO>>() {
                     });
 
-            return Optional.of(result);
+            return Optional.ofNullable(result);
         } catch (HttpClientErrorException.NotFound e) {
             return Optional.empty();
         }
@@ -59,6 +60,8 @@ public class UserTransactionClient implements IUserTransactionClient {
             return responseAsString;
         } catch (HttpClientErrorException.NotFound e) {
             return ResponseEntity.notFound().build();
+        } catch (RestClientResponseException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
         }
 
     }
@@ -78,6 +81,8 @@ public class UserTransactionClient implements IUserTransactionClient {
             return responseAsString;
         } catch (HttpClientErrorException.NotFound e) {
             return ResponseEntity.notFound().build();
+        } catch (RestClientResponseException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
         }
     }
 

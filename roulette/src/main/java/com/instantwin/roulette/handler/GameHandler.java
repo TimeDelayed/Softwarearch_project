@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,14 +13,16 @@ import com.instantwin.roulette.View.UserStatsView;
 import com.instantwin.roulette.contract.client.IBankClient;
 import com.instantwin.roulette.contract.game.IRouletteGame;
 import com.instantwin.roulette.contract.handler.IGameHandler;
+import com.instantwin.roulette.contract.model.IGameFactory;
 import com.instantwin.roulette.contract.view.IGameView;
 import com.instantwin.roulette.contract.view.IStatsView;
 import com.instantwin.roulette.contract.view.IUserStatsView;
 import com.instantwin.roulette.game.BetType;
 import com.instantwin.roulette.game.GameResult;
 import com.instantwin.roulette.model.GameEntity;
-import com.instantwin.roulette.model.GameFactory;
 import com.instantwin.roulette.repostitory.IGameRepository;
+import com.instantwin.roulette.utilities.BankTransactionFailedException;
+import com.instantwin.roulette.utilities.RouletteErrorMessages;
 
 @Service
 public class GameHandler implements IGameHandler {
@@ -67,11 +68,14 @@ public class GameHandler implements IGameHandler {
     private final IGameRepository gameRepository;
     private final IRouletteGame rouletteGame;
     private final IBankClient bankClient;
+    private final IGameFactory gameFactory;
 
-    public GameHandler(IGameRepository gameRepository, IRouletteGame rouletteGame, IBankClient bankClient) {
+    public GameHandler(IGameRepository gameRepository, IRouletteGame rouletteGame,
+                       IBankClient bankClient, IGameFactory gameFactory) {
         this.gameRepository = gameRepository;
         this.rouletteGame = rouletteGame;
         this.bankClient = bankClient;
+        this.gameFactory = gameFactory;
     }
 
     @Override
@@ -97,18 +101,22 @@ public class GameHandler implements IGameHandler {
 
     @Override
     @Transactional
-    public ResponseEntity<IGameView> play(long userId, BigDecimal betAmount, int betNumber, BetType betType) {
+    public Optional<IGameView> play(long userId, BigDecimal betAmount, int betNumber, BetType betType) {
         GameResult result = rouletteGame.play(betAmount, betNumber, betType);
 
         BigDecimal netAmount = result.payout().subtract(betAmount);
-        ResponseEntity<String> transaction = bankClient.requestTransaction(userId, netAmount);
+        var transaction = bankClient.requestTransaction(userId, netAmount);
 
-        if (!transaction.getStatusCode().is2xxSuccessful()) {
-            return ResponseEntity.status(transaction.getStatusCode()).build();
+        if (transaction.getStatusCode().value() == 404) {
+            return Optional.empty();
         }
 
-        GameEntity entity = GameFactory.create(userId, betAmount, betNumber, betType, result);
-        return ResponseEntity.ok(GameView.of(gameRepository.save(entity)));
+        if (!transaction.getStatusCode().is2xxSuccessful()) {
+            throw new BankTransactionFailedException(RouletteErrorMessages.BANK_TRANSACTION_FAILED);
+        }
+
+        GameEntity entity = gameFactory.create(userId, betAmount, betNumber, betType, result);
+        return Optional.of(GameView.of(gameRepository.save(entity)));
     }
 
     @Override

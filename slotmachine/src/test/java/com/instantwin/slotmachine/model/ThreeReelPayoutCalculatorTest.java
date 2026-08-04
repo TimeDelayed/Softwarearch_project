@@ -10,7 +10,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.instantwin.slotmachine.contract.model.ISlotConfiguration;
+import com.instantwin.slotmachine.contract.model.ISlotPayoutConfiguration;
 import com.instantwin.slotmachine.dto.ThreeReelSpinDTO;
 import com.instantwin.slotmachine.utilities.SlotBetMultipliers;
 import com.instantwin.slotmachine.utilities.SlotSymbols;
@@ -21,7 +21,7 @@ public class ThreeReelPayoutCalculatorTest {
 
     @BeforeEach
     void setUp() {
-        ISlotConfiguration config = mock(ISlotConfiguration.class);
+        ISlotPayoutConfiguration config = mock(ISlotPayoutConfiguration.class);
 
         when(config.getDoubleHitReferenceMap()).thenReturn(Map.of(
                 SlotSymbols.CHERRY, SlotBetMultipliers.DOUBLE_CHERRY,

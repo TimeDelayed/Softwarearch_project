@@ -11,7 +11,7 @@ import java.util.SplittableRandom;
 
 import org.junit.jupiter.api.Test;
 
-import com.instantwin.slotmachine.contract.model.ISlotConfiguration;
+import com.instantwin.slotmachine.contract.model.ISlotProbabilityConfiguration;
 import com.instantwin.slotmachine.dto.ThreeReelSpinDTO;
 import com.instantwin.slotmachine.utilities.InvalidSlotProbabilities;
 import com.instantwin.slotmachine.utilities.SlotSymbols;
@@ -127,8 +127,8 @@ public class SlotSpinnerTest {
                         new SplittableRandom(42)));
     }
 
-    private ISlotConfiguration mockConfiguration(Map<SlotSymbols, Float> probabilities) {
-        ISlotConfiguration config = mock(ISlotConfiguration.class);
+    private ISlotProbabilityConfiguration mockConfiguration(Map<SlotSymbols, Float> probabilities) {
+        ISlotProbabilityConfiguration config = mock(ISlotProbabilityConfiguration.class);
         when(config.getProbabilities()).thenReturn(probabilities);
         return config;
     }

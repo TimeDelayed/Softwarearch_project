@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import org.springframework.stereotype.Component;
 
-import com.instantwin.slotmachine.contract.model.ISlotConfiguration;
+import com.instantwin.slotmachine.contract.model.ISlotPayoutConfiguration;
 import com.instantwin.slotmachine.contract.model.IThreeReelPayoutCalculator;
 import com.instantwin.slotmachine.dto.ThreeReelSpinDTO;
 import com.instantwin.slotmachine.utilities.SlotBetMultipliers;
@@ -13,9 +13,9 @@ import com.instantwin.slotmachine.utilities.SlotSymbols;
 @Component
 public class ThreeReelPayoutCalculator implements IThreeReelPayoutCalculator {
 
-    private final ISlotConfiguration slotConfiguration;
+    private final ISlotPayoutConfiguration slotConfiguration;
 
-    public ThreeReelPayoutCalculator(ISlotConfiguration slotConfiguration) {
+    public ThreeReelPayoutCalculator(ISlotPayoutConfiguration slotConfiguration) {
         this.slotConfiguration = slotConfiguration;
     }
 

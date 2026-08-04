@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 import com.instantwin.roulette.client.dto.BankTransactionRequest;
 import com.instantwin.roulette.contract.client.IBankClient;
@@ -35,6 +36,9 @@ public class BankClient implements IBankClient {
         }
         catch (HttpClientErrorException.NotFound e) {
             return ResponseEntity.notFound().build();
+        }
+        catch (RestClientResponseException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getResponseBodyAsString());
         }
     }
 }
