@@ -2,6 +2,7 @@ package com.instantwin.bank.Client.Transaction;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
@@ -11,13 +12,14 @@ import com.instantwin.bank.contract.Client.Transaction.ITransactionUserClient;
 
 @Component
 public class TransactionUserClient implements ITransactionUserClient {
-
-    private static final String BASE_URL = "http://bank:8080/instantwin/bank/api";
     private final RestClient restClient;
 
-    public TransactionUserClient(RestClient.Builder builder) {
+    public TransactionUserClient(
+            RestClient.Builder builder,
+            @Value("${BANK_SERVICE_URL:http://localhost:8081}") String bankServiceUrl) {
+
         this.restClient = builder
-                .baseUrl(BASE_URL)
+                .baseUrl(bankServiceUrl + "/instantwin/bank/api")
                 .build();
     }
 

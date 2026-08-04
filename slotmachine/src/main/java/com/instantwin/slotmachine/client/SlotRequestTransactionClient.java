@@ -2,6 +2,7 @@ package com.instantwin.slotmachine.client;
 
 import java.math.BigDecimal;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -16,13 +17,14 @@ public class SlotRequestTransactionClient implements ISlotRequestTransactionClie
 
     private final String invoicingParty = "SLOTS";
 
-    private static final String BASE_URL = "http://bank:8080/instantwin/bank/api";
-
     private final RestClient restClient;
 
-    public SlotRequestTransactionClient(RestClient.Builder builder) {
+    public SlotRequestTransactionClient(
+            RestClient.Builder builder,
+            @Value("${BANK_SERVICE_URL:http://localhost:8081}") String bankServiceUrl) {
+
         this.restClient = builder
-                .baseUrl(BASE_URL)
+                .baseUrl(bankServiceUrl + "/instantwin/bank/api")
                 .build();
     }
 

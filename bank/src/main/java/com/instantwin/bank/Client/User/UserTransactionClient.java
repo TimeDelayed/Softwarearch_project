@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -20,13 +21,14 @@ public class UserTransactionClient implements IUserTransactionClient {
 
     private final UserInvoicingParty invoicingParty = UserInvoicingParty.USER_SLICE;
 
-    private static final String BASE_URL = "http://bank:8080/instantwin/bank/api";
-
     private final RestClient restClient;
 
-    public UserTransactionClient(RestClient.Builder builder) {
+    public UserTransactionClient(
+            RestClient.Builder builder,
+            @Value("${BANK_SERVICE_URL:http://localhost:8081}") String bankServiceUrl) {
+
         this.restClient = builder
-                .baseUrl(BASE_URL)
+                .baseUrl(bankServiceUrl + "/instantwin/bank/api")
                 .build();
     }
 
