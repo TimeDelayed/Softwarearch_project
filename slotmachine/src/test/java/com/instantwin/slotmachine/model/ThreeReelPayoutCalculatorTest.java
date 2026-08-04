@@ -15,7 +15,7 @@ import com.instantwin.slotmachine.dto.ThreeReelSpinDTO;
 import com.instantwin.slotmachine.utilities.SlotBetMultipliers;
 import com.instantwin.slotmachine.utilities.SlotSymbols;
 
-class ThreeReelPayoutCalculatorTest {
+public class ThreeReelPayoutCalculatorTest {
 
     private ThreeReelPayoutCalculator calculator;
 
@@ -87,6 +87,66 @@ class ThreeReelPayoutCalculatorTest {
     }
 
     @Test
+    void testCalculateMultiplier_returns_triple_cherry_multiplier_when_three_cherries_exist() {
+        ThreeReelSpinDTO spin = new ThreeReelSpinDTO(
+                SlotSymbols.CHERRY,
+                SlotSymbols.CHERRY,
+                SlotSymbols.CHERRY);
+
+        BigDecimal result = calculator.calculateMultiplier(spin);
+
+        assertEquals(0, new BigDecimal("0.99").compareTo(result));
+    }
+
+    @Test
+    void testCalculateMultiplier_returns_double_lemon_multiplier_when_two_lemons_exist() {
+        ThreeReelSpinDTO spin = new ThreeReelSpinDTO(
+                SlotSymbols.LEMON,
+                SlotSymbols.LEMON,
+                SlotSymbols.CHERRY);
+
+        BigDecimal result = calculator.calculateMultiplier(spin);
+
+        assertEquals(0, new BigDecimal("1.15").compareTo(result));
+    }
+
+    @Test
+    void testCalculateMultiplier_returns_triple_lemon_multiplier_when_three_lemons_exist() {
+        ThreeReelSpinDTO spin = new ThreeReelSpinDTO(
+                SlotSymbols.LEMON,
+                SlotSymbols.LEMON,
+                SlotSymbols.LEMON);
+
+        BigDecimal result = calculator.calculateMultiplier(spin);
+
+        assertEquals(0, new BigDecimal("2.50").compareTo(result));
+    }
+
+    @Test
+    void testCalculateMultiplier_returns_double_bell_multiplier_when_two_bells_exist() {
+        ThreeReelSpinDTO spin = new ThreeReelSpinDTO(
+                SlotSymbols.BELL,
+                SlotSymbols.BELL,
+                SlotSymbols.CHERRY);
+
+        BigDecimal result = calculator.calculateMultiplier(spin);
+
+        assertEquals(0, new BigDecimal("1.70").compareTo(result));
+    }
+
+    @Test
+    void testCalculateMultiplier_returns_triple_bell_multiplier_when_three_bells_exist() {
+        ThreeReelSpinDTO spin = new ThreeReelSpinDTO(
+                SlotSymbols.BELL,
+                SlotSymbols.BELL,
+                SlotSymbols.BELL);
+
+        BigDecimal result = calculator.calculateMultiplier(spin);
+
+        assertEquals(0, new BigDecimal("5.75").compareTo(result));
+    }
+
+    @Test
     void testCalculateMultiplier_returns_single_diamond_multiplier_when_double_cherry_and_single_diamond_exist() {
         ThreeReelSpinDTO spin = new ThreeReelSpinDTO(
                 SlotSymbols.CHERRY,
@@ -96,6 +156,18 @@ class ThreeReelPayoutCalculatorTest {
         BigDecimal result = calculator.calculateMultiplier(spin);
 
         assertEquals(0, new BigDecimal("1.50").compareTo(result));
+    }
+
+    @Test
+    void testCalculateMultiplier_returns_double_bell_multiplier_when_double_bell_and_single_diamond_exist() {
+        ThreeReelSpinDTO spin = new ThreeReelSpinDTO(
+                SlotSymbols.BELL,
+                SlotSymbols.BELL,
+                SlotSymbols.DIAMOND);
+
+        BigDecimal result = calculator.calculateMultiplier(spin);
+
+        assertEquals(0, new BigDecimal("1.70").compareTo(result));
     }
 
     @Test

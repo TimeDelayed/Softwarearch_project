@@ -15,7 +15,7 @@ import com.instantwin.slotmachine.dto.ThreeReelSpinDTO;
 import com.instantwin.slotmachine.utilities.InvalidSlotProbabilities;
 import com.instantwin.slotmachine.utilities.SlotSymbols;
 
-class SlotSpinnerTest {
+public class SlotSpinnerTest {
 
     @Test
     void testSpin_returns_three_cherries_when_cherry_probability_is_one() {

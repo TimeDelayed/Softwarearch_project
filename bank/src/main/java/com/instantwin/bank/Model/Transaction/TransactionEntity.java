@@ -44,6 +44,8 @@ public class TransactionEntity implements ITransactionEntity{
 
     public static TransactionEntity of(long userId, TransactionInvoicingParty invoicingParty, BigDecimal amount) {
         validateUserId(userId);
+        validateInvoicingParty(invoicingParty);
+        validateAmount(amount);
         return new TransactionEntity(userId, invoicingParty, amount);
     }
 
@@ -58,7 +60,7 @@ public class TransactionEntity implements ITransactionEntity{
         this.userId = userId;
     }
 
-    private void validateAmount(BigDecimal amount) {
+    private static void validateAmount(BigDecimal amount) {
         if (amount == null) {
             throw new IllegalArgumentException(TransactionErrorMessages.AMOUNT_INPUT_NULL);
         }
@@ -69,7 +71,7 @@ public class TransactionEntity implements ITransactionEntity{
         this.amount = amount;
     }
 
-    private void validateInvoicingParty(TransactionInvoicingParty invoicingParty) {
+    private static void validateInvoicingParty(TransactionInvoicingParty invoicingParty) {
         if (invoicingParty == null) {
             throw new IllegalArgumentException(TransactionErrorMessages.INVOICING_PARTY_INPUT_NULL);
         }

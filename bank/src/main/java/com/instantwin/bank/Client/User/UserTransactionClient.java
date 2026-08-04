@@ -49,28 +49,36 @@ public class UserTransactionClient implements IUserTransactionClient {
 
     @Override
     public ResponseEntity<String> depositTransaction(long userId, BigDecimal amount) {
-        var responseAsString = restClient.post()
-                .uri("/transaction/user/{userId}", userId)
-                .body(new UserRequestTransaction(
-                        invoicingParty, amount))
-                .retrieve()
-                .toEntity(String.class);
+        try {
+            var responseAsString = restClient.post()
+                    .uri("/transaction/user/{userId}", userId)
+                    .body(new UserRequestTransaction(
+                            invoicingParty, amount))
+                    .retrieve()
+                    .toEntity(String.class);
+            return responseAsString;
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.notFound().build();
+        }
 
-        return responseAsString;
     }
 
     @Override
     public ResponseEntity<String> withdrawTransaction(long userId, BigDecimal amount) {
-        BigDecimal negativeAmount = amount.negate();
-        var responseAsString = restClient.post()
-                .uri("/transaction/user/{id}", userId)
-                .body(new UserRequestTransaction(
-                        invoicingParty,
-                        negativeAmount))
-                .retrieve()
-                .toEntity(String.class);
+        try {
+            BigDecimal negativeAmount = amount.negate();
+            var responseAsString = restClient.post()
+                    .uri("/transaction/user/{id}", userId)
+                    .body(new UserRequestTransaction(
+                            invoicingParty,
+                            negativeAmount))
+                    .retrieve()
+                    .toEntity(String.class);
 
-        return responseAsString;
+            return responseAsString;
+        } catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
 }
