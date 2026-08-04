@@ -16,6 +16,7 @@ import com.instantwin.slotmachine.view.SlotGameView;
 import com.instantwin.slotmachine.view.SlotHouseStatsView;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,7 +50,8 @@ public interface ISlotController {
     @Operation(summary = "Get user slot statistics", description = "Returns aggregated slot statistics for the specified user. Users without recorded games receive statistics containing zero values.")
     @ApiResponse(responseCode = "200", description = "User slot statistics successfully retrieved")
     @GetMapping("/stats/user/{userId}")
-    ResponseEntity<SlotClientStatsView> getSlotUserStats(@PathVariable long userId);
+    ResponseEntity<SlotClientStatsView> getSlotUserStats(
+            @Parameter(description = "ID used to select the user's stored slot games", example = "1") @PathVariable long userId);
 
     @Operation(summary = "Get all slot games", description = "Returns all stored slot game results.")
     @ApiResponse(responseCode = "200", description = "Slot games successfully retrieved")
@@ -62,16 +64,20 @@ public interface ISlotController {
             @ApiResponse(responseCode = "404", description = "Slot game not found")
     })
     @GetMapping("/stat/{gameId}")
-    ResponseEntity<SlotGameView> getGameStats(@PathVariable long gameId);
+    ResponseEntity<SlotGameView> getGameStats(
+            @Parameter(description = "ID of the slot game", example = "1") @PathVariable long gameId);
 
     @Operation(summary = "Play slot game", description = "Plays a slot game for the specified user, requests the resulting bank transaction and stores the game result.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Slot game successfully played"),
             @ApiResponse(responseCode = "400", description = "User ID or bet amount is invalid"),
-            @ApiResponse(responseCode = "404", description = "User not found or transaction rejected")
+            @ApiResponse(responseCode = "404", description = "User not found or transaction rejected"),
+            @ApiResponse(responseCode = "500", description = "Slot configuration is invalid or game processing failed")
     })
     @PostMapping("/play")
-    ResponseEntity<SlotGameView> playSlotGame(@RequestBody @Valid SlotGameRequestBodyDTO slotGameRequestBodyDTO);
+    ResponseEntity<SlotGameView> playSlotGame(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User ID and positive bet amount for the slot game", required = true)
+            @RequestBody @Valid SlotGameRequestBodyDTO slotGameRequestBodyDTO);
 
     @Operation(summary = "Delete slot game", description = "Deletes the stored result of a specific slot game.")
     @ApiResponses({
@@ -79,5 +85,6 @@ public interface ISlotController {
             @ApiResponse(responseCode = "404", description = "Slot game not found")
     })
     @DeleteMapping("/stat/{gameId}")
-    ResponseEntity<SlotGameView> deleteGameStats(@PathVariable long gameId);
+    ResponseEntity<SlotGameView> deleteGameStats(
+            @Parameter(description = "ID of the slot game to delete", example = "1") @PathVariable long gameId);
 }

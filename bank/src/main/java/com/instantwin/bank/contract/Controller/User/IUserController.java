@@ -18,6 +18,7 @@ import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,17 +29,22 @@ import jakarta.validation.Valid;
 public interface IUserController {
 
         @Operation(summary = "Get all users", description = "Returns all registered users including their calculated account balances.")
-        @ApiResponse(responseCode = "200", description = "Users successfully retrieved")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Users successfully retrieved; returns an empty list when no users exist"),
+                        @ApiResponse(responseCode = "500", description = "User balances could not be retrieved from the Transaction slice")
+        })
         @GetMapping("/users")
         ResponseEntity<List<IUserView>> findAllUsers();
 
         @Operation(summary = "Get user by ID", description = "Returns a single user together with the current calculated account balance.")
         @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "User found"),
-                        @ApiResponse(responseCode = "404", description = "User not found")
+                        @ApiResponse(responseCode = "404", description = "User not found"),
+                        @ApiResponse(responseCode = "500", description = "User balance could not be retrieved from the Transaction slice")
         })
         @GetMapping("/user/{id}")
-        ResponseEntity<IUserView> findUserById(@PathVariable long id);
+        ResponseEntity<IUserView> findUserById(
+                        @Parameter(description = "ID of the user", example = "1") @PathVariable long id);
 
         @Operation(summary = "Check user existence", description = "Lightweight endpoint used by the Transaction slice to verify whether a user exists without triggering balance calculations.")
         @ApiResponses({
@@ -46,50 +52,66 @@ public interface IUserController {
                         @ApiResponse(responseCode = "404", description = "User does not exist")
         })
         @GetMapping("/user/{id}/exists")
-        ResponseEntity<UserExistsView> checkIfUserExists(@PathVariable long id);
+        ResponseEntity<UserExistsView> checkIfUserExists(
+                        @Parameter(description = "ID of the user whose existence is checked", example = "1") @PathVariable long id);
 
         @Operation(summary = "Create user", description = "Creates a new user account.")
-        @ApiResponse(responseCode = "201", description = "User successfully created")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "User successfully created"),
+                        @ApiResponse(responseCode = "400", description = "First name or last name is null, blank or otherwise invalid")
+        })
         @PostMapping("/user")
-        ResponseEntity<IUserView> createUser(@RequestBody @Valid UserDTO userDTO);
+        ResponseEntity<IUserView> createUser(
+                        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "First and last name of the user to create", required = true)
+                        @RequestBody @Valid UserDTO userDTO);
 
         @Operation(summary = "Update user", description = "Updates the first and last name of an existing user.")
         @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "User updated"),
-                        @ApiResponse(responseCode = "404", description = "User not found")
+                        @ApiResponse(responseCode = "400", description = "First name or last name is null, blank or otherwise invalid"),
+                        @ApiResponse(responseCode = "404", description = "User not found"),
+                        @ApiResponse(responseCode = "500", description = "Updated user balance could not be retrieved from the Transaction slice")
         })
         @PutMapping("/user/{id}")
-        ResponseEntity<IUserView> updateUserName(@PathVariable long id, @RequestBody @Valid UserDTO userDTO);
+        ResponseEntity<IUserView> updateUserName(
+                        @Parameter(description = "ID of the user to update", example = "1") @PathVariable long id,
+                        @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "New first and last name of the user", required = true)
+                        @RequestBody @Valid UserDTO userDTO);
 
         @Operation(summary = "Delete user", description = "Deletes a user and returns information about the removed account.")
         @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "User deleted"),
-                        @ApiResponse(responseCode = "404", description = "User not found")
+                        @ApiResponse(responseCode = "404", description = "User not found"),
+                        @ApiResponse(responseCode = "500", description = "User balance could not be retrieved from the Transaction slice before deletion")
         })
         @DeleteMapping("/user/{id}")
-        ResponseEntity<IUserDeleteView> deleteUser(@PathVariable long id);
+        ResponseEntity<IUserDeleteView> deleteUser(
+                        @Parameter(description = "ID of the user to delete", example = "1") @PathVariable long id);
 
         @Operation(summary = "Deposit funds", description = "Creates a deposit transaction for the specified user.")
         @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "Deposit successful"),
-                        @ApiResponse(responseCode = "404", description = "User not found")
+                        @ApiResponse(responseCode = "400", description = "Amount is negative or decimals are outside the range from 0 to 99"),
+                        @ApiResponse(responseCode = "404", description = "User not found"),
+                        @ApiResponse(responseCode = "500", description = "Transaction could not be created")
         })
         @PostMapping("/user/{id}/deposit/{amount}/{decimals}")
         ResponseEntity<String> depositToUser(
-                        @PathVariable long id,
-                        @PathVariable BigDecimal amount,
-                        @PathVariable int decimals);
+                        @Parameter(description = "ID of the user receiving the deposit", example = "1") @PathVariable long id,
+                        @Parameter(description = "Non-negative whole or decimal amount", example = "50") @PathVariable BigDecimal amount,
+                        @Parameter(description = "Additional hundredths added to the amount, from 0 to 99", example = "75") @PathVariable int decimals);
 
         @Operation(summary = "Withdraw funds", description = "Creates a withdrawal transaction for the specified user.")
         @ApiResponses({
                         @ApiResponse(responseCode = "200", description = "Withdrawal successful"),
                         @ApiResponse(responseCode = "404", description = "User not found"),
-                        @ApiResponse(responseCode = "400", description = "Insufficient balance")
+                        @ApiResponse(responseCode = "400", description = "Amount is negative or decimals are outside the range from 0 to 99"),
+                        @ApiResponse(responseCode = "500", description = "Transaction could not be created")
         })
         @PostMapping("/user/{id}/withdraw/{amount}/{decimals}")
         ResponseEntity<String> withdrawFromUser(
-                        @PathVariable long id,
-                        @PathVariable BigDecimal amount,
-                        @PathVariable int decimals);
+                        @Parameter(description = "ID of the user making the withdrawal", example = "1") @PathVariable long id,
+                        @Parameter(description = "Non-negative whole or decimal amount", example = "30") @PathVariable BigDecimal amount,
+                        @Parameter(description = "Additional hundredths added to the amount, from 0 to 99", example = "25") @PathVariable int decimals);
 
 }
