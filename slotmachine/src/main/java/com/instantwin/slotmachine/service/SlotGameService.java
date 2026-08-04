@@ -31,8 +31,8 @@ public class SlotGameService implements ISlotGameService {
     private final ISlotRepository slotGameRepository;
     private final ISlotRequestTransactionClient slotRequestTransactionClient;
     private final ISlotGameFactory slotGameFactory;
-    private static final String pathToGameRules = "../gameInfo/GameRules.txt";
-    private static final String pathToGameInfo = "../gameInfo/GameInfo.txt";
+    private static final String GAME_RULES_PATH = "/gameInfo/GameRules.txt";
+    private static final String GAME_CHANCES_PATH = "/gameInfo/GameChances.txt";
 
     public SlotGameService(
             ISlotGameLogic slotGameLogic, ISlotRepository slotGameRepository,
@@ -102,19 +102,27 @@ public class SlotGameService implements ISlotGameService {
 
     @Override
     public String getGameRules() {
-        try {
-            return Files.readString(Path.of(pathToGameRules), StandardCharsets.UTF_8);
+        try (var inputStream = getClass().getResourceAsStream(GAME_RULES_PATH)) {
+            if (inputStream == null) {
+                throw new GameRulesUnavailableException(SlotErrorMessages.GAME_RULES_FILE_ERROR,
+                        new NullPointerException(SlotErrorMessages.GAME_RULES_FILE_NOT_FOUND + GAME_RULES_PATH));
+            }
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new GameRulesUnavailableException(SlotErrorMessages.GAME_RULES_FILE_ERROR, e);
         }
     }
 
     @Override
-    public String getGameInfo() {
-        try {
-            return Files.readString(Path.of(pathToGameInfo), StandardCharsets.UTF_8);
+    public String getGameChances() {
+        try (var inputStream = getClass().getResourceAsStream(GAME_CHANCES_PATH)) {
+            if (inputStream == null) {
+                throw new GameRulesUnavailableException(SlotErrorMessages.GAME_CHANCES_FILE_ERROR,
+                        new NullPointerException(SlotErrorMessages.GAME_CHANCES_FILE_NOT_FOUND + GAME_CHANCES_PATH));
+            }
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new GameRulesUnavailableException(SlotErrorMessages.GAME_INFO_FILE_ERROR, e);
+            throw new GameRulesUnavailableException(SlotErrorMessages.GAME_CHANCES_FILE_ERROR, e);
         }
     }
 

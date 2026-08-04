@@ -17,8 +17,7 @@ public class SlotSpinner implements ISlotSpinner {
 
     private final ISlotConfiguration slotConfiguration;
     private final SplittableRandom rng;
-
-    // TODO VERBESSERN FÜR README
+    
     @Autowired
     public SlotSpinner(ISlotConfiguration slotConfiguration) {
         this(slotConfiguration, new SplittableRandom());

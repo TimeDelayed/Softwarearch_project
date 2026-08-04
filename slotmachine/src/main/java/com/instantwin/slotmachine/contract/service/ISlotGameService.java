@@ -13,12 +13,20 @@ import com.instantwin.slotmachine.view.SlotHouseStatsView;
 
 public interface ISlotGameService {
     List<SlotGameView> findAll();
+
     List<SlotGameView> findAllByUserId(long userId);
-    Optional<SlotGameView> findById(long id);
+
+    Optional<SlotGameView> findById(long gameId);
+
     Optional<SlotGameView> playSlotGame(long userId, BigDecimal amount);
-    Optional<SlotGameView> deleteSlotGame(long id);
+
+    Optional<SlotGameView> deleteSlotGame(long gameId);
+
     String getGameRules();
-    String getGameInfo();
+
+    String getGameChances();
+
     SlotHouseStatsView getHouseStats();
+
     SlotClientStatsView getUserStats(long userId);
 }
