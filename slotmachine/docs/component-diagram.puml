@@ -1,0 +1,53 @@
+@startuml
+title Slotmachine Service - Komponentendiagramm
+
+left to right direction
+skinparam componentStyle uml2
+skinparam shadowing false
+
+actor "API Client" as apiClient
+component "Bank Service" as bank <<external>>
+
+package "Slotmachine Service" {
+  package "API" {
+    component "SlotController\n<<ISlotController>>" as slotController
+    component SlotErrorHandler
+  }
+
+  package "Application" {
+    component "SlotGameService\n<<ISlotGameService>>" as slotGameService
+  }
+
+  package "Domain" {
+    component "SlotGameLogic\n<<ISlotGameLogic>>" as slotGameLogic
+    component "SlotSpinner\n<<ISlotSpinner>>" as slotSpinner
+    component "ThreeReelPayoutCalculator\n<<IThreeReelPayoutCalculator>>" as payoutCalculator
+    component "SlotGameFactory\n<<ISlotGameFactory>>" as slotGameFactory
+    component "SlotConfiguration\n<<ISlotConfiguration>>" as slotConfiguration
+  }
+
+  package "Infrastructure" {
+    component "SlotRequestTransactionClient\n<<ISlotRequestTransactionClient>>" as transactionClient
+    component "ISlotRepository\nSpring Data JPA" as slotRepository
+    artifact "GameRules.txt\nGameChances.txt" as gameInfo
+  }
+}
+
+apiClient --> slotController : Slot REST API
+slotController --> slotGameService
+
+slotGameService --> slotGameLogic : Spiel auswerten
+slotGameService --> slotGameFactory : SlotGameEntity erzeugen
+slotGameService --> slotRepository : Spiele und Statistiken
+slotGameService --> transactionClient : Nettoergebnis buchen
+slotGameService --> gameInfo : Regeln und Chancen lesen
+
+slotGameLogic --> slotSpinner
+slotGameLogic --> payoutCalculator
+slotSpinner --> slotConfiguration : <<ISlotProbabilityConfiguration>>
+payoutCalculator --> slotConfiguration : <<ISlotPayoutConfiguration>>
+
+transactionClient --> bank : REST\nPOST /transaction/user/{id}
+SlotErrorHandler ..> slotController : behandelt Fehler
+
+@enduml

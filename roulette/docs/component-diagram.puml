@@ -1,0 +1,45 @@
+@startuml
+title Roulette Service - Komponentendiagramm
+
+left to right direction
+skinparam componentStyle uml2
+skinparam shadowing false
+
+actor "API Client" as apiClient
+component "Bank Service" as bank <<external>>
+
+package "Roulette Service" {
+  package "API" {
+    component "GameController\n<<IGameController>>" as gameController
+    component RouletteErrorHandler
+  }
+
+  package "Application" {
+    component "GameHandler\n<<IGameHandler>>" as gameHandler
+  }
+
+  package "Domain" {
+    component "RouletteGame\n<<IRouletteGame>>" as rouletteGame
+    component "GameFactory\n<<IGameFactory>>" as gameFactory
+    component BetType
+  }
+
+  package "Infrastructure" {
+    component "BankClient\n<<IBankClient>>" as bankClient
+    component "IGameRepository\nSpring Data JPA" as gameRepository
+  }
+}
+
+apiClient --> gameController : Roulette REST API
+gameController --> gameHandler
+
+gameHandler --> rouletteGame : Spiel auswerten
+gameHandler --> gameFactory : GameEntity erzeugen
+gameHandler --> gameRepository : Spiele und Statistiken
+gameHandler --> bankClient : Nettoergebnis buchen
+
+rouletteGame --> BetType : Einsatz prüfen und Auszahlung berechnen
+bankClient --> bank : REST\nPOST /transaction/user/{id}
+RouletteErrorHandler ..> gameController : behandelt Fehler
+
+@enduml

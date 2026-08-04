@@ -1,0 +1,43 @@
+@startuml
+title InstantWin Casino - Komponentenübersicht
+
+left to right direction
+skinparam componentStyle uml2
+skinparam shadowing false
+
+actor "API Client" as apiClient
+
+component "Bank Service\nSpring Boot / REST\nPort 8081" as bank
+component "Roulette Service\nSpring Boot / REST\nPort 8082" as roulette
+component "Slotmachine Service\nSpring Boot / REST\nPort 8083" as slots
+
+database "Bank DB\nPostgreSQL" as bankDb
+database "Roulette DB\nPostgreSQL" as rouletteDb
+database "Slot DB\nPostgreSQL" as slotDb
+
+apiClient --> bank : User- und Transaction-API
+apiClient --> roulette : Roulette-API
+apiClient --> slots : Slot-API
+
+roulette --> bank : REST\nTransaktion buchen
+slots --> bank : REST\nTransaktion buchen
+
+bank --> bankDb : Spring Data JPA
+roulette --> rouletteDb : Spring Data JPA
+slots --> slotDb : Spring Data JPA
+
+note bottom of bank
+  Verwaltet User und deren Transaktionen.
+end note
+
+note bottom of roulette
+  Berechnet Roulette-Spiele und speichert
+  sie erst nach erfolgreicher Banktransaktion.
+end note
+
+note bottom of slots
+  Berechnet Slot-Spiele und speichert
+  sie erst nach erfolgreicher Banktransaktion.
+end note
+
+@enduml

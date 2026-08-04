@@ -1,0 +1,62 @@
+@startuml
+title Bank Service - Komponentendiagramm
+
+left to right direction
+skinparam componentStyle uml2
+skinparam shadowing false
+
+actor "API Client" as apiClient
+component "Roulette Service" as roulette <<external>>
+component "Slotmachine Service" as slots <<external>>
+
+package "Bank Service" {
+  package "API" {
+    component UserController
+    component TransactionController
+    component UserExceptionHandler
+    component TransactionExeptionHandler
+  }
+
+  package "Application" {
+    component "UserService\n<<IUserService>>" as userService
+    component "TransactionService\n<<ITransactionService>>" as transactionService
+  }
+
+  package "Domain" {
+    component "UserFactory\n<<IUserFactory>>" as userFactory
+    component "TransactionFactory\n<<ITransactionFactory>>" as transactionFactory
+    component UserBalanceCalculator
+  }
+
+  package "Infrastructure" {
+    component "UserTransactionClient\n<<IUserTransactionClient>>" as userTransactionClient
+    component "TransactionUserClient\n<<ITransactionUserClient>>" as transactionUserClient
+    component "IUserRepository\nSpring Data JPA" as userRepository
+    component "ITransactionRepository\nSpring Data JPA" as transactionRepository
+  }
+}
+
+apiClient --> UserController : User REST API
+apiClient --> TransactionController : Transaction REST API
+roulette --> TransactionController : POST /transaction/user/{id}
+slots --> TransactionController : POST /transaction/user/{id}
+
+UserController --> userService
+TransactionController --> transactionService
+
+userService --> userFactory
+userService --> UserBalanceCalculator
+userService --> userRepository
+userService --> userTransactionClient
+
+transactionService --> transactionFactory
+transactionService --> transactionRepository
+transactionService --> transactionUserClient
+
+userTransactionClient --> TransactionController : internes REST\nTransaktionen lesen/erstellen
+transactionUserClient --> UserController : internes REST\nUser-Existenz prüfen
+
+UserExceptionHandler ..> UserController : behandelt Fehler
+TransactionExeptionHandler ..> TransactionController : behandelt Fehler
+
+@enduml
