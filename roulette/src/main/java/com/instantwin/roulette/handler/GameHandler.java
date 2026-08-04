@@ -62,7 +62,7 @@ public class GameHandler implements IGameHandler {
             "| BLACK       | 18 / 37         | 48.65 %    | bet × 2                |\n" +
             "| EVEN        | 18 / 37         | 48.65 %    | bet × 2                |\n" +
             "| ODD         | 18 / 37         | 48.65 %    | bet × 2                |\n\n" +
-            "Note: 'amount' in the play response equals payout − bet_amount.\n" +
+            "Note: 'amount' in the play response equals payout − betAmount.\n" +
             "      Positive amount = profit; negative amount = loss.";
 
     private final IGameRepository gameRepository;

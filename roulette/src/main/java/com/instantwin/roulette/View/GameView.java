@@ -50,15 +50,15 @@ public class GameView implements IGameView {
     public long getUserId() { return userId; }
 
     @Override
-    @JsonProperty("bet_amount")
+    @JsonProperty("betAmount")
     public BigDecimal getBetAmount() { return betAmount; }
 
     @Override
-    @JsonProperty("bet_number")
+    @JsonProperty("betNumber")
     public int getBetNumber() { return betNumber; }
 
     @Override
-    @JsonProperty("bet_type")
+    @JsonProperty("betType")
     public BetType getBetType() { return betType; }
 
     @Override
@@ -81,6 +81,6 @@ public class GameView implements IGameView {
         return payout.subtract(betAmount);
     }
 
-    @JsonProperty("ball_position")
+    @JsonProperty("ballPosition")
     public int getBallPosition() { return winningNumber; }
 }

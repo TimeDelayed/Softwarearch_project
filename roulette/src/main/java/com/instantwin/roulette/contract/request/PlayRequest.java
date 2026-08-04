@@ -16,14 +16,14 @@ public record PlayRequest(
 
         @NotNull @Positive
         @Schema(description = "Amount wagered. Must be positive.", example = "10.00")
-        @JsonProperty("bet_amount") BigDecimal betAmount,
+        @JsonProperty("betAmount") BigDecimal betAmount,
 
         @NotNull
         @Schema(description = "Bet number. Meaning depends on the bet type (e.g. the chosen number for STRAIGHT_UP, row index for STREET). Ignored for colour/parity bets.", example = "17")
-        @JsonProperty("bet_number") Integer betNumber,
+        @JsonProperty("betNumber") Integer betNumber,
 
         @NotNull
         @Schema(description = "Bet type. Determines the covered numbers and the payout multiplier.", example = "STRAIGHT_UP")
-        @JsonProperty("bet_type") BetType betType
+        @JsonProperty("betType") BetType betType
 ) {}
 

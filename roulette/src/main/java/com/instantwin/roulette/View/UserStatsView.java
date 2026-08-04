@@ -39,26 +39,26 @@ public class UserStatsView implements IUserStatsView {
     public long getClient() { return client; }
 
     @Override
-    @JsonProperty("total_games_count")
+    @JsonProperty("totalGamesCount")
     public long getTotalGamesCount() { return totalGamesCount; }
 
     @Override
-    @JsonProperty("total_winnings")
+    @JsonProperty("totalWinnings")
     public BigDecimal getTotalWinnings() { return totalWinnings; }
 
     @Override
-    @JsonProperty("total_losses")
+    @JsonProperty("totalLosses")
     public BigDecimal getTotalLosses() { return totalLosses; }
 
     @Override
-    @JsonProperty("total_client_profit")
+    @JsonProperty("totalClientProfit")
     public BigDecimal getTotalClientProfit() { return totalClientProfit; }
 
     @Override
-    @JsonProperty("total_house_turnover_from_client")
+    @JsonProperty("totalHouseTurnoverFromClient")
     public BigDecimal getTotalHouseTurnoverFromClient() { return totalHouseTurnoverFromClient; }
 
     @Override
-    @JsonProperty("total_house_profit_from_client")
+    @JsonProperty("totalHouseProfitFromClient")
     public BigDecimal getTotalHouseProfitFromClient() { return totalHouseProfitFromClient; }
 }

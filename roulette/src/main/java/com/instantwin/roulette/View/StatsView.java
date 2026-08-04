@@ -28,22 +28,22 @@ public class StatsView implements IStatsView {
     }
 
     @Override
-    @JsonProperty("total_client_count")
+    @JsonProperty("totalClientCount")
     public long getTotalClientCount() { return totalClientCount; }
 
     @Override
-    @JsonProperty("total_games_count")
+    @JsonProperty("totalGamesCount")
     public long getTotalGamesCount() { return totalGamesCount; }
 
     @Override
-    @JsonProperty("total_profit")
+    @JsonProperty("totalProfit")
     public BigDecimal getTotalProfit() { return totalProfit; }
 
     @Override
-    @JsonProperty("total_cash_out")
+    @JsonProperty("totalCashOut")
     public BigDecimal getTotalCashOut() { return totalCashOut; }
 
     @Override
-    @JsonProperty("total_turnover")
+    @JsonProperty("totalTurnover")
     public BigDecimal getTotalTurnover() { return totalTurnover; }
 }
