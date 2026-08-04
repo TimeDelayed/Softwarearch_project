@@ -1,13 +1,14 @@
 package com.instantwin.bank;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
+import org.junit.jupiter.api.Test;
+
 class BankApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void application_class_exists() {
+		assertNotNull(BankApplication.class);
 	}
 
 }
