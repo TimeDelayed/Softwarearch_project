@@ -22,9 +22,9 @@ public class SlotConfiguration implements ISlotConfiguration {
     private final int numberOfReels = 3;
 
     public SlotConfiguration() {
-        probabilities.put(SlotSymbols.CHERRY, 0.48f);
+        probabilities.put(SlotSymbols.CHERRY, 0.48325f);
         probabilities.put(SlotSymbols.LEMON, 0.29f);
-        probabilities.put(SlotSymbols.DIAMOND, 0.02f);
+        probabilities.put(SlotSymbols.DIAMOND, 0.01675f);
         probabilities.put(SlotSymbols.BELL, 0.21f);
 
         doubleHitReferenceMap.put(SlotSymbols.CHERRY, SlotBetMultipliers.DOUBLE_CHERRY);

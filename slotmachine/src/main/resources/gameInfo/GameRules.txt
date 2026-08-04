@@ -17,7 +17,7 @@ Lemon x2    -> x1.15
 Lemon x3    -> x2.50
 
 Bell x2     -> x1.70
-Bell x3     -> x5.57
+Bell x3     -> x5.75
 
 Diamond x1  -> x1.50
 Diamond x2  -> x15.80

@@ -11,34 +11,73 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.instantwin.slotmachine.dto.SlotGameRequestBodyDTO;
-import com.instantwin.slotmachine.view.SlotGameResultView;
+import com.instantwin.slotmachine.view.SlotClientStatsView;
 import com.instantwin.slotmachine.view.SlotGameView;
 import com.instantwin.slotmachine.view.SlotHouseStatsView;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+
+@Tag(name = "Slot Machine", description = "Operations for playing slot games and retrieving game information and statistics.")
 @RequestMapping("/instantwin/slots/api")
 public interface ISlotController {
-    
+
+    @Operation(summary = "Get game rules", description = "Returns the rules and payout information of the slot machine as text.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Game rules successfully retrieved"),
+            @ApiResponse(responseCode = "500", description = "Game rules are unavailable")
+    })
     @GetMapping("/info/rules")
     ResponseEntity<String> getGameRules();
 
+    @Operation(summary = "Get slot chances", description = "Returns symbol probabilities, win probabilities and expected return information as text.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Slot chances successfully retrieved"),
+            @ApiResponse(responseCode = "500", description = "Slot chances are unavailable")
+    })
     @GetMapping("/info/chances")
     ResponseEntity<String> getSlotChances();
 
+    @Operation(summary = "Get house statistics", description = "Returns aggregated statistics for all slot games, including turnover, cashout and house profit.")
+    @ApiResponse(responseCode = "200", description = "House statistics successfully retrieved")
     @GetMapping("/stats")
     ResponseEntity<SlotHouseStatsView> getSlotHouseStats();
 
+    @Operation(summary = "Get user slot statistics", description = "Returns aggregated slot statistics for the specified user. Users without recorded games receive statistics containing zero values.")
+    @ApiResponse(responseCode = "200", description = "User slot statistics successfully retrieved")
     @GetMapping("/stats/user/{userId}")
-    ResponseEntity<SlotHouseStatsView> getSlotUserStats(@PathVariable long userId);
+    ResponseEntity<SlotClientStatsView> getSlotUserStats(@PathVariable long userId);
 
+    @Operation(summary = "Get all slot games", description = "Returns all stored slot game results.")
+    @ApiResponse(responseCode = "200", description = "Slot games successfully retrieved")
     @GetMapping("/stats/games")
     ResponseEntity<List<SlotGameView>> getAllGames();
 
+    @Operation(summary = "Get slot game by ID", description = "Returns the stored result of a specific slot game.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Slot game found"),
+            @ApiResponse(responseCode = "404", description = "Slot game not found")
+    })
     @GetMapping("/stat/{gameId}")
-    ResponseEntity<SlotGameView> getGameStats(@PathVariable long id);
+    ResponseEntity<SlotGameView> getGameStats(@PathVariable long gameId);
 
+    @Operation(summary = "Play slot game", description = "Plays a slot game for the specified user, requests the resulting bank transaction and stores the game result.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Slot game successfully played"),
+            @ApiResponse(responseCode = "400", description = "User ID or bet amount is invalid"),
+            @ApiResponse(responseCode = "404", description = "User not found or transaction rejected")
+    })
     @PostMapping("/play")
-    ResponseEntity<SlotGameView> playSlotGame(@RequestBody SlotGameRequestBodyDTO slotGameRequestBodyDTO);
-    
+    ResponseEntity<SlotGameView> playSlotGame(@RequestBody @Valid SlotGameRequestBodyDTO slotGameRequestBodyDTO);
+
+    @Operation(summary = "Delete slot game", description = "Deletes the stored result of a specific slot game.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Slot game successfully deleted"),
+            @ApiResponse(responseCode = "404", description = "Slot game not found")
+    })
     @DeleteMapping("/stat/{gameId}")
-    ResponseEntity<SlotGameView> deleteGameStats(@PathVariable long id);
+    ResponseEntity<SlotGameView> deleteGameStats(@PathVariable long gameId);
 }

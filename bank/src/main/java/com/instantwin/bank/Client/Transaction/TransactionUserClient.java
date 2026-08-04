@@ -3,6 +3,7 @@ package com.instantwin.bank.Client.Transaction;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 
 import com.instantwin.bank.DTO.Transaction.TransactionRequestUser;
@@ -29,7 +30,7 @@ public class TransactionUserClient implements ITransactionUserClient {
                     .toEntity(TransactionRequestUser.class);
 
             return Optional.of(user.getBody());
-        } catch (Exception e) {
+        } catch (HttpClientErrorException.NotFound e) {
             return Optional.empty();
         }
     }
