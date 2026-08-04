@@ -21,7 +21,7 @@ class GameViewTest {
                 7,
                 BetType.STRAIGHT_UP,
                 7,
-                new BigDecimal("350.00")
+                new BigDecimal("360.00")
         );
 
         IGameView view = GameView.of(entity);
@@ -30,13 +30,13 @@ class GameViewTest {
         assertThat(view.getBetAmount()).isEqualByComparingTo(new BigDecimal("10.00"));
         assertThat(view.getBetType()).isEqualTo(BetType.STRAIGHT_UP);
         assertThat(view.getWinningNumber()).isEqualTo(7);
-        assertThat(view.getPayout()).isEqualByComparingTo(new BigDecimal("350.00"));
+        assertThat(view.getPayout()).isEqualByComparingTo(new BigDecimal("360.00"));
     }
 
     @Test
     void of_withZeroPayout_setsPayoutToZero() {
         GameEntity entity = new GameEntity(
-                2L, new BigDecimal("10.00"), 3, BetType.RED, 5, BigDecimal.ZERO
+                2L, new BigDecimal("10.00"), 3, BetType.RED, 2, BigDecimal.ZERO
         );
 
         IGameView view = GameView.of(entity);

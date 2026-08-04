@@ -20,7 +20,7 @@ class GameFactoryTest {
         BigDecimal betAmount = new BigDecimal("10.00");
         int betNumber = 5;
         BetType betType = BetType.STRAIGHT_UP;
-        GameResult result = new GameResult(5, new BigDecimal("350.00"));
+        GameResult result = new GameResult(5, new BigDecimal("360.00"));
 
         GameEntity entity = gameFactory.create(7L, betAmount, betNumber, betType, result);
 

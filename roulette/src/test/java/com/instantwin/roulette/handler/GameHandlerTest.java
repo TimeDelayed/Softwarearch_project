@@ -277,7 +277,7 @@ class GameHandlerTest {
     @Test
     void getStats_countsDistinctClients() {
         GameEntity g1 = new GameEntity(1L, BigDecimal.TEN, 0, BetType.RED, 3, new BigDecimal("20"));
-        GameEntity g2 = new GameEntity(1L, BigDecimal.TEN, 0, BetType.RED, 5, BigDecimal.ZERO);
+        GameEntity g2 = new GameEntity(1L, BigDecimal.TEN, 0, BetType.RED, 2, BigDecimal.ZERO);
         when(gameRepository.findAll()).thenReturn(List.of(g1, g2));
 
         IStatsView stats = gameHandler.getStats();
@@ -317,7 +317,7 @@ class GameHandlerTest {
 
     @Test
     void getUserStats_returnsCorrectClientId() {
-        GameEntity game = new GameEntity(5L, BigDecimal.TEN, 0, BetType.BLACK, 2, BigDecimal.ZERO);
+        GameEntity game = new GameEntity(5L, BigDecimal.TEN, 0, BetType.BLACK, 1, BigDecimal.ZERO);
         when(gameRepository.findByUserId(5L)).thenReturn(List.of(game));
 
         Optional<IUserStatsView> result = gameHandler.getUserStats(5L);
