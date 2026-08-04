@@ -28,5 +28,5 @@ public interface ISlotGameService {
 
     SlotHouseStatsView getHouseStats();
 
-    SlotClientStatsView getUserStats(long userId);
+    Optional<SlotClientStatsView> getUserStats(long userId);
 }

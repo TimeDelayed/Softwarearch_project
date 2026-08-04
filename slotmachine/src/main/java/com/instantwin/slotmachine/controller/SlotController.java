@@ -48,7 +48,7 @@ public class SlotController implements ISlotController {
 
     @Override
     public ResponseEntity<SlotClientStatsView> getSlotUserStats(long userId) {
-        return ResponseEntity.ok(slotGameService.getUserStats(userId));
+        return SlotResponseMapper.optionalToResponseEntity(slotGameService.getUserStats(userId));
     }
 
     @Override

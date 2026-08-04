@@ -47,8 +47,11 @@ public interface ISlotController {
     @GetMapping("/stats")
     ResponseEntity<SlotHouseStatsView> getSlotHouseStats();
 
-    @Operation(summary = "Get user slot statistics", description = "Returns aggregated slot statistics for the specified user. Users without recorded games receive statistics containing zero values.")
-    @ApiResponse(responseCode = "200", description = "User slot statistics successfully retrieved")
+    @Operation(summary = "Get user slot statistics", description = "Returns aggregated slot statistics for the specified user when recorded games exist.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "User slot statistics successfully retrieved"),
+            @ApiResponse(responseCode = "404", description = "No slot statistics found for the user")
+    })
     @GetMapping("/stats/user/{userId}")
     ResponseEntity<SlotClientStatsView> getSlotUserStats(
             @Parameter(description = "ID used to select the user's stored slot games", example = "1") @PathVariable long userId);

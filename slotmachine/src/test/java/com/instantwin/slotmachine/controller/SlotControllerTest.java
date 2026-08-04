@@ -79,17 +79,27 @@ public class SlotControllerTest {
         var userStats = new SlotClientStatsView(
                 USER_ID,
                 2,
-                1,
-                1,
+                BigDecimal.valueOf(15),
+                BigDecimal.TEN,
                 BigDecimal.valueOf(5),
                 BigDecimal.valueOf(20),
                 BigDecimal.valueOf(-5));
-        when(slotGameService.getUserStats(USER_ID)).thenReturn(userStats);
+        when(slotGameService.getUserStats(USER_ID)).thenReturn(Optional.of(userStats));
 
         var result = slotController.getSlotUserStats(USER_ID);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(userStats, result.getBody());
+    }
+
+    @Test
+    void testGetSlotUserStats_returns_not_found_when_user_has_no_slot_games() {
+        when(slotGameService.getUserStats(USER_ID)).thenReturn(Optional.empty());
+
+        var result = slotController.getSlotUserStats(USER_ID);
+
+        assertEquals(HttpStatus.NOT_FOUND, result.getStatusCode());
+        assertNull(result.getBody());
     }
 
     @Test

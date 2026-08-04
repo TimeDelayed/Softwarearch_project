@@ -349,18 +349,12 @@ public class SlotGameServiceTest {
     }
 
     @Test
-    void testGetUserStats_returns_zero_values_when_user_has_no_slot_games() {
+    void testGetUserStats_returns_empty_when_user_has_no_slot_games() {
         when(slotGameRepository.findAllByUserId(USER_ID)).thenReturn(List.of());
 
         var result = slotGameService.getUserStats(USER_ID);
 
-        assertEquals(USER_ID, result.getUserId());
-        assertEquals(0, result.getTotalGamesCount());
-        assertEquals(0, result.getTotalLosses());
-        assertEquals(0, result.getTotalWins());
-        assertEquals(BigDecimal.ZERO, result.getTotalClientProfit());
-        assertEquals(BigDecimal.ZERO, result.getTotalHouseTurnoverFromClient());
-        assertEquals(BigDecimal.ZERO, result.getTotalHouseProfitFromClient());
+        assertTrue(result.isEmpty());
     }
 
     @Test
@@ -383,13 +377,14 @@ public class SlotGameServiceTest {
 
         var result = slotGameService.getUserStats(USER_ID);
 
-        assertEquals(USER_ID, result.getUserId());
-        assertEquals(2, result.getTotalGamesCount());
-        assertEquals(1, result.getTotalLosses());
-        assertEquals(1, result.getTotalWins());
-        assertEquals(BigDecimal.valueOf(5), result.getTotalClientProfit());
-        assertEquals(BigDecimal.valueOf(20), result.getTotalHouseTurnoverFromClient());
-        assertEquals(BigDecimal.valueOf(-5), result.getTotalHouseProfitFromClient());
+        assertTrue(result.isPresent());
+        assertEquals(USER_ID, result.get().getUserId());
+        assertEquals(2, result.get().getTotalGamesCount());
+        assertEquals(PLAYER_PROFIT, result.get().getTotalWinnings());
+        assertEquals(BET_AMOUNT, result.get().getTotalLosses());
+        assertEquals(BigDecimal.valueOf(5), result.get().getTotalClientProfit());
+        assertEquals(BigDecimal.valueOf(20), result.get().getTotalHouseTurnoverFromClient());
+        assertEquals(BigDecimal.valueOf(-5), result.get().getTotalHouseProfitFromClient());
     }
 
     private SlotGameEntity successfulSlotGameRequest() {

@@ -2,7 +2,7 @@ package com.instantwin.slotmachine.view;
 
 import java.math.BigDecimal;
 
-public record SlotClientStatsView(long userId, long totalGamesCount, long totalLosses, long totalWins,
+public record SlotClientStatsView(long userId, long totalGamesCount, BigDecimal totalWinnings, BigDecimal totalLosses,
         BigDecimal totalClientProfit, BigDecimal totalHouseTurnoverFromClient, BigDecimal totalHouseProfitFromClient) {
 
     public long getUserId() {
@@ -13,12 +13,12 @@ public record SlotClientStatsView(long userId, long totalGamesCount, long totalL
         return totalGamesCount;
     }
 
-    public long getTotalLosses() {
-        return totalLosses;
+    public BigDecimal getTotalWinnings() {
+        return totalWinnings;
     }
 
-    public long getTotalWins() {
-        return totalWins;
+    public BigDecimal getTotalLosses() {
+        return totalLosses;
     }
 
     public BigDecimal getTotalClientProfit() {
