@@ -1,4 +1,4 @@
-package com.instantwin.bank.Service.Transaction;
+package com.instantwin.bank.service.Transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,11 +21,12 @@ import org.junit.jupiter.api.Test;
 import com.instantwin.bank.DTO.Transaction.TransactionDTO;
 import com.instantwin.bank.DTO.Transaction.TransactionRequestUser;
 import com.instantwin.bank.DTO.Transaction.TransactionUpdateDTO;
-import com.instantwin.bank.Model.Transaction.TransactionEntity;
-import com.instantwin.bank.Repository.Transaction.ITransactionRepository;
-import com.instantwin.bank.Utilities.Transaction.TransactionInvoicingParty;
 import com.instantwin.bank.contract.Client.Transaction.ITransactionUserClient;
 import com.instantwin.bank.contract.Model.Transaction.ITransactionFactory;
+import com.instantwin.bank.model.Transaction.TransactionEntity;
+import com.instantwin.bank.repository.Transaction.ITransactionRepository;
+import com.instantwin.bank.service.Transaction.TransactionService;
+import com.instantwin.bank.utilities.Transaction.TransactionInvoicingParty;
 
 public class TransactionServiceTest {
 

@@ -17,7 +17,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.instantwin.roulette.Model.GameEntity;
 import com.instantwin.roulette.contract.client.IBankClient;
 import com.instantwin.roulette.contract.game.IRouletteGame;
 import com.instantwin.roulette.contract.view.IGameView;
@@ -27,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import com.instantwin.roulette.game.BetType;
 import com.instantwin.roulette.game.GameResult;
+import com.instantwin.roulette.model.GameEntity;
 import com.instantwin.roulette.repostitory.IGameRepository;
 
 @ExtendWith(MockitoExtension.class)

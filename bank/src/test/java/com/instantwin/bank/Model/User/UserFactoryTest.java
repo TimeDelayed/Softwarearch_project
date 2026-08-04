@@ -1,10 +1,12 @@
-package com.instantwin.bank.Model.User;
+package com.instantwin.bank.model.User;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
-import com.instantwin.bank.Utilities.User.ModelValidityBreachException;
 import com.instantwin.bank.contract.Model.User.IUserFactory;
+import com.instantwin.bank.model.User.UserEntity;
+import com.instantwin.bank.model.User.UserFactory;
+import com.instantwin.bank.utilities.User.ModelValidityBreachException;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;

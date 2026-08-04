@@ -2,7 +2,7 @@ package com.instantwin.bank.DTO.Transaction;
 
 import java.math.BigDecimal;
 
-import com.instantwin.bank.Utilities.Transaction.TransactionInvoicingParty;
+import com.instantwin.bank.utilities.Transaction.TransactionInvoicingParty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

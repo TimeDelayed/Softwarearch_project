@@ -1,4 +1,4 @@
-package com.instantwin.bank.Utilities.Transaction;
+package com.instantwin.bank.utilities.Transaction;
 
 public abstract class TransactionErrorMessages {
     public static final String USER_ID_INPUT_NEGATIVE = "Invalid user Id input: Can't be negative!";

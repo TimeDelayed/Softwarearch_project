@@ -1,4 +1,4 @@
-package com.instantwin.bank.Utilities.Transaction;
+package com.instantwin.bank.utilities.Transaction;
 
 public class UserIdInputFormatInvalidException extends RuntimeException{
     public UserIdInputFormatInvalidException(String msg) {

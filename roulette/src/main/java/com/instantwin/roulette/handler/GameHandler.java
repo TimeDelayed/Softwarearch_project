@@ -8,8 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.instantwin.roulette.Model.GameEntity;
-import com.instantwin.roulette.Model.GameFactory;
 import com.instantwin.roulette.View.GameView;
 import com.instantwin.roulette.View.StatsView;
 import com.instantwin.roulette.View.UserStatsView;
@@ -21,6 +19,8 @@ import com.instantwin.roulette.contract.view.IStatsView;
 import com.instantwin.roulette.contract.view.IUserStatsView;
 import com.instantwin.roulette.game.BetType;
 import com.instantwin.roulette.game.GameResult;
+import com.instantwin.roulette.model.GameEntity;
+import com.instantwin.roulette.model.GameFactory;
 import com.instantwin.roulette.repostitory.IGameRepository;
 
 @Service

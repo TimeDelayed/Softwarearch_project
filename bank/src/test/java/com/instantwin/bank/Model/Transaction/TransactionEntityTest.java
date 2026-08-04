@@ -1,4 +1,4 @@
-package com.instantwin.bank.Model.Transaction;
+package com.instantwin.bank.model.Transaction;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -8,9 +8,10 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.instantwin.bank.Utilities.Transaction.TransactionErrorMessages;
-import com.instantwin.bank.Utilities.Transaction.TransactionInvoicingParty;
-import com.instantwin.bank.Utilities.Transaction.UserIdInputFormatInvalidException;
+import com.instantwin.bank.model.Transaction.TransactionEntity;
+import com.instantwin.bank.utilities.Transaction.TransactionErrorMessages;
+import com.instantwin.bank.utilities.Transaction.TransactionInvoicingParty;
+import com.instantwin.bank.utilities.Transaction.UserIdInputFormatInvalidException;
 
 public class TransactionEntityTest {
 

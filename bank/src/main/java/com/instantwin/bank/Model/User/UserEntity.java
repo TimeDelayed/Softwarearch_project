@@ -1,8 +1,8 @@
-package com.instantwin.bank.Model.User;
+package com.instantwin.bank.model.User;
 
-import com.instantwin.bank.Utilities.User.ModelValidityBreachException;
-import com.instantwin.bank.Utilities.User.UserErrorMessages;
 import com.instantwin.bank.contract.Model.User.IUserEntity;
+import com.instantwin.bank.utilities.User.ModelValidityBreachException;
+import com.instantwin.bank.utilities.User.UserErrorMessages;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

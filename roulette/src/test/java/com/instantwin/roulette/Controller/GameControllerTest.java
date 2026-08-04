@@ -1,4 +1,4 @@
-package com.instantwin.roulette.Controller;
+package com.instantwin.roulette.controller;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -16,14 +16,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import com.instantwin.roulette.Model.GameEntity;
 import com.instantwin.roulette.View.GameView;
 import com.instantwin.roulette.contract.handler.IGameHandler;
 import com.instantwin.roulette.contract.request.PlayRequest;
 import com.instantwin.roulette.contract.view.IGameView;
 import com.instantwin.roulette.contract.view.IStatsView;
 import com.instantwin.roulette.contract.view.IUserStatsView;
+import com.instantwin.roulette.controller.GameController;
 import com.instantwin.roulette.game.BetType;
+import com.instantwin.roulette.model.GameEntity;
 
 @ExtendWith(MockitoExtension.class)
 class GameControllerTest {

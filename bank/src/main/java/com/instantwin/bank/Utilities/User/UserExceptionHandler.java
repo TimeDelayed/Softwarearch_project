@@ -1,4 +1,4 @@
-package com.instantwin.bank.Utilities.User;
+package com.instantwin.bank.utilities.User;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;

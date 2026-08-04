@@ -1,8 +1,8 @@
-package com.instantwin.bank.View.Transaction;
+package com.instantwin.bank.view.Transaction;
 
 import java.math.BigDecimal;
 
-import com.instantwin.bank.Model.Transaction.TransactionEntity;
+import com.instantwin.bank.model.Transaction.TransactionEntity;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

@@ -1,4 +1,4 @@
-package com.instantwin.bank.Client;
+package com.instantwin.bank.client;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

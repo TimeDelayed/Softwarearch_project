@@ -1,4 +1,4 @@
-package com.instantwin.bank.Controller.Transaction;
+package com.instantwin.bank.controller.Transaction;
 
 import java.util.List;
 
@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.instantwin.bank.DTO.Transaction.TransactionDTO;
 import com.instantwin.bank.DTO.Transaction.TransactionUpdateDTO;
-import com.instantwin.bank.View.Transaction.TransactionDeleteView;
-import com.instantwin.bank.View.Transaction.TransactionSpecificUserView;
-import com.instantwin.bank.View.Transaction.TransactionView;
 import com.instantwin.bank.contract.Controller.Transaction.ITransactionController;
 import com.instantwin.bank.contract.Service.Transaction.ITransactionService;
+import com.instantwin.bank.view.Transaction.TransactionDeleteView;
+import com.instantwin.bank.view.Transaction.TransactionSpecificUserView;
+import com.instantwin.bank.view.Transaction.TransactionView;
 
 import jakarta.validation.Valid;
 
@@ -52,7 +52,7 @@ public class TransactionController implements ITransactionController {
 
     @Override
     public ResponseEntity<TransactionView> updateTransaction(long transactionId,
-            @Valid TransactionUpdateDTO transactionRequest) {
+            TransactionUpdateDTO transactionRequest) {
         var result = transactionHandler.updateTransaction(transactionId, transactionRequest);
         if (result.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -68,5 +68,5 @@ public class TransactionController implements ITransactionController {
         }
         return ResponseEntity.ok(result.get());
     }
-    
+
 }

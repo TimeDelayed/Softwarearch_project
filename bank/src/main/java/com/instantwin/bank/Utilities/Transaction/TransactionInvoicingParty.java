@@ -1,4 +1,4 @@
-package com.instantwin.bank.Utilities.Transaction;
+package com.instantwin.bank.utilities.Transaction;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

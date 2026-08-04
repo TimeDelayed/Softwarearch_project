@@ -1,4 +1,4 @@
-package com.instantwin.bank.Service.User;
+package com.instantwin.bank.service.User;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -9,17 +9,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import com.instantwin.bank.DTO.User.UserDTO;
-import com.instantwin.bank.Model.User.UserEntity;
-import com.instantwin.bank.Repository.User.IUserRepository;
-import com.instantwin.bank.Utilities.User.UserBalanceCalculator;
-import com.instantwin.bank.View.User.UserDeleteView;
-import com.instantwin.bank.View.User.UserExistsView;
-import com.instantwin.bank.View.User.UserView;
 import com.instantwin.bank.contract.Client.User.IUserTransactionClient;
 import com.instantwin.bank.contract.Model.User.IUserFactory;
 import com.instantwin.bank.contract.Service.User.IUserService;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
+import com.instantwin.bank.model.User.UserEntity;
+import com.instantwin.bank.repository.User.IUserRepository;
+import com.instantwin.bank.utilities.User.UserBalanceCalculator;
+import com.instantwin.bank.view.User.UserDeleteView;
+import com.instantwin.bank.view.User.UserExistsView;
+import com.instantwin.bank.view.User.UserView;
 
 @Service
 public class UserService implements IUserService {

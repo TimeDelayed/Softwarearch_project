@@ -1,4 +1,4 @@
-package com.instantwin.bank.Model.User;
+package com.instantwin.bank.model.User;
 
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.Random;
@@ -9,7 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.TestInstance;
-import com.instantwin.bank.Utilities.User.ModelValidityBreachException;
+
+import com.instantwin.bank.model.User.UserEntity;
+import com.instantwin.bank.utilities.User.ModelValidityBreachException;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserEntityTest {

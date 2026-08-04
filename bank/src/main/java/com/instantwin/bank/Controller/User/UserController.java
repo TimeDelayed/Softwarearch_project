@@ -1,4 +1,4 @@
-package com.instantwin.bank.Controller.User;
+package com.instantwin.bank.controller.User;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -9,14 +9,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.instantwin.bank.DTO.User.UserDTO;
-import com.instantwin.bank.Utilities.User.DecimalPlaceInvalidException;
-import com.instantwin.bank.Utilities.User.UserResponseMapper;
-import com.instantwin.bank.View.User.UserExistsView;
-import com.instantwin.bank.Utilities.User.UserErrorMessages;
 import com.instantwin.bank.contract.Controller.User.IUserController;
 import com.instantwin.bank.contract.Service.User.IUserService;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
+import com.instantwin.bank.utilities.User.DecimalPlaceInvalidException;
+import com.instantwin.bank.utilities.User.UserErrorMessages;
+import com.instantwin.bank.utilities.User.UserResponseMapper;
+import com.instantwin.bank.view.User.UserExistsView;
 
 @Validated
 @RestController

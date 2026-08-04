@@ -1,4 +1,4 @@
-package com.instantwin.bank.View.User;
+package com.instantwin.bank.view.User;
 import java.math.BigDecimal;
 import com.instantwin.bank.contract.Model.User.IUserEntity;
 import jakarta.validation.constraints.NotNull;

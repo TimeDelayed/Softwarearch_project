@@ -1,4 +1,4 @@
-package com.instantwin.bank.Client.User;
+package com.instantwin.bank.client.User;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -13,8 +13,8 @@ import org.springframework.web.client.RestClient;
 
 import com.instantwin.bank.DTO.User.UserRequestTransaction;
 import com.instantwin.bank.DTO.User.UserTransactionDTO;
-import com.instantwin.bank.Utilities.User.UserInvoicingParty;
 import com.instantwin.bank.contract.Client.User.IUserTransactionClient;
+import com.instantwin.bank.utilities.User.UserInvoicingParty;
 
 @Component
 public class UserTransactionClient implements IUserTransactionClient {

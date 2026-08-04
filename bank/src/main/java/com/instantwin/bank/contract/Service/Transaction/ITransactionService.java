@@ -6,9 +6,9 @@ import java.util.Optional;
 import com.instantwin.bank.DTO.Transaction.TransactionDTO;
 import com.instantwin.bank.DTO.Transaction.TransactionRequestUser;
 import com.instantwin.bank.DTO.Transaction.TransactionUpdateDTO;
-import com.instantwin.bank.View.Transaction.TransactionDeleteView;
-import com.instantwin.bank.View.Transaction.TransactionSpecificUserView;
-import com.instantwin.bank.View.Transaction.TransactionView;
+import com.instantwin.bank.view.Transaction.TransactionDeleteView;
+import com.instantwin.bank.view.Transaction.TransactionSpecificUserView;
+import com.instantwin.bank.view.Transaction.TransactionView;
 
 public interface ITransactionService {
     List<TransactionView> findAllTransactions();

@@ -1,4 +1,4 @@
-package com.instantwin.bank.Utilities.User;
+package com.instantwin.bank.utilities.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 
 import com.instantwin.bank.DTO.User.UserTransactionDTO;
+import com.instantwin.bank.utilities.User.UserBalanceCalculator;
 
 public class UserBalanceCalculatorTest {
 

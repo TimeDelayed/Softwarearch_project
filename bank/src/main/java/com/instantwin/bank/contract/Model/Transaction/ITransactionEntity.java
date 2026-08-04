@@ -2,7 +2,7 @@ package com.instantwin.bank.contract.Model.Transaction;
 
 import java.math.BigDecimal;
 
-import com.instantwin.bank.Utilities.Transaction.TransactionInvoicingParty;
+import com.instantwin.bank.utilities.Transaction.TransactionInvoicingParty;
 
 public interface ITransactionEntity {
     

@@ -1,4 +1,4 @@
-package com.instantwin.bank.Client.Transaction;
+package com.instantwin.bank.client.Transaction;
 
 import java.util.Optional;
 

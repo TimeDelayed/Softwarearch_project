@@ -1,9 +1,11 @@
-package com.instantwin.roulette.Model;
+package com.instantwin.roulette.model;
 
 import org.junit.jupiter.api.Test;
 
 import com.instantwin.roulette.game.BetType;
 import com.instantwin.roulette.game.GameResult;
+import com.instantwin.roulette.model.GameEntity;
+import com.instantwin.roulette.model.GameFactory;
 
 import java.math.BigDecimal;
 

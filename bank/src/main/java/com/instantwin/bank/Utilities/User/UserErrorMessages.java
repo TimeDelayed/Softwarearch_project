@@ -1,4 +1,4 @@
-package com.instantwin.bank.Utilities.User;
+package com.instantwin.bank.utilities.User;
 
 public abstract class UserErrorMessages {
     public static final String USER_NAME_IS_INVALID = "Invalid or empty name!";

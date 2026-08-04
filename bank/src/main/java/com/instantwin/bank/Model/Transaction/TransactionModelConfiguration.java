@@ -1,4 +1,4 @@
-package com.instantwin.bank.Model.Transaction;
+package com.instantwin.bank.model.Transaction;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.instantwin.bank.Service.User;
+package com.instantwin.bank.service.User;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,10 +21,11 @@ import org.springframework.http.ResponseEntity;
 
 import com.instantwin.bank.DTO.User.UserDTO;
 import com.instantwin.bank.DTO.User.UserTransactionDTO;
-import com.instantwin.bank.Model.User.UserEntity;
-import com.instantwin.bank.Repository.User.IUserRepository;
 import com.instantwin.bank.contract.Client.User.IUserTransactionClient;
 import com.instantwin.bank.contract.Model.User.IUserFactory;
+import com.instantwin.bank.model.User.UserEntity;
+import com.instantwin.bank.repository.User.IUserRepository;
+import com.instantwin.bank.service.User.UserService;
 
 public class UserServiceTest {
 

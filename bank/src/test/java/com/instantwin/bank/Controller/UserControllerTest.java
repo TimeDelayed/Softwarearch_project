@@ -1,4 +1,4 @@
-package com.instantwin.bank.Controller;
+package com.instantwin.bank.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,13 +15,13 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.instantwin.bank.Controller.User.UserController;
 import com.instantwin.bank.DTO.User.UserDTO;
-import com.instantwin.bank.Model.User.UserEntity;
-import com.instantwin.bank.Utilities.User.DecimalPlaceInvalidException;
-import com.instantwin.bank.View.User.UserView;
 import com.instantwin.bank.contract.Service.User.IUserService;
 import com.instantwin.bank.contract.View.User.IUserView;
+import com.instantwin.bank.controller.User.UserController;
+import com.instantwin.bank.model.User.UserEntity;
+import com.instantwin.bank.utilities.User.DecimalPlaceInvalidException;
+import com.instantwin.bank.view.User.UserView;
 
 public class UserControllerTest {
 

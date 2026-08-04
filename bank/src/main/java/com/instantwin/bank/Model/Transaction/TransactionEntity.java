@@ -1,11 +1,11 @@
-package com.instantwin.bank.Model.Transaction;
+package com.instantwin.bank.model.Transaction;
 
 import java.math.BigDecimal;
 
-import com.instantwin.bank.Utilities.Transaction.TransactionErrorMessages;
-import com.instantwin.bank.Utilities.Transaction.TransactionInvoicingParty;
-import com.instantwin.bank.Utilities.Transaction.UserIdInputFormatInvalidException;
 import com.instantwin.bank.contract.Model.Transaction.ITransactionEntity;
+import com.instantwin.bank.utilities.Transaction.TransactionErrorMessages;
+import com.instantwin.bank.utilities.Transaction.TransactionInvoicingParty;
+import com.instantwin.bank.utilities.Transaction.UserIdInputFormatInvalidException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

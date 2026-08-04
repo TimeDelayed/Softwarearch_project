@@ -1,9 +1,9 @@
-package com.instantwin.bank.Model.Transaction;
+package com.instantwin.bank.model.Transaction;
 
 import java.math.BigDecimal;
 
-import com.instantwin.bank.Utilities.Transaction.TransactionInvoicingParty;
 import com.instantwin.bank.contract.Model.Transaction.ITransactionFactory;
+import com.instantwin.bank.utilities.Transaction.TransactionInvoicingParty;
 
 public class TransactionFactory implements ITransactionFactory {
 

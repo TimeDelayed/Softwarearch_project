@@ -1,4 +1,4 @@
-package com.instantwin.roulette.Controller;
+package com.instantwin.roulette.controller;
 
 import java.util.List;
 

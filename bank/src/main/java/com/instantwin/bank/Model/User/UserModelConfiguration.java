@@ -1,4 +1,4 @@
-package com.instantwin.bank.Model.User;
+package com.instantwin.bank.model.User;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

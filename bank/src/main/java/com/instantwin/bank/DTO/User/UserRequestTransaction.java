@@ -2,7 +2,7 @@ package com.instantwin.bank.DTO.User;
 
 import java.math.BigDecimal;
 
-import com.instantwin.bank.Utilities.User.UserInvoicingParty;
+import com.instantwin.bank.utilities.User.UserInvoicingParty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

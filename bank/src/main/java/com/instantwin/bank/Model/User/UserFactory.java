@@ -1,4 +1,4 @@
-package com.instantwin.bank.Model.User;
+package com.instantwin.bank.model.User;
 
 import com.instantwin.bank.contract.Model.User.IUserFactory;
 

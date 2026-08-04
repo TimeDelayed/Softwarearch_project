@@ -7,9 +7,9 @@ import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 
 import com.instantwin.bank.DTO.User.UserDTO;
-import com.instantwin.bank.View.User.UserExistsView;
 import com.instantwin.bank.contract.View.User.IUserDeleteView;
 import com.instantwin.bank.contract.View.User.IUserView;
+import com.instantwin.bank.view.User.UserExistsView;
 
 public interface IUserService {
 

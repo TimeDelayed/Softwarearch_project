@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.instantwin.bank.DTO.Transaction.TransactionDTO;
 import com.instantwin.bank.DTO.Transaction.TransactionUpdateDTO;
-import com.instantwin.bank.View.Transaction.TransactionDeleteView;
-import com.instantwin.bank.View.Transaction.TransactionSpecificUserView;
-import com.instantwin.bank.View.Transaction.TransactionView;
+import com.instantwin.bank.view.Transaction.TransactionDeleteView;
+import com.instantwin.bank.view.Transaction.TransactionSpecificUserView;
+import com.instantwin.bank.view.Transaction.TransactionView;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

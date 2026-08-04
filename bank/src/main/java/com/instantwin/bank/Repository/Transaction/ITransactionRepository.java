@@ -1,11 +1,11 @@
-package com.instantwin.bank.Repository.Transaction;
+package com.instantwin.bank.repository.Transaction;
 
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.instantwin.bank.Model.Transaction.TransactionEntity;
+import com.instantwin.bank.model.Transaction.TransactionEntity;
 
 @Repository
 public interface ITransactionRepository extends JpaRepository<TransactionEntity, Long> {

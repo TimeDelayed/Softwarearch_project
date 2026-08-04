@@ -1,10 +1,11 @@
-package com.instantwin.roulette.View;
+package com.instantwin.roulette.view;
 
 import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.jupiter.api.Test;
 
+import com.instantwin.roulette.View.UserStatsView;
 import com.instantwin.roulette.contract.view.IUserStatsView;
 
 class UserStatsViewTest {

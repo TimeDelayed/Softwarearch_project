@@ -1,4 +1,4 @@
-package com.instantwin.roulette.Model;
+package com.instantwin.roulette.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

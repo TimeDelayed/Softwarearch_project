@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.instantwin.roulette.Model.GameEntity;
 import com.instantwin.roulette.contract.view.IGameView;
 import com.instantwin.roulette.game.BetType;
+import com.instantwin.roulette.model.GameEntity;
 
 public class GameView implements IGameView {
 
