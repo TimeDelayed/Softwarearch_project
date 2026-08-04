@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
@@ -32,10 +33,9 @@ public class BankClient implements IBankClient {
                     .body(new BankTransactionRequest(netAmount, "ROULETTE"))
                     .retrieve()
                     .toEntity(String.class);
-        } catch (RestClientResponseException e) {
-            return ResponseEntity.status(e.getStatusCode()).build();
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+        }
+        catch (HttpClientErrorException.NotFound e) {
+            return ResponseEntity.notFound().build();
         }
     }
 }
