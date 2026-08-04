@@ -45,7 +45,7 @@ public interface ITransactionController {
 
         @Operation(summary = "Create transaction", description = "Creates a new transaction for a specific user.")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Transaction created"),
+                        @ApiResponse(responseCode = "201", description = "Transaction created"),
                         @ApiResponse(responseCode = "400", description = "Amount or invoicing party is invalid"),
                         @ApiResponse(responseCode = "404", description = "User not found"),
                         @ApiResponse(responseCode = "500", description = "User existence could not be verified")

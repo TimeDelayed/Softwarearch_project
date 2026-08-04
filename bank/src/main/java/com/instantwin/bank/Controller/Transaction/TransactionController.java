@@ -2,6 +2,7 @@ package com.instantwin.bank.controller.Transaction;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,7 +48,7 @@ public class TransactionController implements ITransactionController {
         if (result.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(result.get());
+        return ResponseEntity.status(HttpStatus.CREATED).body(result.get());
     }
 
     @Override
