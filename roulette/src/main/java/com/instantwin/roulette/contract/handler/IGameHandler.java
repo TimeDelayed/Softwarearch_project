@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
+
 import com.instantwin.roulette.contract.view.IGameView;
 import com.instantwin.roulette.contract.view.IStatsView;
 import com.instantwin.roulette.contract.view.IUserStatsView;
@@ -13,7 +15,7 @@ public interface IGameHandler {
     List<IGameView> findAllGames();
     Optional<IGameView> findGameById(long id);
     Optional<IGameView> deleteGame(long id);
-    Optional<IGameView> play(long userId, BigDecimal betAmount, int betNumber, BetType betType);
+    ResponseEntity<IGameView> play(long userId, BigDecimal betAmount, int betNumber, BetType betType);
     IStatsView getStats();
     Optional<IUserStatsView> getUserStats(long userId);
     String getRules();

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -96,19 +97,18 @@ public class GameHandler implements IGameHandler {
 
     @Override
     @Transactional
-    public Optional<IGameView> play(long userId, BigDecimal betAmount, int betNumber, BetType betType) {
-        if (!bankClient.userExists(userId)) {
-            return Optional.empty();
-        }
-
+    public ResponseEntity<IGameView> play(long userId, BigDecimal betAmount, int betNumber, BetType betType) {
         GameResult result = rouletteGame.play(betAmount, betNumber, betType);
 
-        if (result.payout().compareTo(BigDecimal.ZERO) > 0) {
-            bankClient.createTransaction(userId, result.payout());
+        BigDecimal netAmount = result.payout().subtract(betAmount);
+        ResponseEntity<String> transaction = bankClient.requestTransaction(userId, netAmount);
+
+        if (!transaction.getStatusCode().is2xxSuccessful()) {
+            return ResponseEntity.status(transaction.getStatusCode()).build();
         }
 
         GameEntity entity = GameFactory.create(userId, betAmount, betNumber, betType, result);
-        return Optional.of(GameView.of(gameRepository.save(entity)));
+        return ResponseEntity.ok(GameView.of(gameRepository.save(entity)));
     }
 
     @Override

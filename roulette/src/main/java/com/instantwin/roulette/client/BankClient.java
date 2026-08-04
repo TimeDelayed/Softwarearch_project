@@ -1,14 +1,14 @@
 package com.instantwin.roulette.client;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientResponseException;
 
 import com.instantwin.roulette.client.dto.BankTransactionRequest;
-import com.instantwin.roulette.client.dto.BankTransactionResponse;
 import com.instantwin.roulette.contract.client.IBankClient;
 
 @Component
@@ -25,29 +25,17 @@ public class BankClient implements IBankClient {
     }
 
     @Override
-    public boolean userExists(long userId) {
+    public ResponseEntity<String> requestTransaction(long userId, BigDecimal netAmount) {
         try {
-            restClient.get()
-                    .uri("/user/{id}/exists", userId)
-                    .retrieve()
-                    .toBodilessEntity();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    @Override
-    public Optional<BankTransactionResponse> createTransaction(long userId, BigDecimal amount) {
-        try {
-            var response = restClient.post()
+            return restClient.post()
                     .uri("/transaction/user/{userId}", userId)
-                    .body(new BankTransactionRequest(amount, "ROULETTE"))
+                    .body(new BankTransactionRequest(netAmount, "ROULETTE"))
                     .retrieve()
-                    .toEntity(BankTransactionResponse.class);
-            return Optional.ofNullable(response.getBody());
+                    .toEntity(String.class);
+        } catch (RestClientResponseException e) {
+            return ResponseEntity.status(e.getStatusCode()).build();
         } catch (Exception e) {
-            return Optional.empty();
+            return ResponseEntity.internalServerError().build();
         }
     }
 }
