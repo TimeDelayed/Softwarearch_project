@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.SplittableRandom;
 
@@ -20,7 +21,7 @@ public class SlotSpinnerTest {
     @Test
     void testSpin_returns_three_cherries_when_cherry_probability_is_one() {
         SlotSpinner spinner = new SlotSpinner(
-                mockConfiguration(Map.of(SlotSymbols.CHERRY, 1.0f)),
+                mockConfiguration(validProbabilitiesFor(SlotSymbols.CHERRY)),
                 new SplittableRandom(42));
 
         ThreeReelSpinDTO result = spinner.spin();
@@ -33,7 +34,7 @@ public class SlotSpinnerTest {
     @Test
     void testSpin_returns_three_lemons_when_lemon_probability_is_one() {
         SlotSpinner spinner = new SlotSpinner(
-                mockConfiguration(Map.of(SlotSymbols.LEMON, 1.0f)),
+                mockConfiguration(validProbabilitiesFor(SlotSymbols.LEMON)),
                 new SplittableRandom(42));
 
         ThreeReelSpinDTO result = spinner.spin();
@@ -46,7 +47,7 @@ public class SlotSpinnerTest {
     @Test
     void testSpin_returns_three_diamonds_when_diamond_probability_is_one() {
         SlotSpinner spinner = new SlotSpinner(
-                mockConfiguration(Map.of(SlotSymbols.DIAMOND, 1.0f)),
+                mockConfiguration(validProbabilitiesFor(SlotSymbols.DIAMOND)),
                 new SplittableRandom(42));
 
         ThreeReelSpinDTO result = spinner.spin();
@@ -59,7 +60,7 @@ public class SlotSpinnerTest {
     @Test
     void testSpin_returns_three_bells_when_bell_probability_is_one() {
         SlotSpinner spinner = new SlotSpinner(
-                mockConfiguration(Map.of(SlotSymbols.BELL, 1.0f)),
+                mockConfiguration(validProbabilitiesFor(SlotSymbols.BELL)),
                 new SplittableRandom(42));
 
         ThreeReelSpinDTO result = spinner.spin();
@@ -70,17 +71,76 @@ public class SlotSpinnerTest {
     }
 
     @Test
-    void testSpin_throws_invalid_slot_probabilities_when_total_probability_is_too_low() {
-        SlotSpinner spinner = new SlotSpinner(
-                mockConfiguration(Map.of(SlotSymbols.CHERRY, 0.0f)),
-                new SplittableRandom(42));
+    void testConstructor_throws_invalid_slot_probabilities_when_symbol_is_missing() {
+        assertThrows(
+                InvalidSlotProbabilities.class,
+                () -> new SlotSpinner(
+                        mockConfiguration(Map.of(SlotSymbols.CHERRY, 1.0f)),
+                        new SplittableRandom(42)));
+    }
 
-        assertThrows(InvalidSlotProbabilities.class, spinner::spin);
+    @Test
+    void testConstructor_throws_invalid_slot_probabilities_when_probability_is_negative() {
+        var probabilities = validProbabilitiesFor(SlotSymbols.CHERRY);
+        probabilities.put(SlotSymbols.LEMON, -0.1f);
+
+        assertThrows(
+                InvalidSlotProbabilities.class,
+                () -> new SlotSpinner(
+                        mockConfiguration(probabilities),
+                        new SplittableRandom(42)));
+    }
+
+    @Test
+    void testConstructor_throws_invalid_slot_probabilities_when_probability_is_greater_than_one() {
+        var probabilities = validProbabilitiesFor(SlotSymbols.CHERRY);
+        probabilities.put(SlotSymbols.CHERRY, 1.1f);
+
+        assertThrows(
+                InvalidSlotProbabilities.class,
+                () -> new SlotSpinner(
+                        mockConfiguration(probabilities),
+                        new SplittableRandom(42)));
+    }
+
+    @Test
+    void testConstructor_throws_invalid_slot_probabilities_when_total_probability_is_too_low() {
+        var probabilities = validProbabilitiesFor(SlotSymbols.CHERRY);
+        probabilities.put(SlotSymbols.CHERRY, 0.9f);
+
+        assertThrows(
+                InvalidSlotProbabilities.class,
+                () -> new SlotSpinner(
+                        mockConfiguration(probabilities),
+                        new SplittableRandom(42)));
+    }
+
+    @Test
+    void testConstructor_throws_invalid_slot_probabilities_when_total_probability_is_too_high() {
+        var probabilities = validProbabilitiesFor(SlotSymbols.CHERRY);
+        probabilities.put(SlotSymbols.LEMON, 0.1f);
+
+        assertThrows(
+                InvalidSlotProbabilities.class,
+                () -> new SlotSpinner(
+                        mockConfiguration(probabilities),
+                        new SplittableRandom(42)));
     }
 
     private ISlotConfiguration mockConfiguration(Map<SlotSymbols, Float> probabilities) {
         ISlotConfiguration config = mock(ISlotConfiguration.class);
         when(config.getProbabilities()).thenReturn(probabilities);
         return config;
+    }
+
+    private EnumMap<SlotSymbols, Float> validProbabilitiesFor(SlotSymbols selectedSymbol) {
+        var probabilities = new EnumMap<SlotSymbols, Float>(SlotSymbols.class);
+
+        for (var symbol : SlotSymbols.values()) {
+            probabilities.put(symbol, 0.0f);
+        }
+
+        probabilities.put(selectedSymbol, 1.0f);
+        return probabilities;
     }
 }

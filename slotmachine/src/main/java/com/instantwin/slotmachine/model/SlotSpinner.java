@@ -15,8 +15,12 @@ import com.instantwin.slotmachine.utilities.SlotSymbols;
 @Component
 public class SlotSpinner implements ISlotSpinner {
 
+    private static final float TOTAL_PROBABILITY = 1.0f;
+    private static final float PROBABILITY_TOLERANCE = 0.0001f;
+
     private final ISlotConfiguration slotConfiguration;
     private final SplittableRandom rng;
+    private final double configuredTotalProbability;
     
     @Autowired
     public SlotSpinner(ISlotConfiguration slotConfiguration) {
@@ -26,6 +30,7 @@ public class SlotSpinner implements ISlotSpinner {
     public SlotSpinner(ISlotConfiguration slotConfiguration, SplittableRandom rng) {
         this.slotConfiguration = slotConfiguration;
         this.rng = rng;
+        this.configuredTotalProbability = validateProbabilities();
     }
 
     @Override
@@ -37,16 +42,45 @@ public class SlotSpinner implements ISlotSpinner {
     }
 
     private SlotSymbols getSymbolForSpin(float spin) {
-        float cumulativeProbability = 0.0f;
+        double cumulativeProbability = 0.0;
+        double normalizedSpin = spin * configuredTotalProbability;
 
         for (var entry : slotConfiguration.getProbabilities().entrySet()) {
             cumulativeProbability += entry.getValue();
 
-            if (spin <= cumulativeProbability) {
+            if (normalizedSpin < cumulativeProbability) {
                 return entry.getKey();
             }
         }
 
         throw new InvalidSlotProbabilities(SlotErrorMessages.INVALID_SLOT_PROBABILITIES);
+    }
+
+    private double validateProbabilities() {
+        var probabilities = slotConfiguration.getProbabilities();
+        double totalProbability = 0.0;
+
+        if (probabilities == null || probabilities.size() != SlotSymbols.values().length) {
+            throw new InvalidSlotProbabilities(SlotErrorMessages.INVALID_SLOT_PROBABILITIES);
+        }
+
+        for (var symbol : SlotSymbols.values()) {
+            var probability = probabilities.get(symbol);
+
+            if (probability == null
+                    || !Float.isFinite(probability)
+                    || probability < 0.0f
+                    || probability > 1.0f) {
+                throw new InvalidSlotProbabilities(SlotErrorMessages.INVALID_SLOT_PROBABILITIES);
+            }
+
+            totalProbability += probability;
+        }
+
+        if (Math.abs(totalProbability - TOTAL_PROBABILITY) > PROBABILITY_TOLERANCE) {
+            throw new InvalidSlotProbabilities(SlotErrorMessages.INVALID_SLOT_PROBABILITIES);
+        }
+
+        return totalProbability;
     }
 }
