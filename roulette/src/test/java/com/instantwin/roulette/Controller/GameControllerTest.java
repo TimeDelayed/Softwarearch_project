@@ -22,7 +22,7 @@ import com.instantwin.roulette.contract.request.PlayRequest;
 import com.instantwin.roulette.contract.view.IGameView;
 import com.instantwin.roulette.contract.view.IStatsView;
 import com.instantwin.roulette.contract.view.IUserStatsView;
-import com.instantwin.roulette.controller.GameController;
+
 import com.instantwin.roulette.game.BetType;
 import com.instantwin.roulette.model.GameEntity;
 
@@ -52,8 +52,7 @@ class GameControllerTest {
     @Test
     void findAllGames_returns200_withAllGamesInBody() {
         IGameView view = GameView.of(
-                new GameEntity(1L, new BigDecimal("10.00"), 5, BetType.RED, 3, new BigDecimal("20.00"))
-        );
+                new GameEntity(1L, new BigDecimal("10.00"), 5, BetType.RED, 3, new BigDecimal("20.00")));
         when(gameHandler.findAllGames()).thenReturn(List.of(view));
 
         ResponseEntity<List<IGameView>> response = gameController.findAllGames();
@@ -80,8 +79,7 @@ class GameControllerTest {
     void play_returns200_withResultInBody() {
         PlayRequest request = new PlayRequest(1L, new BigDecimal("10.00"), 5, BetType.STRAIGHT_UP);
         IGameView view = GameView.of(
-                new GameEntity(1L, new BigDecimal("10.00"), 5, BetType.STRAIGHT_UP, 5, new BigDecimal("350.00"))
-        );
+                new GameEntity(1L, new BigDecimal("10.00"), 5, BetType.STRAIGHT_UP, 5, new BigDecimal("360.00")));
         when(gameHandler.play(request.userId(), request.betAmount(), request.betNumber(), request.betType()))
                 .thenReturn(ResponseEntity.ok(view));
 
@@ -89,7 +87,7 @@ class GameControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().getPayout()).isEqualByComparingTo(new BigDecimal("350.00"));
+        assertThat(response.getBody().getPayout()).isEqualByComparingTo(new BigDecimal("360.00"));
     }
 
     @Test
@@ -118,8 +116,7 @@ class GameControllerTest {
     void play_delegatesToHandlerWithCorrectArguments() {
         PlayRequest request = new PlayRequest(2L, new BigDecimal("20.00"), 3, BetType.EVEN);
         IGameView view = GameView.of(
-                new GameEntity(2L, new BigDecimal("20.00"), 3, BetType.EVEN, 6, new BigDecimal("40.00"))
-        );
+                new GameEntity(2L, new BigDecimal("20.00"), 3, BetType.EVEN, 6, new BigDecimal("40.00")));
         when(gameHandler.play(request.userId(), request.betAmount(), request.betNumber(), request.betType()))
                 .thenReturn(ResponseEntity.ok(view));
 
@@ -135,8 +132,7 @@ class GameControllerTest {
     @Test
     void findGameById_returns200_withGameInBody() {
         IGameView view = GameView.of(
-                new GameEntity(1L, new BigDecimal("10.00"), 7, BetType.STRAIGHT_UP, 7, new BigDecimal("350.00"))
-        );
+                new GameEntity(1L, new BigDecimal("10.00"), 7, BetType.STRAIGHT_UP, 7, new BigDecimal("360.00")));
         when(gameHandler.findGameById(1L)).thenReturn(Optional.of(view));
 
         ResponseEntity<IGameView> response = gameController.findGameById(1L);
@@ -171,8 +167,7 @@ class GameControllerTest {
     @Test
     void deleteGame_returns200_withDeletedGameInBody() {
         IGameView view = GameView.of(
-                new GameEntity(1L, new BigDecimal("10.00"), 3, BetType.RED, 1, new BigDecimal("20.00"))
-        );
+                new GameEntity(1L, new BigDecimal("10.00"), 3, BetType.RED, 1, new BigDecimal("20.00")));
         when(gameHandler.deleteGame(1L)).thenReturn(Optional.of(view));
 
         ResponseEntity<IGameView> response = gameController.deleteGame(1L);

@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 
+import com.instantwin.roulette.utilities.InvalidBetException;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -20,7 +23,7 @@ class RouletteGameTest {
         GameResult result = game.play(new BigDecimal("10"), 17, BetType.STRAIGHT_UP);
 
         assertThat(result.winningNumber()).isEqualTo(17);
-        assertThat(result.payout()).isEqualByComparingTo(new BigDecimal("350"));
+        assertThat(result.payout()).isEqualByComparingTo(new BigDecimal("360"));
     }
 
     @Test
@@ -66,5 +69,41 @@ class RouletteGameTest {
                     .as("Auszahlung darf nie negativ sein")
                     .isGreaterThanOrEqualTo(BigDecimal.ZERO);
         }
+    }
+
+    @Test
+    void play_throws_exception_when_bet_amount_is_null() {
+        RouletteGame game = new RouletteGame();
+
+        assertThatThrownBy(() -> game.play(null, 17, BetType.STRAIGHT_UP))
+                .isInstanceOf(InvalidBetException.class);
+    }
+
+    @Test
+    void play_throws_exception_when_bet_amount_is_not_positive() {
+        RouletteGame game = new RouletteGame();
+
+        assertThatThrownBy(() -> game.play(BigDecimal.ZERO, 17, BetType.STRAIGHT_UP))
+                .isInstanceOf(InvalidBetException.class);
+        assertThatThrownBy(() -> game.play(new BigDecimal("-10"), 17, BetType.STRAIGHT_UP))
+                .isInstanceOf(InvalidBetException.class);
+    }
+
+    @Test
+    void play_throws_exception_when_bet_type_is_null() {
+        RouletteGame game = new RouletteGame();
+
+        assertThatThrownBy(() -> game.play(BigDecimal.TEN, 17, null))
+                .isInstanceOf(InvalidBetException.class);
+    }
+
+    @Test
+    void play_throws_exception_when_bet_number_is_invalid_for_bet_type() {
+        RouletteGame game = new RouletteGame();
+
+        assertThatThrownBy(() -> game.play(BigDecimal.TEN, 37, BetType.STRAIGHT_UP))
+                .isInstanceOf(InvalidBetException.class);
+        assertThatThrownBy(() -> game.play(BigDecimal.TEN, 13, BetType.STREET))
+                .isInstanceOf(InvalidBetException.class);
     }
 }

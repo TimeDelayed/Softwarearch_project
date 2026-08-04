@@ -20,6 +20,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @Tag(name = "Roulette", description = "Play roulette rounds and retrieve game statistics.")
 @RequestMapping("/instantwin/roulette/api")
@@ -28,13 +29,14 @@ public interface IGameController {
     @Operation(summary = "Play a round", description = "Spins the wheel and settles the bet. The net result (win or loss) is posted to the bank in a single transaction. The game is only persisted after a successful bank transaction.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Round played and bank transaction successful"),
+            @ApiResponse(responseCode = "400", description = "User ID, bet amount, bet number or bet type is invalid"),
             @ApiResponse(responseCode = "404", description = "User not found in the bank"),
             @ApiResponse(responseCode = "500", description = "Bank returned an internal server error")
     })
     @PostMapping("/play")
     ResponseEntity<IGameView> play(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "User ID, bet amount, bet number and bet type", required = true)
-            @RequestBody PlayRequest request);
+            @Valid @RequestBody PlayRequest request);
 
     @Operation(summary = "Get game rules", description = "Returns a plain-text description of all bet types and their rules.")
     @ApiResponse(responseCode = "200", description = "Rules text returned")

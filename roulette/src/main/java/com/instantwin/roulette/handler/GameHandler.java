@@ -50,11 +50,11 @@ public class GameHandler implements IGameHandler {
             "Win Chances and Payout Formulas:\n\n" +
             "| Bet Type    | Numbers Covered | Win Chance | Payout Formula         |\n" +
             "|-------------|-----------------|------------|------------------------|\n" +
-            "| STRAIGHT_UP | 1 / 37          |  2.70 %    | bet × 35               |\n" +
-            "| SPLIT       | 2 / 37          |  5.41 %    | bet × 17               |\n" +
-            "| STREET      | 3 / 37          |  8.11 %    | bet × 11               |\n" +
-            "| CORNER      | 4 / 37          | 10.81 %    | bet × 8                |\n" +
-            "| LINE        | 6 / 37          | 16.22 %    | bet × 5                |\n" +
+            "| STRAIGHT_UP | 1 / 37          |  2.70 %    | bet × 36               |\n" +
+            "| SPLIT       | 2 / 37          |  5.41 %    | bet × 18               |\n" +
+            "| STREET      | 3 / 37          |  8.11 %    | bet × 12               |\n" +
+            "| CORNER      | 4 / 37          | 10.81 %    | bet × 9                |\n" +
+            "| LINE        | 6 / 37          | 16.22 %    | bet × 6                |\n" +
             "| DOZEN       | 12 / 37         | 32.43 %    | bet × 3                |\n" +
             "| COLUMN      | 12 / 37         | 32.43 %    | bet × 3                |\n" +
             "| RED         | 18 / 37         | 48.65 %    | bet × 2                |\n" +

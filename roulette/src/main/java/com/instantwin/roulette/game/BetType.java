@@ -12,7 +12,7 @@ public enum BetType implements BetStrategy {
         }
         @Override
         public BigDecimal calculatePayout(BigDecimal betAmount) {
-            return betAmount.multiply(BigDecimal.valueOf(35));
+            return betAmount.multiply(BigDecimal.valueOf(36));
         }
     },
     RED {
@@ -73,7 +73,7 @@ public enum BetType implements BetStrategy {
         }
         @Override
         public BigDecimal calculatePayout(BigDecimal betAmount) {
-            return betAmount.multiply(BigDecimal.valueOf(17));
+            return betAmount.multiply(BigDecimal.valueOf(18));
         }
     },
     STREET {
@@ -85,7 +85,7 @@ public enum BetType implements BetStrategy {
         }
         @Override
         public BigDecimal calculatePayout(BigDecimal betAmount) {
-            return betAmount.multiply(BigDecimal.valueOf(11));
+            return betAmount.multiply(BigDecimal.valueOf(12));
         }
     },
     CORNER {
@@ -99,7 +99,7 @@ public enum BetType implements BetStrategy {
         }
         @Override
         public BigDecimal calculatePayout(BigDecimal betAmount) {
-            return betAmount.multiply(BigDecimal.valueOf(8));
+            return betAmount.multiply(BigDecimal.valueOf(9));
         }
     },
     LINE {
@@ -111,7 +111,7 @@ public enum BetType implements BetStrategy {
         }
         @Override
         public BigDecimal calculatePayout(BigDecimal betAmount) {
-            return betAmount.multiply(BigDecimal.valueOf(5));
+            return betAmount.multiply(BigDecimal.valueOf(6));
         }
     },
     DOZEN {
@@ -145,4 +145,29 @@ public enum BetType implements BetStrategy {
 
     public abstract boolean isWinner(int winningNumber, int betNumber);
     public abstract BigDecimal calculatePayout(BigDecimal betAmount);
+
+    public boolean isValidBetNumber(int betNumber) {
+        return switch (this) {
+            case STRAIGHT_UP -> betNumber >= 0 && betNumber <= 36;
+            case SPLIT -> isValidSplitBetNumber(betNumber);
+            case STREET -> betNumber >= 1 && betNumber <= 12;
+            case CORNER -> betNumber >= 1 && betNumber <= 32 && betNumber % 3 != 0;
+            case LINE -> betNumber >= 1 && betNumber <= 11;
+            case DOZEN, COLUMN -> betNumber >= 1 && betNumber <= 3;
+            case RED, BLACK, EVEN, ODD -> true;
+        };
+    }
+
+    private static boolean isValidSplitBetNumber(int betNumber) {
+        if (betNumber > 0) {
+            return betNumber <= 33;
+        }
+
+        if (betNumber < 0 && betNumber >= -35) {
+            int firstNumber = -betNumber;
+            return firstNumber % 3 != 0;
+        }
+
+        return false;
+    }
 }

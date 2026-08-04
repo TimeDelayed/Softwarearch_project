@@ -60,7 +60,7 @@ class GameHandlerTest {
     @Test
     void findAllGames_returnsMappedView_forEachStoredEntity() {
         GameEntity entity = new GameEntity(
-                1L, new BigDecimal("10.00"), 7, BetType.STRAIGHT_UP, 7, new BigDecimal("350.00")
+                1L, new BigDecimal("10.00"), 7, BetType.STRAIGHT_UP, 7, new BigDecimal("360.00")
         );
         when(gameRepository.findAll()).thenReturn(List.of(entity));
 
@@ -68,7 +68,7 @@ class GameHandlerTest {
 
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getBetType()).isEqualTo(BetType.STRAIGHT_UP);
-        assertThat(result.get(0).getPayout()).isEqualByComparingTo(new BigDecimal("350.00"));
+        assertThat(result.get(0).getPayout()).isEqualByComparingTo(new BigDecimal("360.00"));
     }
 
     @Test
@@ -89,8 +89,8 @@ class GameHandlerTest {
     @Test
     void play_returnsOk_andSavesEntity_whenTransactionSucceeds() {
         BigDecimal betAmount = new BigDecimal("10.00");
-        BigDecimal payout = new BigDecimal("350.00");
-        BigDecimal netAmount = new BigDecimal("340.00");
+        BigDecimal payout = new BigDecimal("360.00");
+        BigDecimal netAmount = new BigDecimal("350.00");
         GameResult gameResult = new GameResult(7, payout);
         GameEntity savedEntity = new GameEntity(1L, betAmount, 7, BetType.STRAIGHT_UP, 7, payout);
 
@@ -128,7 +128,7 @@ class GameHandlerTest {
     @Test
     void play_returnsTransactionStatus_andDoesNotSave_whenTransactionFails() {
         BigDecimal betAmount = new BigDecimal("10.00");
-        GameResult gameResult = new GameResult(7, new BigDecimal("350.00"));
+        GameResult gameResult = new GameResult(7, new BigDecimal("360.00"));
 
         when(rouletteGame.play(betAmount, 7, BetType.STRAIGHT_UP)).thenReturn(gameResult);
         when(bankClient.requestTransaction(anyLong(), any())).thenReturn(ResponseEntity.notFound().build());
@@ -142,7 +142,7 @@ class GameHandlerTest {
     @Test
     void play_propagates500Status_andDoesNotSave_whenBankHasInternalError() {
         BigDecimal betAmount = new BigDecimal("10.00");
-        GameResult gameResult = new GameResult(7, new BigDecimal("350.00"));
+        GameResult gameResult = new GameResult(7, new BigDecimal("360.00"));
 
         when(rouletteGame.play(betAmount, 7, BetType.STRAIGHT_UP)).thenReturn(gameResult);
         when(bankClient.requestTransaction(anyLong(), any())).thenReturn(ResponseEntity.internalServerError().build());
@@ -160,7 +160,7 @@ class GameHandlerTest {
     @Test
     void findGameById_returnsView_whenGameExists() {
         GameEntity entity = new GameEntity(
-                1L, new BigDecimal("10.00"), 7, BetType.STRAIGHT_UP, 7, new BigDecimal("350.00")
+                1L, new BigDecimal("10.00"), 7, BetType.STRAIGHT_UP, 7, new BigDecimal("360.00")
         );
         when(gameRepository.findById(1L)).thenReturn(Optional.of(entity));
 
@@ -168,7 +168,7 @@ class GameHandlerTest {
 
         assertThat(result).isPresent();
         assertThat(result.get().getBetType()).isEqualTo(BetType.STRAIGHT_UP);
-        assertThat(result.get().getPayout()).isEqualByComparingTo(new BigDecimal("350.00"));
+        assertThat(result.get().getPayout()).isEqualByComparingTo(new BigDecimal("360.00"));
     }
 
     @Test
@@ -230,6 +230,7 @@ class GameHandlerTest {
         assertThat(chances).isNotBlank();
         assertThat(chances).contains("STRAIGHT_UP");
         assertThat(chances).contains("COLUMN");
+        assertThat(chances).contains("bet × 36");
     }
 
     // -------------------------------------------------------------------------
@@ -251,7 +252,7 @@ class GameHandlerTest {
 
     @Test
     void getStats_calculatesCorrectValues_forGivenGames() {
-        GameEntity win = new GameEntity(1L, new BigDecimal("10"), 7, BetType.STRAIGHT_UP, 7, new BigDecimal("350"));
+        GameEntity win = new GameEntity(1L, new BigDecimal("10"), 7, BetType.STRAIGHT_UP, 7, new BigDecimal("360"));
         GameEntity loss = new GameEntity(2L, new BigDecimal("10"), 5, BetType.RED, 2, BigDecimal.ZERO);
         when(gameRepository.findAll()).thenReturn(List.of(win, loss));
 
@@ -260,8 +261,8 @@ class GameHandlerTest {
         assertThat(stats.getTotalGamesCount()).isEqualTo(2);
         assertThat(stats.getTotalClientCount()).isEqualTo(2);
         assertThat(stats.getTotalTurnover()).isEqualByComparingTo(new BigDecimal("20"));
-        assertThat(stats.getTotalCashOut()).isEqualByComparingTo(new BigDecimal("350"));
-        assertThat(stats.getTotalProfit()).isEqualByComparingTo(new BigDecimal("-330"));
+        assertThat(stats.getTotalCashOut()).isEqualByComparingTo(new BigDecimal("360"));
+        assertThat(stats.getTotalProfit()).isEqualByComparingTo(new BigDecimal("-340"));
     }
 
     @Test
@@ -291,7 +292,7 @@ class GameHandlerTest {
 
     @Test
     void getUserStats_calculatesCorrectValues_forWinAndLoss() {
-        GameEntity win = new GameEntity(1L, new BigDecimal("10"), 7, BetType.STRAIGHT_UP, 7, new BigDecimal("350"));
+        GameEntity win = new GameEntity(1L, new BigDecimal("10"), 7, BetType.STRAIGHT_UP, 7, new BigDecimal("360"));
         GameEntity loss = new GameEntity(1L, new BigDecimal("10"), 5, BetType.RED, 2, BigDecimal.ZERO);
         when(gameRepository.findByUserId(1L)).thenReturn(List.of(win, loss));
 
@@ -300,7 +301,7 @@ class GameHandlerTest {
         assertThat(result).isPresent();
         IUserStatsView stats = result.get();
         assertThat(stats.getTotalGamesCount()).isEqualTo(2);
-        assertThat(stats.getTotalWinnings()).isEqualByComparingTo(new BigDecimal("340"));
+        assertThat(stats.getTotalWinnings()).isEqualByComparingTo(new BigDecimal("350"));
         assertThat(stats.getTotalLosses()).isEqualByComparingTo(new BigDecimal("10"));
         assertThat(stats.getTotalHouseTurnoverFromClient()).isEqualByComparingTo(new BigDecimal("20"));
     }

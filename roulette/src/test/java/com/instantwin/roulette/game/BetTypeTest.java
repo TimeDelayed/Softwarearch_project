@@ -25,9 +25,9 @@ class BetTypeTest {
     }
 
     @Test
-    void straightUp_payout_is35x() {
+    void straightUp_payout_is36x() {
         assertThat(BetType.STRAIGHT_UP.calculatePayout(new BigDecimal("10")))
-                .isEqualByComparingTo(new BigDecimal("350"));
+                .isEqualByComparingTo(new BigDecimal("360"));
     }
 
     // -------------------------------------------------------------------------
@@ -151,9 +151,9 @@ class BetTypeTest {
     }
 
     @Test
-    void split_payout_is17x() {
+    void split_payout_is18x() {
         assertThat(BetType.SPLIT.calculatePayout(new BigDecimal("10")))
-                .isEqualByComparingTo(new BigDecimal("170"));
+                .isEqualByComparingTo(new BigDecimal("180"));
     }
 
     // -------------------------------------------------------------------------
@@ -179,9 +179,9 @@ class BetTypeTest {
     }
 
     @Test
-    void street_payout_is11x() {
+    void street_payout_is12x() {
         assertThat(BetType.STREET.calculatePayout(new BigDecimal("10")))
-                .isEqualByComparingTo(new BigDecimal("110"));
+                .isEqualByComparingTo(new BigDecimal("120"));
     }
 
     // -------------------------------------------------------------------------
@@ -208,9 +208,9 @@ class BetTypeTest {
     }
 
     @Test
-    void corner_payout_is8x() {
+    void corner_payout_is9x() {
         assertThat(BetType.CORNER.calculatePayout(new BigDecimal("10")))
-                .isEqualByComparingTo(new BigDecimal("80"));
+                .isEqualByComparingTo(new BigDecimal("90"));
     }
 
     // -------------------------------------------------------------------------
@@ -230,9 +230,9 @@ class BetTypeTest {
     }
 
     @Test
-    void line_payout_is5x() {
+    void line_payout_is6x() {
         assertThat(BetType.LINE.calculatePayout(new BigDecimal("10")))
-                .isEqualByComparingTo(new BigDecimal("50"));
+                .isEqualByComparingTo(new BigDecimal("60"));
     }
 
     // -------------------------------------------------------------------------
@@ -300,5 +300,32 @@ class BetTypeTest {
     void column_payout_is3x() {
         assertThat(BetType.COLUMN.calculatePayout(new BigDecimal("10")))
                 .isEqualByComparingTo(new BigDecimal("30"));
+    }
+
+    @Test
+    void betNumberValidation_accepts_valid_numbers() {
+        assertThat(BetType.STRAIGHT_UP.isValidBetNumber(0)).isTrue();
+        assertThat(BetType.STRAIGHT_UP.isValidBetNumber(36)).isTrue();
+        assertThat(BetType.SPLIT.isValidBetNumber(33)).isTrue();
+        assertThat(BetType.SPLIT.isValidBetNumber(-35)).isTrue();
+        assertThat(BetType.STREET.isValidBetNumber(12)).isTrue();
+        assertThat(BetType.CORNER.isValidBetNumber(32)).isTrue();
+        assertThat(BetType.LINE.isValidBetNumber(11)).isTrue();
+        assertThat(BetType.DOZEN.isValidBetNumber(3)).isTrue();
+        assertThat(BetType.COLUMN.isValidBetNumber(3)).isTrue();
+        assertThat(BetType.RED.isValidBetNumber(100)).isTrue();
+    }
+
+    @Test
+    void betNumberValidation_rejects_invalid_numbers() {
+        assertThat(BetType.STRAIGHT_UP.isValidBetNumber(37)).isFalse();
+        assertThat(BetType.SPLIT.isValidBetNumber(0)).isFalse();
+        assertThat(BetType.SPLIT.isValidBetNumber(34)).isFalse();
+        assertThat(BetType.SPLIT.isValidBetNumber(-3)).isFalse();
+        assertThat(BetType.STREET.isValidBetNumber(13)).isFalse();
+        assertThat(BetType.CORNER.isValidBetNumber(3)).isFalse();
+        assertThat(BetType.LINE.isValidBetNumber(12)).isFalse();
+        assertThat(BetType.DOZEN.isValidBetNumber(4)).isFalse();
+        assertThat(BetType.COLUMN.isValidBetNumber(0)).isFalse();
     }
 }
