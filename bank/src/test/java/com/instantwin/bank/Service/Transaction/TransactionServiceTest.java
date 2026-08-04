@@ -235,9 +235,9 @@ public class TransactionServiceTest {
 
         assertTrue(result.isPresent());
         assertEquals(2, result.get().size());
-        assertEquals(USER_ID, result.get().get(0).getUserId());
+        assertEquals(TRANSACTION_ID, result.get().get(0).getId());
         assertEquals(AMOUNT, result.get().get(0).getAmount());
-        assertEquals(USER_ID, result.get().get(1).getUserId());
+        assertEquals(TRANSACTION_ID + 1, result.get().get(1).getId());
         assertEquals(OTHER_AMOUNT, result.get().get(1).getAmount());
     }
 

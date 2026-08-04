@@ -8,15 +8,15 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public record TransactionSpecificUserView(
-        @Positive long userId,
+        @Positive long id,
         @NotNull BigDecimal amount) {
     public static TransactionSpecificUserView of(TransactionEntity transactionEntity) {
-        return new TransactionSpecificUserView(transactionEntity.getUserId(),
+        return new TransactionSpecificUserView(transactionEntity.getId(),
                 transactionEntity.getAmount());
     }
 
-    public long getUserId() {
-        return userId;
+    public long getId() {
+        return id;
     }
 
     public BigDecimal getAmount() {
