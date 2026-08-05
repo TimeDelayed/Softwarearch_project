@@ -342,16 +342,25 @@ Repository, DTOs und Hilfsklassen werden möglichst der jeweiligen Subdomäne zu
 `Stat`-Slice wurde nicht umgesetzt, da dafür in den funktionalen Anforderungen keine Bank-Endpunkte
 definiert waren und im Unterricht ausdrücklich besprochen wurde, diesen nicht zusätzlich zu bauen.
 
-Die Transaction-Entity ist die einzige Quelle für Geldbewegungen. Ein User besitzt daher keinen
-direkt veränderbaren Balance-Wert. Der Kontostand wird als Summe seiner Transaktionen berechnet.
+Die Transaction-Entity ist die einzige Quelle für Geldbewegungen. Ein User besitzt daher **_keinen
+direkt veränderbaren Balance-Wert_**. Der Kontostand wird als Summe seiner Transaktionen berechnet.
 Diese Entscheidung verhindert zwei konkurrierende Geldstände, führt innerhalb der geforderten
-Slice-Trennung aber zu zusätzlicher Kommunikation.
+Slice-Trennung aber zu _zusätzlicher Kommunikation_.
+
+Damit wurde vor allem das Problem gelöst, das ein deposit/withdraw über den User Endpunkt auch als eigene Transaction gilt. Der besprochene ungefähre Wortlaut war:
+
+ _"Der Transaction-Slice 
+ist damit die einzige source of truth
+für Geldbeträge, der User-Slice speichert also keine eigene Balance sondern fragt Geldbeträge beim Transaction-Slice ab und summiert sich daraus die Balance. Damit stellt man auch sicher, das beide Slices sich gegenseitig brauchen, was bei Vertikal Slice wichtig ist."_
+
+Ein Problem was dadurch leider auch auftritt ist, das bei jedem User Abruf die Balance "lazy" neu berechnet werden muss, selbst wenn schon große Mengen an Transaktionen vorliegen.
 
 Der User-Slice ruft für Kontostände den Transaction-Slice über HTTP auf. Umgekehrt muss der
 Transaction-Slice vor dem Erstellen einer Transaktion prüfen, ob der User existiert. Würde er dafür
 `GET /user/{id}` aufrufen, würde dieser Endpunkt wieder den Kontostand aus dem Transaction-Slice
 anfordern. Dadurch entstünde ein Aufrufkreis. Der zusätzliche Endpunkt `GET /user/{id}/exists`
-liefert deshalb nur die Stammdaten und löst keine Balance-Berechnung aus.
+liefert deshalb nur die Stammdaten und löst keine Balance-Berechnung aus. Dieser
+Endpunkt wurde bei gemeinsamer Absprache mit dem Dozenten präsentiert und akzeptiert!
 
 Das funktioniert und entspricht dem im Unterricht besprochenen Ansatz für getrennte Slices, ist aber
 nicht optimal. Vor allem `GET /users` benötigt für die Kontostände mehrere interne Requests. Bei einer
@@ -391,30 +400,6 @@ mvn -f slotmachine/pom.xml test
 Der Schwerpunkt liegt auf eigenen Entities, Factorys, Services beziehungsweise Handlern, Controllern,
 Mappern und Spielregeln. Warum nicht jede technische Klasse eine eigene Testklasse besitzt, wird im
 Abschnitt [Testumfang](#testumfang) erläutert.
-
-## Docker-Images für die Abgabe
-
-Die drei Images können unabhängig von Compose mit eindeutigen Namen gebaut werden:
-
-```bash
-docker build -t instantwin-bank:latest ./bank
-docker build -t instantwin-roulette:latest ./roulette
-docker build -t instantwin-slotmachine:latest ./slotmachine
-```
-
-Anschließend lassen sie sich als TAR-Dateien exportieren:
-
-```bash
-docker save -o instantwin-bank.tar instantwin-bank:latest
-docker save -o instantwin-roulette.tar instantwin-roulette:latest
-docker save -o instantwin-slotmachine.tar instantwin-slotmachine:latest
-```
-
-Unter PowerShell können die drei Dateien gemeinsam verpackt werden:
-
-```powershell
-Compress-Archive -Path instantwin-bank.tar,instantwin-roulette.tar,instantwin-slotmachine.tar -DestinationPath instantwin-images.zip
-```
 
 ## Bewusste Abweichungen und technische Schulden
 
@@ -571,7 +556,7 @@ Framework-Konfigurationen und Clients ohne nennenswerte eigene Logik werden teil
 Verhalten von Spring testen. Eigene Fehlerübersetzung und Request-Erzeugung wären später sinnvolle
 Kandidaten für fokussierte Client- oder Contract-Tests.
 
-Für Spring-Data-Repositories werden konkrete Entity-Typen verwendet. Zusätzliche Entity-Interfaces
+_Für Spring-Data-Repositories werden konkrete Entity-Typen verwendet._ Zusätzliche Entity-Interfaces
 würden dort häufig nur vortäuschen, beliebige Implementierungen zu akzeptieren, während intern wieder
 auf die konkrete JPA-Entity gecastet werden müsste. Auch dieser Verzicht wurde im Unterricht als
 vertretbar besprochen. Wo eigene abstrakte Abhängigkeiten vorhanden sind, werden sie in Unit-Tests mit
