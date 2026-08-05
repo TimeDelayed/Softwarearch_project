@@ -3,6 +3,9 @@ package com.instantwin.roulette.game;
 import java.math.BigDecimal;
 import java.util.Set;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Supported roulette bet type. It determines the covered numbers and gross payout multiplier.")
 public enum BetType implements BetStrategy {
 
     STRAIGHT_UP {

@@ -9,9 +9,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
+@Schema(description = "Request for placing and settling one roulette bet.")
 public record PlayRequest(
         @Positive
-        @Schema(description = "ID of the user placing the bet", example = "1")
+        @Schema(description = "ID of the user placing the bet", example = "1",
+                requiredMode = Schema.RequiredMode.REQUIRED)
         @JsonProperty("user") long userId,
 
         @NotNull @Positive

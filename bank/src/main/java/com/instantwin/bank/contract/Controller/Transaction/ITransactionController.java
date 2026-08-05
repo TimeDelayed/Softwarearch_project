@@ -2,6 +2,7 @@ package com.instantwin.bank.contract.Controller.Transaction;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +20,9 @@ import com.instantwin.bank.view.Transaction.TransactionView;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,15 +33,21 @@ import jakarta.validation.Valid;
 public interface ITransactionController {
 
         @Operation(summary = "Get all transactions", description = "Returns all transactions stored in the system.")
-        @ApiResponse(responseCode = "200", description = "Transactions successfully retrieved")
+        @ApiResponse(responseCode = "200", description = "Transactions successfully retrieved",
+                        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                        array = @ArraySchema(schema = @Schema(implementation = TransactionView.class))))
         @GetMapping("/transactions")
         ResponseEntity<List<TransactionView>> findAllTransactions();
 
         @Operation(summary = "Get transactions for user", description = "Returns all transactions belonging to a specific user.")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Transactions found"),
-                        @ApiResponse(responseCode = "404", description = "User not found"),
-                        @ApiResponse(responseCode = "500", description = "User existence could not be verified")
+                        @ApiResponse(responseCode = "200", description = "Transactions found",
+                                        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                                        array = @ArraySchema(schema = @Schema(implementation = TransactionSpecificUserView.class)))),
+                        @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
+                        @ApiResponse(responseCode = "500", description = "User existence could not be verified",
+                                        content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE,
+                                                        schema = @Schema(type = "string")))
         })
         @GetMapping("/transactions/user/{userId}")
         ResponseEntity<List<TransactionSpecificUserView>> findTransactionsByUserId(
@@ -45,10 +55,16 @@ public interface ITransactionController {
 
         @Operation(summary = "Create transaction", description = "Creates a new transaction for a specific user.")
         @ApiResponses({
-                        @ApiResponse(responseCode = "201", description = "Transaction created"),
-                        @ApiResponse(responseCode = "400", description = "Amount or invoicing party is invalid"),
-                        @ApiResponse(responseCode = "404", description = "User not found"),
-                        @ApiResponse(responseCode = "500", description = "User existence could not be verified")
+                        @ApiResponse(responseCode = "201", description = "Transaction created",
+                                        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                                        schema = @Schema(implementation = TransactionView.class))),
+                        @ApiResponse(responseCode = "400", description = "Amount or invoicing party is invalid",
+                                        content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE,
+                                                        schema = @Schema(type = "string"))),
+                        @ApiResponse(responseCode = "404", description = "User not found", content = @Content),
+                        @ApiResponse(responseCode = "500", description = "User existence could not be verified",
+                                        content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE,
+                                                        schema = @Schema(type = "string")))
         })
         @PostMapping("/transaction/user/{userId}")
         ResponseEntity<TransactionView> createTransaction(
@@ -58,10 +74,16 @@ public interface ITransactionController {
 
         @Operation(summary = "Update transaction", description = "Updates an existing transaction.")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Transaction updated"),
-                        @ApiResponse(responseCode = "400", description = "User ID, amount or invoicing party is invalid"),
-                        @ApiResponse(responseCode = "404", description = "Transaction or target user not found"),
-                        @ApiResponse(responseCode = "500", description = "Target user existence could not be verified")
+                        @ApiResponse(responseCode = "200", description = "Transaction updated",
+                                        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                                        schema = @Schema(implementation = TransactionView.class))),
+                        @ApiResponse(responseCode = "400", description = "User ID, amount or invoicing party is invalid",
+                                        content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE,
+                                                        schema = @Schema(type = "string"))),
+                        @ApiResponse(responseCode = "404", description = "Transaction or target user not found", content = @Content),
+                        @ApiResponse(responseCode = "500", description = "Target user existence could not be verified",
+                                        content = @Content(mediaType = MediaType.TEXT_PLAIN_VALUE,
+                                                        schema = @Schema(type = "string")))
         })
         @PutMapping("/transaction/{transactionId}")
         ResponseEntity<TransactionView> updateTransaction(
@@ -71,8 +93,10 @@ public interface ITransactionController {
 
         @Operation(summary = "Delete transaction", description = "Deletes an existing transaction.")
         @ApiResponses({
-                        @ApiResponse(responseCode = "200", description = "Transaction deleted"),
-                        @ApiResponse(responseCode = "404", description = "Transaction not found")
+                        @ApiResponse(responseCode = "200", description = "Transaction deleted",
+                                        content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                                                        schema = @Schema(implementation = TransactionDeleteView.class))),
+                        @ApiResponse(responseCode = "404", description = "Transaction not found", content = @Content)
         })
         @DeleteMapping("/transaction/{transactionId}")
         ResponseEntity<TransactionDeleteView> deleteTransaction(

@@ -8,6 +8,9 @@ import com.instantwin.roulette.contract.view.IGameView;
 import com.instantwin.roulette.game.BetType;
 import com.instantwin.roulette.model.GameEntity;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Public representation of a settled roulette game.")
 public class GameView implements IGameView {
 
     private final Long id;
@@ -43,44 +46,54 @@ public class GameView implements IGameView {
 
     @Override
     @JsonProperty("id")
+    @Schema(description = "ID of the stored game", example = "1")
     public Long getId() { return id; }
 
     @Override
     @JsonProperty("user")
+    @Schema(description = "ID of the user who played the game", example = "1")
     public long getUserId() { return userId; }
 
     @Override
     @JsonProperty("betAmount")
+    @Schema(description = "Amount wagered by the user", example = "10.00")
     public BigDecimal getBetAmount() { return betAmount; }
 
     @Override
     @JsonProperty("betNumber")
+    @Schema(description = "Selected number or group index, depending on betType", example = "17")
     public int getBetNumber() { return betNumber; }
 
     @Override
     @JsonProperty("betType")
+    @Schema(description = "Type of roulette bet", example = "STRAIGHT_UP")
     public BetType getBetType() { return betType; }
 
     @Override
     @JsonIgnore
+    @Schema(hidden = true)
     public int getWinningNumber() { return winningNumber; }
 
     @Override
     @JsonIgnore
+    @Schema(hidden = true)
     public BigDecimal getPayout() { return payout; }
 
     @Override
     @JsonProperty("winning")
+    @Schema(description = "Whether the selected bet covered the winning number", example = "true")
     public boolean isWinning() {
         return payout.compareTo(BigDecimal.ZERO) > 0;
     }
 
     @Override
     @JsonProperty("amount")
+    @Schema(description = "Net result of the game: payout minus bet amount", example = "350.00")
     public BigDecimal getAmount() {
         return payout.subtract(betAmount);
     }
 
     @JsonProperty("ballPosition")
+    @Schema(description = "Number on which the roulette ball landed", example = "17")
     public int getBallPosition() { return winningNumber; }
 }
