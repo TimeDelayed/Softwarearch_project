@@ -446,6 +446,38 @@ Sauberer wäre ein eigenes Response-Modell, das die erstellte Buchung und option
 berechneten Kontostand enthält. Noch besser wäre die bereits beschriebene klarere Trennung zwischen
 User-Stammdaten, Konto und Buchungen.
 
+### Löschen von Usern und langfristige Identität
+
+Der Beleg fordert kein Konzept dafür, wie die Daten der verschiedenen Slices beim Löschen eines
+Users langfristig behandelt werden sollen. Deshalb wird aktuell nur der User im User-Slice gelöscht,
+während seine bisherigen Transaktionen im Transaction-Slice erhalten bleiben. Ein Cascade-Delete
+über die Slice-Grenze existiert nicht. Das verhindert zwar, dass die Buchungshistorie automatisch
+verloren geht, die gespeicherten Transaktionen enthalten danach aber nur noch eine `userId`, die
+keinem aktuellen User mehr eindeutig zugeordnet werden kann.
+
+Die automatisch hochgezählten Datenbank-IDs sind für lokale Beziehungen innerhalb einer
+Laufzeitumgebung ausreichend, sollten aber nicht gleichzeitig als dauerhafte, serviceübergreifende
+fachliche Identität dienen. Solange die Sequenzen und Datenbanken unverändert bleiben, werden IDs
+normalerweise nicht erneut vergeben. Bei unabhängigen Resets, Wiederherstellungen oder Migrationen
+der User-, Transaction- oder Spieldatenbanken kann darauf jedoch nicht mehr zuverlässig vertraut
+werden. Dann können Referenzen ins Leere zeigen, Historien unvollständig werden oder eine alte ID im
+schlechtesten Fall einem neuen User zugeordnet werden.
+
+Bei einer Neuplanung würden wir daher zwischen einer internen technischen ID und einer
+unveränderlichen öffentlichen Konto- oder Kundennummer unterscheiden. Eine echte Kreditkartennummer
+wäre wegen ihrer Sensibilität kein geeigneter allgemeiner Identifier; gemeint ist vielmehr ein
+eigens erzeugter, nicht wiederverwendbarer Account-Identifier. Andere Services würden nur diesen
+fachlichen Identifier kennen, während die `long`-ID auf den jeweiligen Service beziehungsweise die
+lokale Datenbank beschränkt bliebe.
+
+Auch dann sollten Transaktionen beim Löschen eines Users nicht zwangsläufig mitgelöscht werden, da
+sie eine Buchungs- und Prüfhistorie darstellen. Sinnvoller wären beispielsweise ein Soft-Delete oder
+ein geschlossener Account, die Pseudonymisierung persönlicher Userdaten und ein Ereignis wie
+`UserDeleted`, auf das der Transaction-Slice reagieren kann. So bliebe die Historie über den stabilen
+Account-Identifier nachvollziehbar, ohne einen bereits gelöschten User weiterhin als aktiv zu
+behandeln. Dieser zusätzliche Identitäts- und Lebenszyklusmechanismus lag außerhalb der funktionalen
+Anforderungen des Belegs, wäre für ein belastbares System aber notwendig.
+
 ### Negative Kontostände
 
 Negative Kontostände sind im aktuellen Modell erlaubt. Weder Auszahlungen noch Spiele werden durch
