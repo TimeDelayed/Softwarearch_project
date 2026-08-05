@@ -244,6 +244,23 @@ public class UserServiceTest {
     }
 
     @Test
+    void testDepositToUser_throws_when_transaction_client_returns_null_response() {
+        when(transactionClient.depositTransaction(USER_ID, DEPOSIT_AMOUNT)).thenReturn(null);
+
+        assertThrows(TransactionRequestFailedException.class,
+                () -> userService.depositToUser(USER_ID, DEPOSIT_AMOUNT));
+    }
+
+    @Test
+    void testDepositToUser_throws_when_successful_transaction_has_no_response_body() {
+        when(transactionClient.depositTransaction(USER_ID, DEPOSIT_AMOUNT))
+                .thenReturn(ResponseEntity.<String>ok().build());
+
+        assertThrows(TransactionRequestFailedException.class,
+                () -> userService.depositToUser(USER_ID, DEPOSIT_AMOUNT));
+    }
+
+    @Test
     void testDepositToUser_deposit_transaction_is_delegated() {
         userService.depositToUser(USER_ID, DEPOSIT_AMOUNT);
 

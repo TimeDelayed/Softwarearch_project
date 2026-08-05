@@ -80,6 +80,63 @@ public class SlotSpinnerTest {
     }
 
     @Test
+    void testConstructor_throws_invalid_slot_probabilities_when_probability_map_is_null() {
+        assertThrows(
+                InvalidSlotProbabilities.class,
+                () -> new SlotSpinner(
+                        mockConfiguration(null),
+                        new SplittableRandom(42)));
+    }
+
+    @Test
+    void testConstructor_throws_invalid_slot_probabilities_when_probability_is_null() {
+        var probabilities = validProbabilitiesFor(SlotSymbols.CHERRY);
+        probabilities.put(SlotSymbols.LEMON, null);
+
+        assertThrows(
+                InvalidSlotProbabilities.class,
+                () -> new SlotSpinner(
+                        mockConfiguration(probabilities),
+                        new SplittableRandom(42)));
+    }
+
+    @Test
+    void testConstructor_throws_invalid_slot_probabilities_when_probability_is_nan() {
+        var probabilities = validProbabilitiesFor(SlotSymbols.CHERRY);
+        probabilities.put(SlotSymbols.LEMON, Float.NaN);
+
+        assertThrows(
+                InvalidSlotProbabilities.class,
+                () -> new SlotSpinner(
+                        mockConfiguration(probabilities),
+                        new SplittableRandom(42)));
+    }
+
+    @Test
+    void testConstructor_throws_invalid_slot_probabilities_when_probability_is_infinite() {
+        var probabilities = validProbabilitiesFor(SlotSymbols.CHERRY);
+        probabilities.put(SlotSymbols.LEMON, Float.POSITIVE_INFINITY);
+
+        assertThrows(
+                InvalidSlotProbabilities.class,
+                () -> new SlotSpinner(
+                        mockConfiguration(probabilities),
+                        new SplittableRandom(42)));
+    }
+
+    @Test
+    void testConstructor_throws_invalid_slot_probabilities_when_probability_is_negative_infinity() {
+        var probabilities = validProbabilitiesFor(SlotSymbols.CHERRY);
+        probabilities.put(SlotSymbols.LEMON, Float.NEGATIVE_INFINITY);
+
+        assertThrows(
+                InvalidSlotProbabilities.class,
+                () -> new SlotSpinner(
+                        mockConfiguration(probabilities),
+                        new SplittableRandom(42)));
+    }
+
+    @Test
     void testConstructor_throws_invalid_slot_probabilities_when_probability_is_negative() {
         var probabilities = validProbabilitiesFor(SlotSymbols.CHERRY);
         probabilities.put(SlotSymbols.LEMON, -0.1f);

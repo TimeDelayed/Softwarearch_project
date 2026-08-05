@@ -263,6 +263,18 @@ public class TransactionServiceTest {
     }
 
     @Test
+    void testCheckIfUserExists_returns_response_from_user_client() {
+        var expectedUser = new TransactionRequestUser(USER_ID);
+        when(transactionUserClient.checkIfUserExists(USER_ID)).thenReturn(Optional.of(expectedUser));
+
+        var result = transactionService.checkIfUserExists(USER_ID);
+
+        assertTrue(result.isPresent());
+        assertEquals(expectedUser, result.get());
+        verify(transactionUserClient).checkIfUserExists(USER_ID);
+    }
+
+    @Test
     void testUpdateTransaction_returns_empty_if_transaction_does_not_exist() {
         var request = updateRequest(USER_ID);
         when(transactionRepository.findById(UNKNOWN_ID)).thenReturn(Optional.empty());

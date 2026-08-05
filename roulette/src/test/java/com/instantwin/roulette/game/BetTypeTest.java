@@ -76,6 +76,12 @@ class BetTypeTest {
         assertThat(BetType.BLACK.isWinner(1, 0)).isFalse();
     }
 
+    @Test
+    void black_payout_is2x() {
+        assertThat(BetType.BLACK.calculatePayout(new BigDecimal("10")))
+                .isEqualByComparingTo(new BigDecimal("20"));
+    }
+
     // -------------------------------------------------------------------------
     // EVEN
     // -------------------------------------------------------------------------
@@ -120,6 +126,12 @@ class BetTypeTest {
     @Test
     void odd_loses_forEvenNumber() {
         assertThat(BetType.ODD.isWinner(4, 0)).isFalse();
+    }
+
+    @Test
+    void odd_payout_is2x() {
+        assertThat(BetType.ODD.calculatePayout(new BigDecimal("10")))
+                .isEqualByComparingTo(new BigDecimal("20"));
     }
 
     // -------------------------------------------------------------------------
@@ -318,14 +330,22 @@ class BetTypeTest {
 
     @Test
     void betNumberValidation_rejects_invalid_numbers() {
+        assertThat(BetType.STRAIGHT_UP.isValidBetNumber(-1)).isFalse();
         assertThat(BetType.STRAIGHT_UP.isValidBetNumber(37)).isFalse();
         assertThat(BetType.SPLIT.isValidBetNumber(0)).isFalse();
         assertThat(BetType.SPLIT.isValidBetNumber(34)).isFalse();
+        assertThat(BetType.SPLIT.isValidBetNumber(-36)).isFalse();
         assertThat(BetType.SPLIT.isValidBetNumber(-3)).isFalse();
+        assertThat(BetType.STREET.isValidBetNumber(0)).isFalse();
         assertThat(BetType.STREET.isValidBetNumber(13)).isFalse();
+        assertThat(BetType.CORNER.isValidBetNumber(0)).isFalse();
         assertThat(BetType.CORNER.isValidBetNumber(3)).isFalse();
+        assertThat(BetType.CORNER.isValidBetNumber(33)).isFalse();
+        assertThat(BetType.LINE.isValidBetNumber(0)).isFalse();
         assertThat(BetType.LINE.isValidBetNumber(12)).isFalse();
+        assertThat(BetType.DOZEN.isValidBetNumber(0)).isFalse();
         assertThat(BetType.DOZEN.isValidBetNumber(4)).isFalse();
         assertThat(BetType.COLUMN.isValidBetNumber(0)).isFalse();
+        assertThat(BetType.COLUMN.isValidBetNumber(4)).isFalse();
     }
 }

@@ -52,6 +52,32 @@ public class SlotGameEntityTest {
     }
 
     @Test
+    void testOf_accepts_won_combination_when_payout_is_lower_than_bet() {
+        var partialLoss = SlotGameEntity.of(
+                USER_ID,
+                BET_AMOUNT,
+                true,
+                BigDecimal.valueOf(-2),
+                SPIN_RESULT);
+
+        assertEquals(true, partialLoss.isWon());
+        assertEquals(BigDecimal.valueOf(-2), partialLoss.getAmount());
+    }
+
+    @Test
+    void testOf_accepts_lost_game_when_no_payout_is_returned() {
+        var completeLoss = SlotGameEntity.of(
+                USER_ID,
+                BET_AMOUNT,
+                false,
+                BET_AMOUNT.negate(),
+                SPIN_RESULT);
+
+        assertEquals(false, completeLoss.isWon());
+        assertEquals(BET_AMOUNT.negate(), completeLoss.getAmount());
+    }
+
+    @Test
     void testOf_throws_exception_when_user_id_is_null() {
         var exception = assertThrows(
                 ModelValidityBreachException.class,
@@ -128,6 +154,15 @@ public class SlotGameEntityTest {
         var exception = assertThrows(
                 ModelValidityBreachException.class,
                 () -> SlotGameEntity.of(USER_ID, BET_AMOUNT, true, BET_AMOUNT.negate(), SPIN_RESULT));
+
+        assertEquals(SlotErrorMessages.INVALID_WIN_STATE, exception.getMessage());
+    }
+
+    @Test
+    void testOf_throws_exception_when_game_is_marked_lost_despite_positive_cash_out() {
+        var exception = assertThrows(
+                ModelValidityBreachException.class,
+                () -> SlotGameEntity.of(USER_ID, BET_AMOUNT, false, BigDecimal.ZERO, SPIN_RESULT));
 
         assertEquals(SlotErrorMessages.INVALID_WIN_STATE, exception.getMessage());
     }

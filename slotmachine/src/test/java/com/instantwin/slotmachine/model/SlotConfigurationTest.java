@@ -74,4 +74,9 @@ public class SlotConfigurationTest {
         assertEquals(new BigDecimal("15.80"), result.get(SlotBetMultipliers.DOUBLE_DIAMOND));
         assertEquals(new BigDecimal("498.00"), result.get(SlotBetMultipliers.TRIPLE_DIAMOND));
     }
+
+    @Test
+    void testGetNumberOfReels_returns_three_reels() {
+        assertEquals(3, slotConfiguration.getNumberOfReels());
+    }
 }

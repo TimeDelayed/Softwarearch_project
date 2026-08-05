@@ -67,6 +67,17 @@ public class SlotGameLogicTest {
     }
 
     @Test
+    void testPlaceBet_marks_positive_multiplier_as_won_even_when_payout_is_lower_than_bet() {
+        when(slotSpinner.spin()).thenReturn(SPIN_RESULT);
+        when(payoutCalculator.calculateMultiplier(SPIN_RESULT)).thenReturn(new BigDecimal("0.80"));
+
+        var result = slotGameLogic.placeBet(BET_AMOUNT);
+
+        assertTrue(result.won());
+        assertEquals(new BigDecimal("8.00"), result.winnings());
+    }
+
+    @Test
     void testPlaceBet_throws_exception_when_bet_amount_is_null() {
         var exception = assertThrows(
                 BetAmountInvalidException.class,

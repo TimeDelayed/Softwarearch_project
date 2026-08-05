@@ -8,6 +8,8 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -210,6 +212,46 @@ public class SlotGameServiceTest {
     }
 
     @Test
+    void testPlaySlotGame_keeps_combination_as_won_when_payout_is_lower_than_bet() {
+        BigDecimal partialPayout = BigDecimal.valueOf(8);
+        var gameResult = new SlotGameResultView(
+                BET_AMOUNT,
+                WINNING_SPIN,
+                true,
+                partialPayout);
+        var entity = slotGame(
+                GAME_ID,
+                USER_ID,
+                BET_AMOUNT,
+                true,
+                PARTIAL_PLAYER_LOSS,
+                WINNING_SPIN);
+        when(slotGameLogic.placeBet(BET_AMOUNT)).thenReturn(gameResult);
+        when(slotRequestTransactionClient.requestTransaction(USER_ID, PARTIAL_PLAYER_LOSS))
+                .thenReturn(ResponseEntity.ok("Transaction created"));
+        when(slotGameFactory.createSlotGame(
+                USER_ID,
+                BET_AMOUNT,
+                true,
+                PARTIAL_PLAYER_LOSS,
+                WINNING_SPIN)).thenReturn(entity);
+
+        var result = slotGameService.playSlotGame(USER_ID, BET_AMOUNT);
+
+        assertTrue(result.isPresent());
+        assertTrue(result.get().getWon());
+        assertEquals(PARTIAL_PLAYER_LOSS, result.get().getAmount());
+        verify(slotRequestTransactionClient).requestTransaction(USER_ID, PARTIAL_PLAYER_LOSS);
+        verify(slotGameFactory).createSlotGame(
+                USER_ID,
+                BET_AMOUNT,
+                true,
+                PARTIAL_PLAYER_LOSS,
+                WINNING_SPIN);
+        verify(slotGameRepository).save(entity);
+    }
+
+    @Test
     void testFindById_returns_slot_game_when_slot_game_exists() {
         var entity = slotGame(
                 GAME_ID,
@@ -284,6 +326,25 @@ public class SlotGameServiceTest {
         assertEquals(BET_AMOUNT, result.get().getBetAmount());
         assertFalse(result.get().getWon());
         assertEquals(PLAYER_LOSS, result.get().getAmount());
+    }
+
+    @Test
+    void testDeleteSlotGame_maps_lazy_slot_states_before_delete_to_avoid_hibernate_lazy_loading_failure() {
+        var entity = slotGame(
+                GAME_ID,
+                USER_ID,
+                BET_AMOUNT,
+                false,
+                PLAYER_LOSS,
+                LOSING_SPIN);
+        when(slotGameRepository.findById(GAME_ID)).thenReturn(Optional.of(entity));
+        clearInvocations(entity, slotGameRepository);
+
+        slotGameService.deleteSlotGame(GAME_ID);
+
+        var orderedCalls = inOrder(entity, slotGameRepository);
+        orderedCalls.verify(entity).getSlotStates();
+        orderedCalls.verify(slotGameRepository).delete(entity);
     }
 
     @Test

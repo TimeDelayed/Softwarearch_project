@@ -67,8 +67,22 @@ class GameEntityTest {
     }
 
     @Test
+    void constructor_rejectsNegativeUserId() {
+        assertThatThrownBy(() -> new GameEntity(-1L, BigDecimal.TEN, 0, BetType.RED, 2, BigDecimal.ZERO))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(RouletteErrorMessages.USER_ID_INVALID);
+    }
+
+    @Test
     void constructor_rejectsInvalidBetAmount() {
         assertThatThrownBy(() -> new GameEntity(1L, BigDecimal.ZERO, 0, BetType.RED, 2, BigDecimal.ZERO))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(RouletteErrorMessages.BET_AMOUNT_INVALID);
+    }
+
+    @Test
+    void constructor_rejectsNegativeBetAmount() {
+        assertThatThrownBy(() -> new GameEntity(1L, BigDecimal.ONE.negate(), 0, BetType.RED, 2, BigDecimal.ZERO))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(RouletteErrorMessages.BET_AMOUNT_INVALID);
     }
@@ -97,6 +111,13 @@ class GameEntityTest {
     @Test
     void constructor_rejectsInvalidWinningNumber() {
         assertThatThrownBy(() -> new GameEntity(1L, BigDecimal.TEN, 0, BetType.RED, 37, BigDecimal.ZERO))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(RouletteErrorMessages.WINNING_NUMBER_INVALID);
+    }
+
+    @Test
+    void constructor_rejectsNegativeWinningNumber() {
+        assertThatThrownBy(() -> new GameEntity(1L, BigDecimal.TEN, 0, BetType.RED, -1, BigDecimal.ZERO))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(RouletteErrorMessages.WINNING_NUMBER_INVALID);
     }

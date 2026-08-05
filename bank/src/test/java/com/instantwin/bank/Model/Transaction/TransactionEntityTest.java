@@ -44,6 +44,34 @@ public class TransactionEntityTest {
         }
 
         @Test
+        void testOf_throws_exception_when_user_id_is_zero() {
+                var exception = assertThrows(
+                                UserIdInputFormatInvalidException.class,
+                                () -> TransactionEntity.of(
+                                                ZERO_USER_ID,
+                                                VALID_INVOICING_PARTY,
+                                                VALID_AMOUNT));
+
+                assertEquals(
+                                TransactionErrorMessages.USER_ID_INPUT_NEGATIVE,
+                                exception.getMessage());
+        }
+
+        @Test
+        void testOf_throws_exception_when_user_id_is_negative() {
+                var exception = assertThrows(
+                                UserIdInputFormatInvalidException.class,
+                                () -> TransactionEntity.of(
+                                                NEGATIVE_USER_ID,
+                                                VALID_INVOICING_PARTY,
+                                                VALID_AMOUNT));
+
+                assertEquals(
+                                TransactionErrorMessages.USER_ID_INPUT_NEGATIVE,
+                                exception.getMessage());
+        }
+
+        @Test
         void testOf_throws_exception_when_amount_is_null() {
                 var exception = assertThrows(
                                 IllegalArgumentException.class,

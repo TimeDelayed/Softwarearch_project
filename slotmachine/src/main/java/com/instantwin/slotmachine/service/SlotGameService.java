@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
 
+import org.aspectj.weaver.patterns.ConcreteCflowPointcut.Slot;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -94,8 +95,9 @@ public class SlotGameService implements ISlotGameService {
         Optional<SlotGameEntity> slotGameEntityOptional = slotGameRepository.findById(id);
         if (slotGameEntityOptional.isPresent()) {
             SlotGameEntity slotGameEntity = slotGameEntityOptional.get();
+            SlotGameView slotGameView = SlotGameView.of(slotGameEntity);
             slotGameRepository.delete(slotGameEntity);
-            return Optional.of(SlotGameView.of(slotGameEntity));
+            return Optional.of(slotGameView);
         }
         return Optional.empty();
     }
