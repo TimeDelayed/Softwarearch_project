@@ -178,13 +178,13 @@ public class SlotGameService implements ISlotGameService {
         long totalGamesPlayed = userGames.size();
 
         BigDecimal totalWinnings = userGames.stream()
-                .filter(SlotGameEntity::isWon)
+                .filter(game -> game.getAmount().signum() > 0)
                 .map(SlotGameEntity::getAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalLosses = userGames.stream()
-                .filter(game -> !game.isWon())
-                .map(SlotGameEntity::getBetAmount)
+                .filter(game -> game.getAmount().signum() < 0)
+                .map(game -> game.getAmount().negate())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalClientProfit = userGames.stream()

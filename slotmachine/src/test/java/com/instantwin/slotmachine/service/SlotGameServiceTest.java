@@ -39,6 +39,7 @@ public class SlotGameServiceTest {
     private static final BigDecimal OTHER_BET_AMOUNT = BigDecimal.valueOf(20);
     private static final BigDecimal WINNINGS = BigDecimal.valueOf(25);
     private static final BigDecimal PLAYER_PROFIT = BigDecimal.valueOf(15);
+    private static final BigDecimal PARTIAL_PLAYER_LOSS = BigDecimal.valueOf(-2);
     private static final BigDecimal PLAYER_LOSS = BigDecimal.valueOf(-10);
 
     private static final ThreeReelSpinDTO WINNING_SPIN = new ThreeReelSpinDTO(
@@ -370,21 +371,29 @@ public class SlotGameServiceTest {
                 GAME_ID + 1,
                 USER_ID,
                 BET_AMOUNT,
+                true,
+                PARTIAL_PLAYER_LOSS,
+                WINNING_SPIN);
+        var gameWithoutCombination = slotGame(
+                GAME_ID + 2,
+                USER_ID,
+                BET_AMOUNT,
                 false,
                 PLAYER_LOSS,
                 LOSING_SPIN);
-        when(slotGameRepository.findAllByUserId(USER_ID)).thenReturn(List.of(winningGame, losingGame));
+        when(slotGameRepository.findAllByUserId(USER_ID))
+                .thenReturn(List.of(winningGame, losingGame, gameWithoutCombination));
 
         var result = slotGameService.getUserStats(USER_ID);
 
         assertTrue(result.isPresent());
         assertEquals(USER_ID, result.get().getUserId());
-        assertEquals(2, result.get().getTotalGamesCount());
+        assertEquals(3, result.get().getTotalGamesCount());
         assertEquals(PLAYER_PROFIT, result.get().getTotalWinnings());
-        assertEquals(BET_AMOUNT, result.get().getTotalLosses());
-        assertEquals(BigDecimal.valueOf(5), result.get().getTotalClientProfit());
-        assertEquals(BigDecimal.valueOf(20), result.get().getTotalHouseTurnoverFromClient());
-        assertEquals(BigDecimal.valueOf(-5), result.get().getTotalHouseProfitFromClient());
+        assertEquals(BigDecimal.valueOf(12), result.get().getTotalLosses());
+        assertEquals(BigDecimal.valueOf(3), result.get().getTotalClientProfit());
+        assertEquals(BigDecimal.valueOf(30), result.get().getTotalHouseTurnoverFromClient());
+        assertEquals(BigDecimal.valueOf(-3), result.get().getTotalHouseProfitFromClient());
     }
 
     private SlotGameEntity successfulSlotGameRequest() {
