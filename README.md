@@ -53,20 +53,29 @@ docker compose version
 ### Projekt starten
 
 Repository klonen oder das abgegebene ZIP entpacken, anschließend in den Projektordner wechseln.
-Danach werden alle Services und Datenbanken gebaut und gestartet:
+Die fertig gebauten Images der drei Kern-Services liegen öffentlich in der
+[Docker Registry](https://hub.docker.com/r/timedelay/instantwin-enterprise). Sie werden zusammen mit
+den benötigten PostgreSQL-Images heruntergeladen und anschließend ohne lokalen Neubuild gestartet:
+
+```bash
+docker compose pull
+docker compose up --no-build
+```
+
+Für einen Start im Hintergrund:
+
+```bash
+docker compose up --no-build -d
+```
+
+Alternativ können alle Images direkt aus dem Quellcode neu gebaut werden:
 
 ```bash
 docker compose up --build
 ```
 
-Beim Build werden auch die Unit-Tests der drei Services ausgeführt. Der erste Start kann daher etwas
-länger dauern, weil Maven- und Docker-Abhängigkeiten heruntergeladen werden müssen.
-
-Für einen Start im Hintergrund:
-
-```bash
-docker compose up --build -d
-```
+Beim lokalen Build werden auch die Unit-Tests der drei Services ausgeführt. Der erste Build kann daher
+etwas länger dauern, weil Maven- und Docker-Abhängigkeiten heruntergeladen werden müssen.
 
 Status und Logs lassen sich anschließend so prüfen:
 
@@ -400,6 +409,35 @@ mvn -f slotmachine/pom.xml test
 Der Schwerpunkt liegt auf eigenen Entities, Factorys, Services beziehungsweise Handlern, Controllern,
 Mappern und Spielregeln. Warum nicht jede technische Klasse eine eigene Testklasse besitzt, wird im
 Abschnitt [Testumfang](#testumfang) erläutert.
+
+## Docker-Images für die Abgabe
+
+Die fertigen Images sind wegen ihrer Dateigröße nicht als TAR-Archive im Repository oder in der
+Moodle-Abgabe enthalten. Sie werden stattdessen über das öffentliche Docker-Hub-Repository
+[timedelay/instantwin-enterprise](https://hub.docker.com/r/timedelay/instantwin-enterprise)
+bereitgestellt.
+
+Das Repository enthält drei getrennte Tags:
+
+| Service | Docker-Image |
+| --- | --- |
+| Bank | `timedelay/instantwin-enterprise:bank` |
+| Roulette | `timedelay/instantwin-enterprise:roulette` |
+| Slotmachine | `timedelay/instantwin-enterprise:slotmachine` |
+
+Die `compose.yml` verweist bereits auf diese Images. Zum Herunterladen und Starten der vollständigen
+Anwendung inklusive der drei PostgreSQL-Datenbanken reichen daher folgende Befehle im Projektordner:
+
+```bash
+docker compose pull
+docker compose up --no-build
+```
+
+Zum Beenden der Anwendung:
+
+```bash
+docker compose down
+```
 
 ## Bewusste Abweichungen und technische Schulden
 
