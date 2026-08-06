@@ -3,7 +3,6 @@ package com.instantwin.bank.service.Transaction;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.http.RequestEntity;
 import org.springframework.stereotype.Service;
 
 import com.instantwin.bank.DTO.Transaction.TransactionDTO;

@@ -15,8 +15,6 @@ import com.instantwin.bank.view.Transaction.TransactionDeleteView;
 import com.instantwin.bank.view.Transaction.TransactionSpecificUserView;
 import com.instantwin.bank.view.Transaction.TransactionView;
 
-import jakarta.validation.Valid;
-
 @Validated
 @RestController
 public class TransactionController implements ITransactionController {

@@ -12,11 +12,8 @@ import com.instantwin.slotmachine.contract.service.ISlotGameService;
 import com.instantwin.slotmachine.dto.SlotGameRequestBodyDTO;
 import com.instantwin.slotmachine.utilities.SlotResponseMapper;
 import com.instantwin.slotmachine.view.SlotClientStatsView;
-import com.instantwin.slotmachine.view.SlotGameResultView;
 import com.instantwin.slotmachine.view.SlotGameView;
 import com.instantwin.slotmachine.view.SlotHouseStatsView;
-
-import jakarta.validation.Valid;
 
 @Validated
 @RestController

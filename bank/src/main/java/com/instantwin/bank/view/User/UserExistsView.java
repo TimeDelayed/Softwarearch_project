@@ -1,9 +1,9 @@
 package com.instantwin.bank.view.User;
-import java.math.BigDecimal;
 import com.instantwin.bank.contract.Model.User.IUserEntity;
+
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.NotBlank;
 public record UserExistsView(
                 @NotNull @NotBlank String firstName,
                 @NotNull @NotBlank String lastName,
