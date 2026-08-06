@@ -633,6 +633,8 @@ So ein Ansatz hätte insbesondere die uneinheitlichen Kommunikationsobjekte, die
 hätte er uns gezwungen, die Servicekommunikation als eigenen Architekturteil zu planen und nicht erst
 beim Implementieren des nächsten HTTP-Calls festzulegen.
 
+Zur Verbesserung der Codequalität und um fehlende Testabdekungen ausfindig zu machen wurde in diesem Projekt KI als Unterstüzung verwendet.
+
 ## Lizenz
 
 Für dieses studentische Projekt ist aktuell keine separate Lizenzdatei hinterlegt. Die im Beleg
