@@ -27,6 +27,7 @@ freundlich verkaufen möchte.
 - [Tests](#tests)
 - [Docker-Images für die Abgabe](#docker-images-für-die-abgabe)
 - [Bewusste Abweichungen und technische Schulden](#bewusste-abweichungen-und-technische-schulden)
+- [Disclaimer](#disclaimer)
 - [Lizenz](#lizenz)
 
 ## Schnellstart
@@ -633,6 +634,7 @@ So ein Ansatz hätte insbesondere die uneinheitlichen Kommunikationsobjekte, die
 hätte er uns gezwungen, die Servicekommunikation als eigenen Architekturteil zu planen und nicht erst
 beim Implementieren des nächsten HTTP-Calls festzulegen.
 
+## Disclaimer
 Zur Verbesserung der Codequalität und um fehlende Testabdekungen ausfindig zu machen wurde in diesem Projekt KI als Unterstüzung verwendet.
 
 ## Lizenz
